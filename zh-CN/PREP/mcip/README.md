@@ -155,7 +155,7 @@ MCIP输出文件的默认位置是`$CMAQ_HOME/data/mcip/$GridName`目录，但�
 
 MCIPv4.3和MCIPv4.2是通过CMAS Center MCIP GitHub存储库发布的。从4.5版本开始，MCIP作为CMAQ存储库的一部分发布。
 
-* [MCIPv5.1 (2019年12月)](https://github.com/zhifzhang/CMAQ/blob/5.3.1/PREP/mcip/docs/ReleaseNotes) - 与CMAQv5.3.1一同发布
+* [MCIP v5.1 (2019年12月)](https://github.com/zhifzhang/CMAQ/blob/5.3.1/PREP/mcip/docs/ReleaseNotes) - 与CMAQv5.3.1一同发布
 * [MCIP v5.0 (2019年8月)](https://github.com/zhifzhang/CMAQ/blob/5.3/PREP/mcip/docs/ReleaseNotes) - 与CMAQv5.3一同发布
 * [MCIP v4.5 (2018年十月)](https://github.com/zhifzhang/CMAQ/blob/CMAQv5.3.b2_19Oct2018/PREP/mcip/docs/ReleaseNotes) - 与CMAQv5.3beta2一同发布
 * [MCIP v4.3 (2015年十一月)](https://github.com/CMASCenter/MCIP/tree/4.3) - 在CMASCenter GitHub存储库中提供

@@ -1,9 +1,9 @@
-The bldmake utility is used to create a Makefile suitable for compiling the components of CMAQ (e.g. CCTM, post-processing tools, ICON, BCON, etc.). The Makefiles produced will contain the proper rules, compilation flags, and library paths to produce each executable.   
+bldmake实用程序用于创建适用于编译CMAQ组件（例如CCTM、后处理工具、ICON、BCON等）的Makefile。生成的Makefile将包含适当的规则、编译标志和库路径以生成每个可执行文件。
 
-The utility relies on a text-based configuration file (e.g. CCTM_v53.cfg) to determine the contents of the Makefile. Each configuration file includes information about the build-time options for the target executable, the compiler brand and version, the paths to required libraries (i.e. NetCDF and IOAPI), and compilation flags. With this input, bldmake harvests source code from the CMAQ repository consistent with the selected build-time options and auto-populates the Makefile with the correct dependencies for each process module.  
+该实用程序依赖于基于文本的配置文件（例如CCTM_v53.cfg）来确定Makefile的内容。每个配置文件均包含有关目标可执行文件构建时的选项、编译器品牌和版本、所需库（即NetCDF和IOAPI）的路径以及编译标志的信息。使用此输入，bldmake将从CMAQ存储库中获取与选定的构建时选项一致的源代码，并为Makefile自动填充每个过程模块的正确依赖关系。
 
-Note that each Makefile created by bldmake will only work for a specific compiler/version (set in the input to bldmake). Users should ensure that their compute environment is consistent when compiling with that Makefile and running the generated executable.  
+请注意，由bldmake创建的每个Makefile仅适用于特定的编译器品牌和版本（在bldmake的输入中设置）。用户在使用该Makefile进行编译并运行生成的可执行文件时，应确保其计算环境与创建Makefile时所用的一致。
 
-The CMAQ repo contains shell script drivers (e.g. bldit_cctm.csh, bldit_combine.csh, etc.) for choosing build options, populating the bldmake configuration file, running bldmake to generate a Makefile, and running the Makefile to create an executable. The CMAQ team recommends users refrain from modifying bldmake or executing it stand-alone. Instead, please use these shell script drivers.  
+CMAQ存储库包含Shell脚本程序（例如bldit_cctm.csh、bldit_combine.csh等），可用于选择构建时选项、填充bldmake配置文件、运行bldmake生成Makefile、以及运行Makefile创建可执行文件。CMAQ团队建议用户不要修改bldmake或独立执行它，而是使用这些Shell脚本程序。
 
 
