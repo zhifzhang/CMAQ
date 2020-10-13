@@ -1,425 +1,425 @@
 <!-- BEGIN COMMENT -->
 
-[<< Previous Chapter](CMAQ_UG_ch05_running_a_simulation.md) - [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch07_model_outputs.md)
+[<< 前一章](CMAQ_UG_ch05_running_a_simulation.md) - [返回](README.md) - [下一章 >>](CMAQ_UG_ch07_model_outputs.md)
 
 <!-- END COMMENT -->
 
-# 6. Model Configuration Options
+# 6 模型配置选项
 
 <a id=Return_to_Top></a>
 
 <!-- BEGIN COMMENT -->
 
-## Table of Contents:
+## 目录:
 
-* [6.1 Introduction](#6.1_Introduction)
-* [6.2 Numerical Approach](#6.2_Numerical_Approach)
-* [6.3 Grid Configuration](#6.3_Grid_Config)
-	* [6.3.1 Horizontal Domains and Lateral Boundaries](#6.3.1_Horizontal_Domains)
-	* [6.3.2 Vertical Domains](#6.3.2_Vertical_Domains)
-* [6.4 Science Configurations](#6.4_Science_Config)
-* [6.5 Advection](#6.5_Advection)
-* [6.6 Horizontal Diffusion](#6.6_Horizontal_Diff)
-* [6.7 Vertical Diffusion](#6.7_Vertical_Diff)
-* [6.8 Dry Deposition/Air-surface exchange](#6.8_Dry_Dep/Air)
-	* [6.8.1 Dry Deposition - m3dry](#6.8.1_Dry_Depm3dry)
-	* [6.8.2 Dry Deposition - STAGE](#6.8.2_Dry_STAGE)
-* [6.9 Emissions](#6.9_Emissions)
-	* [6.9.1 Emission Streams](#6.9.1_Emission_Streams)
-	* [6.9.2 Online Emission Streams](#6.9.2_Online_Emission)
-	* [6.9.3 Emission Compatability](#6.9.3_Emission_Compatability)
-* [6.10 Gas Phase Chemistry](#6.10_Gas_Phase_Chem)
-	* [6.10.1 Gas Phase Chemical Mechanisms](#6.10.1_Gas_Phase_Mech)
-	* [6.10.2 Solvers](#6.10.2_Solver)
-	* [6.10.3 Photolysis](#6.10.3_Photolysis)
-	* [6.10.4 Nitrous Acid (HONO)](#6.10.4_HONO)
-* [6.11 Aerosol Dynamics and Chemistry](#6.11_Aerosol_Dynamics)
-* [6.12 Aqueous Chemistry, Scavenging and Wet Deposition](#6.12_Aqueous_Chemistry)
-* [6.13 Potential Vorticity Scaling](#6.13_Potential_Vort)
-* [6.14 References](#6.14_References)
+* [6.1 简介](#6.1_Introduction)
+* [6.2 数值方法](#6.2_Numerical_Approach)
+* [6.3 网格配置](#6.3_Grid_Config)
+	* [6.3.1 水平区域和横向边界](#6.3.1_Horizontal_Domains)
+	* [6.3.2 垂直区域](#6.3.2_Vertical_Domains)
+* [6.4 科学选项](#6.4_Science_Config)
+* [6.5 水平对流](#6.5_Advection)
+* [6.6 水平扩散](#6.6_Horizontal_Diff)
+* [6.7 垂直扩散](#6.7_Vertical_Diff)
+* [6.8 干沉降/空气-地面交换](#6.8_Dry_Dep/Air)
+	* [6.8.1 干沉降 - m3dry](#6.8.1_Dry_Depm3dry)
+	* [6.8.2 干沉降 - STAGE](#6.8.2_Dry_STAGE)
+* [6.9 排放源](#6.9_Emissions)
+	* [6.9.1 排放源](#6.9.1_Emission_Streams)
+	* [6.9.2 实时排放源](#6.9.2_Online_Emission)
+	* [6.9.3 排放兼容性](#6.9.3_Emission_Compatability)
+* [6.10 气相化学](#6.10_Gas_Phase_Chem)
+	* [6.10.1 气相化学机理](#6.10.1_Gas_Phase_Mech)
+	* [6.10.2 求解器](#6.10.2_Solver)
+	* [6.10.3 光解作用](#6.10.3_Photolysis)
+	* [6.10.4 亚硝酸盐(HONO)](#6.10.4_HONO)
+* [6.11 气溶胶动力学与化学](#6.11_Aerosol_Dynamics)
+* [6.12 水相化学、清除和湿沉降](#6.12_Aqueous_Chemistry)
+* [6.13 潜在涡度尺度](#6.13_Potential_Vort)
+* [6.14 参考文献](#6.14_References)
 
 <!-- END COMMENT -->
 
 <a id=6.1_Introduction></a>
 
-## 6.1 Introduction
+## 6.1 简介
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-As discussed in [Chapter 1](CMAQ_UG_ch01_overview.md), CMAQ is a multipollutant, multiscale air quality modeling system that estimates the transport and chemistry of ozone, PM, toxic airborne pollutants, and acidic and nutrient pollutant species, as well as visibility degradation and deposition totals. CMAQ includes state-of-the-art technical and computational techniques to simulate air quality from urban to global scales. It can model complex atmospheric processes affecting transformation, transport, and deposition of air pollutants using a system architecture that is designed for fast and efficient computing. (See [Appendix D](Appendix/CMAQ_UG_appendixD_parallel_implementation.md) for an introduction on how data-parallelism can be applied in the CMAQ system to increase computational efficiency.) This chapter presents a brief overview of the conceptual formulation of Eulerian air quality modeling and the science features in various components of the Chemistry-Transport Model (CTM) component of CMAQ, CCTM. 
+正如在[第1章](CMAQ_UG_ch01_overview.md)中所讨论的那样，CMAQ是一种多污染物、多尺度的空气质量模型系统，可估算臭氧、PM、有毒空气污染物、酸性和营养性污染物的迁移和化学转化，以及能见度的下降和污染物沉降量。CMAQ包括最新的技术和计算方法，可以模拟从城市到全球尺度的空气质量。它可以使用专为快速高效计算而设计的系统架构，对影响空气污染物转化、传输和沉降的复杂大气过程进行建模。（有关如何在CMAQ系统中应用并行计算以提高计算效率的介绍，请参见[附录D](Appendix/CMAQ_UG_appendixD_parallel_implementation.md)。本章将简要概述欧拉空气质量模型的概念公式和CMAQ化学运输模型（CCTM）中各个组件的科学参数。
 
 <a id=6.2_Numerical_Approach></a>
 
-## 6.2 Numerical Approach
+## 6.2 数值方法
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-The theoretical basis for CMAQ’s formulation is the conservation of mass for atmospheric trace species emissions, transport, chemistry, and removal in the atmosphere. The general form of a chemical species equation derives from this conservation, so that changes in atmospheric concentrations of a species, C<sub>i</sub>, can mathematically be represented as
+CMAQ模型的理论基础是大气中的追踪物质在排放、运输、化学和清除过程中的质量守恒。化学物种方程的一般形式源自这种质量守恒，因此大气中物种的浓度C<sub>i</sub>的变化可以用数学表示为：
 
-![Equation 6-1](images/Figure6-1.JPG)  
+![公式 6-1](images/Figure6-1.JPG)  
 
-where the terms on the right-hand side of the equation represent the rate of change in C<sub>i</sub> due to advection, diffusion, cloud processes (mixing, scavenging, and aqueous-phase chemistry), dry deposition, and aerosol processes (phase partitioning, and aerosol dynamics). R<sub>gi</sub> represents the rate of change due to gas and heterogeneous chemical reactions, while E<sub>i</sub> is the emission rate for that species. The mass conservation for trace species and the moment dynamic equations for the various modes of the particulate size distribution in CMAQ are further formulated in generalized coordinates, where in the same formulation allows the model to accommodate the commonly used horizontal map projections (i.e., Lambert conformal, polar stereographic, and Mercator) as well as different vertical coordinates (see Chapters 5 and 6 in Byun and Ching, 1999). The governing equation for CMAQ is numerically solved using the time-splitting or process splitting approach wherein each process equation is solved sequentially, typically with the process with the largest time-scale solved first. 
+其中等式右侧的项表示由于对流、扩散、云过程（包括混合、清除和水相化学）、干沉降、和气溶胶过程（相分配和气溶胶动力学）引起的C<sub>i</sub>的变化率。R<sub>gi</sub>代表由于气体和异质化学反应而引起的变化率，E<sub>i</sub>是该物种的排放速率。追踪物质的质量守恒和CMAQ中各种粒度分布模式的矩动力方程在广义坐标中进一步制定，其中在相同的公式中允许模型配合常用的水平地图投影（即Lambert正形、极坐标和墨卡托投影）以及不同的垂直坐标（请参见Byun和Ching的第5章和第6章，1999年）。使用时间拆分或过程拆分方法在数值上求解CMAQ的控制方程，其中，每个过程方程是按顺序求解的，通常首先求解最大时间尺度的过程。
 
 <a id=6.3_Grid_Config></a>
 
-## 6.3 Grid Configuration
+## 6.3 网格配置
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-CMAQ is a three-dimensional Eulerian air quality model. To solve the governing partial differential equations, the modeling domain (that is, the volume of the atmosphere over a geographic region of interest) is discretized with three-dimensional cells. The grid cells and lateral boundaries of the domain must be rigorously and consistently defined across the scientific components of the model, including chemistry, emissions, meteorology, and other peripheral scientific processors. In other words, all components of the CMAQ system must use the same map projections and horizontal grid spacing to maintain scientific consistency across the modeling domain. The number of grid cells in the west-east dimension is typically counted in "columns" or "NCOLS", and the number of grid cells in the south-north dimension is typically counted in "rows" or "NROWS". The vertical discretization is typically counted in "layers" or "NLAYS".
+CMAQ是一个三维欧拉空气质量模型。为了求解控制偏微分方程，模型区域（即感兴趣地理区域的大气体积）离散成三维网格单元。模型区域的网格单元和横向边界必须在模型的科学选项（包括化学、排放、气象学和其他外围科学处理器）中严格定义且保持一致性。换句话说，CMAQ系统的所有组件必须使用相同的地图投影和水平网格间距，以保持整个模型区域的科学一致性。东-西维度的网格单元数通常以“列（columns）”或“NCOLS”来计算，而南-北维度的网格单元数通常以“行（rows）”或“NROWS”来计算。垂直方向上通常以“层（layers）”或“NLAYS”来计算。
 
-CMAQ uses a generalized coordinate system to map the physical space to the computational space; see Chapter 6 of Byun and Ching (1999). The generalized coordinates enable CMAQ to maintain mass consistency under different horizontal map projections (such as Lambert conformal, polar stereographic, and Mercator) and under different vertical coordinate systems (such as terrain-following "sigma", height, and hybrid sigma-pressure). CMAQv5.3 supports modeling domains comprised of rectilinear cells, where the length of each _side_ of the cells in projected space is the same (such as &#916;x = &#916;y = 12&nbsp;km). By contrast, the vertical grid is generally irregular, such that the modeling layers are thinnest near the ground. The absolute dimensions of the horizontal grid (that is, the west-east and south-north extents of the computational domain) can differ.
+CMAQ使用广义坐标系将物理空间映射到计算空间；见Byun和Ching（1999）第6章。广义坐标使CMAQ能够在不同的水平投影（如Lambert正形、极坐标和墨卡托投影）和不同的垂直坐标系（如地形跟随"sigma"、高度、混合sigma-压力）下保持质量守恒。CMAQv5.3支持由直线单元组成的建模区域，其中投影空间中每个单元的边长相同（例如&#916;x = &#916;y = 12&nbsp;km）。相比之下，垂直网格通常是不规则的，模型中层的高度在地面附近最薄。水平网格的绝对尺寸（即计算区域的东-西范围和南-北范围）可以不同。
 
-In general, the characteristics of the CMAQ modeling domain (including the map projection, horizontal grid spacing, vertical grid type, and maximum areal coverage) are inherited from the meteorological model. Beginning with CMAQv5.3 and MCIPv5.0, the public release of CMAQ is only configured for meteorological data from the Weather Research and Forecasting (WRF) model. However, MCIP (which translates and prepares meteorological model data for CMAQ) can be expanded to process data from other meteorological models to be used within the CCTM.
+一般来说，CMAQ建模区域的特征（包括地图投影、水平网格间距、垂直网格类型和最大覆盖范围）都是从气象模型继承而来的。从CMAQv5.3和MCIPv5.0开始，CMAQ的公开发布版本仅针对WRF模型的气象数据进行配置。然而，MCIP（为CMAQ转换和准备气象模型数据）可以扩展到处理其他气象模型的数据，作为CCTM的输入气象数据。
 
 <a id=6.3.1_Horizontal_Domains></a>
 
-### 6.3.1 Horizontal Domains and Lateral Boundaries
+### 6.3.1 水平区域和横向边界
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-After determining the horizontal and vertical extent of the domain of interest, the meteorological model must be run for a horizontal domain slightly larger than the CMAQ domain. A larger meteorology domain is required so the boundary conditions in the WRF simulation will fall outside the CMAQ simulation domain. Because there is a blend of larger-scale driving data and scale-specific physics within the WRF lateral boundaries, these data are inappropriate to use in the CCTM, so they are usually removed in MCIP. The lateral boundaries for WRF are typically a "picture frame" of the outermost 5 cells of the WRF domain. These lateral boundaries are used to blend the influence of larger-scale meteorological driving data with the WRF simulation. In WRF, the lateral boundaries are calculated and included as part of the modeling domain. By contrast, the lateral boundaries for the CCTM are external to the modeling domain.
+在确定模型区域的水平和垂直范围后，气象模型运行的水平区域必须略大于CMAQ的模拟区域。由于需要更大的气象学区域，因此WRF模拟中的边界条件将不在CMAQ的模拟区域内。由于在WRF横向边界内存在大尺度驱动数据和特定比例尺的物理混合，这些数据不适合在CCTM中使用，因此它们通常在MCIP中被删除。WRF的侧边界通常是WRF模拟区域最外层5个单元的“图框”。这些横向边界用于将大尺度气象驱动数据的影响与WRF模拟相结合。在WRF中会计算横向边界并作为建模区域的一部分。相比之下，CCTM的横向边界是在建模区域之外的。
 
-MCIP can be used to extract a subset of the WRF modeling domain (that is, a "window") to be used for the CCTM modeling domain. The window can be any rectangular area within the meteorological model's lateral boundaries, provided it contains a nominally large enough areal coverage.
+MCIP可提取WRF建模区域的子集（即一个“窗口”），用于CCTM模拟区域。“窗口”可以是气象模型横向边界内的任何矩形区域，只要它包含名义上足够大的区域覆盖。
 
-Horizontal grids specifications for CMAQ are contained in the grid definition file (GRIDDESC), which is output by MCIP and can be edited by the user.  Further details on grid configuration are available in the [README.md](../../PREP/mcip/README.md) file in the PREP/mcip folder. If several domains have been used within a group, the horizontal domain for a given CMAQ run can be defined at runtime by setting the GRIDDESC and GRID_NAME environment variables to point to an existing grid definition file and to one of the grids defined in the file, respectively. 
+CMAQ的水平网格设置包含在网格定义文件（GRIDDESC）中，该文件由MCIP输出，用户可以编辑。有关网格配置的更多详细信息，请参阅PREP/mcip文件夹中的[README.md](../../PREP/mcip/README.md)文件。如果一个组中使用了多个区域，则可以在运行时通过将GRIDDESC和GRID_NAME环境变量分别设置为指向现有网格定义文件和文件中定义的网格之一，来确定CMAQ运行的水平区域。
 
 <a id=6.3.2_Vertical_Domains></a>
 
-### 6.3.2 Vertical Domains
+### 6.3.2 垂直区域
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-CMAQ can support multiple vertical coordinate systems via the generalized coordinate. Most of the grid transformation to maintain mass consistency in CMAQ occurs through the mathematical term, Jacobian; see Chapter 6 of Byun and Ching (1999) and Otte and Pleim (2010). In the CMAQ system, the Jacobian is calculated in MCIP. The vertical processes in the CCTM (such as mixing within the planetary boundary layer and convective mixing) must also be cast in a flexible coordinate system.
+CMAQ可以通过广义坐标支持多个垂直坐标系。保持CMAQ质量守恒的大多数网格转换都是通过数学术语Jacobian实现的；参见Byun和Ching（1999）和Otte和Pleim（2010）的第6章。在CMAQ系统中，用MCIP计算Jacobian矩阵。CCTM中的垂直过程（如行星边界层内的混合和对流混合）也必须投影在一个灵活的坐标系中。
 
-There are two options for vertical coordinates in the WRF model: terrain-following ("sigma"), and hybrid sigma-pressure. In both vertical coordinate systems, there is a "model top" employed (often called PTOP, or pressure at the top of the model) to limit the vertical extent of the modeling domain. The model top is usually set within the lower stratosphere (for example, 50&nbsp;hPa), but can be higher for some modeling applications. The sigma coordinate system allows the influence of the terrain to gradually diminish with height toward the model top. The sigma coordinate (technically called "eta" in the WRF system) has been used since WRF was initially released to the public in the late 1990s. The hybrid sigma-pressure coordinate was introduced in WRFv3.9 (released in 2017), and it uses a terrain-following coordinate in the lower part of the atmosphere which transitions to a constant pressure coordinate in the upper part of the atmosphere. The hybrid sigma-pressure coordinate is often used to reduce the presence of gravity waves in the model in steep and complex terrain, and to enable a higher model top to be used.
+WRF模型中有两种垂直坐标系：地形跟随（“sigma”）坐标系和混合sigma-压力坐标系。在两个垂直坐标系中，都有一个“模型顶部”（通常称为PTOP，或模型顶部的压力）用于限制建模区域的垂直范围。模型顶部通常设置在平流层下层以内（例如50&nbsp;hPa），但对于某些建模应用程序也可以更高。sigma坐标系允许地形的影响随着高度向模型顶部逐渐减小。sigma坐标系（在WRF中技术上称为“eta”）自WRF于20世纪90年代末首次向公众发布以来就一直在使用。混合sigma-压力坐标系在WRFv3.9（2017年发布）中引入，它在大气层下部区域使用地形跟随坐标系，同时向大气层上部过渡到恒定压力坐标系。混合sigma-压力坐标系常被用来减少在陡峭复杂地形中模型中重力波的影响，它可以使模型顶部更高。
 
-Beginning with CMAQv5.3 and MCIPv5.0, both the sigma and the hybrid sigma-pressure coordinates are supported. MCIPv5.0 was modified to calculate the Jacobian from the hybrid coordinate, and CMAQv5.3 has some scientific processes recast more generically so that both the sigma coordinate and the hybrid coordinate can be properly represented. CMAQ prior to v5.3 (and MCIP prior to v5.0) is not compatible with the hybrid coordinate system introduced in WRF 3.9.  If the hybrid coordinate is used in WRF (versions 3.9 or later), MCIPv5.0 must be used with CMAQv5.3.  See [Appendix E](Appendix/CMAQ_UG_appendixE_configuring_WRF.md) for notes on configuring WRF4.0 and later for use with CMAQv5.3. 
+从CMAQv5.3和MCIPv5.0开始，sigma坐标系和混合sigma-压力坐标系都受支持。MCIPv5.0被修改为从混合坐标系计算Jacobian，CMAQv5.3有一些更通用的科学过程，以便sigma坐标系和混合坐标系都能得到正确的表示。v5.3之前的CMAQ（以及v5.0之前的MCIP）与WRF 3.9中引入的混合坐标系不兼容。如果在WRF（3.9或更高版本）中使用混合坐标系，则必须使用MCIPv5.0与CMAQv5.3以上版本。有关配置WRF4.0和更高版本以用于CMAQv5.3的说明，请参阅[附录E](Appendix/CMAQ_UG_appendixE_configuring_WRF.md)。
 
 <a id=6.4_Science_Config></a>
 
-## 6.4 Science Configurations
+## 6.4 科学选项
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-CCTM contains several science configurations for simulating transport, chemistry, and deposition. All the science configuration options in CCTM, such as the chemical mechanism to be used, are set when building the executable. The model grid and vertical layer structure for CCTM are set at execution. The important distinction between selecting the science configuration and the model grid/layer configuration is that CCTM does not need to be recompiled when changing model grids/layers but does need to be recompiled when new science options are invoked.  The following sections describe how these science options can be utilized by configuring using the `bldit_cctm.csh` and `run_cctm.csh` scripts.  For the remainder of this chapter these files will be referred to as simply BuildScript and RunScript.
+CCTM包含多个用于模拟传输、化学和沉降的科学配置。CCTM中的所有科学配置选项（比如要使用的化学机制）都是在构建（build）可执行文件时设置的。而在可执行文件运行时设置CCTM的模型网格和垂直层结构。选择科学配置选项和模型网格/层配置之间的重要区别在于，更改模型网格/层时不需要重新编译CCTM，但在调用新的科学选项时必须要重新编译CCTM。以下各节介绍如何在`bldit_cctm.csh`和`run_cctm.csh`脚本中进行设置，以利用这些科学选项。在本章的其余部分中，这些文件将被简称为BuildScript和RunScript。
 
 <a id=6.5_Advection></a>
 
-## 6.5 Advection
+## 6.5 水平对流
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-In CCTM, the 3-dimensional transport by mean winds (or advection) is numerically represented by sequentially solving locally-one dimensional equations for the two horizontal and vertical components. CMAQ uses the piecewise parabolic method (PPM) (Colella and Woodward, 1984) for representing tracer advection in each of the three directions. This algorithm is based on the finite-volume sub-grid definition of the advected scalar. In PPM, the sub-grid distribution is described by a parabola in each grid interval. PPM is a monotonic and positive-definite scheme. Positive-definite schemes maintain the sign of input values, which in this case means that positive concentrations will remain positive and cannot become negative.
+在CCTM中，平均风（或平流）的三维输送通过连续求解两个水平分量和垂直分量的局部一维方程来表示。CMAQ使用分段抛物线方法（PPM）（Colella和Woodward，1984）来表示三个方向上的示踪平流。该算法基于对流尺度上定义的有限体积子网格。在PPM中，每个网格间隔内的子网格分布用抛物线表示。PPM是一个单调的正定方案。正定方案保持输入值的符号，在这种情况下，这意味着正浓度将保持为正，而不能变为负。
 
-Mass consistency is a key desired attribute in tracer advection. Data consistency is maintained for air quality simulations by using dynamically and thermodynamically consistent meteorology data from WRF/MCIP. Mass inconsistencies can nevertheless arise either using different grid configurations (horizontal or vertical) or due to differing numerical advection schemes between the driving meteorological model and the CCTM. While inconsistencies due to the former can be eliminated through use of the same grid configurations (thus, layer collapsing is not recommended), some inconsistencies can still remain due to differing numerical representations for satisfying the mass-continuity equation between the driving meteorological model and the CCTM. These mass-inconsistencies manifest as first order terms (whose magnitude can often be comparable to tracer lifetimes if continuity is not satisfied with high accuracy) that can artificially produce or destroy mass during 3D tracer advection (e.g., Mathur and Peters, 1990).
+质量守恒是示踪平流的一个关键属性。通过使用WRF/MCIP的动态和热力学一致的气象数据，维持空气质量模拟的数据一致性。然而，在气象模型和CCTM之前使用不同的网格配置（水平或垂直）或由于不同的数值平流方案，可能会出现质量不守恒的情况。虽然可以通过使用相同的网格配置来消除由前者引起的不一致（因此，不建议采用层折叠设置），但由于满足驱动气象模型和CCTM之间的质量连续性方程的数值表示不同，仍可能存在一些质量不守恒的情况。这些质量不守恒表现为一阶项（如果连续性不满足高精度要求，其大小通常可与示踪物的寿命相比较），在三维示踪平流期间可以人为地产生或破坏质量（例如，Mathur和Peters，1990）。
 
-CMAQ has two options that minimize mass consistency errors in tracer advection. In one scheme (designated “local_cons” in the BuildScript), first implemented in CMAQv4.5 and later improved for CMAQv4.7.1, CMAQ  advects air density and re-diagnoses the vertical velocity field according to the layer-by-layer mass continuity equation which guarantees that the CCTM advected density matches that derived from the driving meteorological inputs (e.g., Odman and Russell, 2000). Briefly, x- and y-advection are first performed (the order of these is reversed every step to minimize aliasing errors) to yield intermediate tracer and density fields. The intermediate density field is then subject to vertical advection with the PPM scheme such that it yields the WRF-derived density field at the end of the advection time-step. This scheme results in an estimated vertical velocity field that is minimally adjusted relative to the WRF derived field in the lower model layers but yields strict mass-consistent tracer advection in CMAQ.  A drawback to this approach is that erroneous noise in the diagnosed vertical velocity field accumulates toward the top of the model with non-zero velocity and mass flux across the top boundary.  The noise in the vertical velocity field causes excessive diffusion in upper layers.  Therefore, since CMAQv5.0, a scheme designated “wrf_cons”, that closely follows the vertical velocity calculation in WRF has been available.  This scheme solves the vertically integrated mass continuity equation such that the column integrated horizontal mass divergence is balanced by the net change in column mass (Skamarock et al, 2019).  An advantage of this scheme is that the diagnosed vertical velocity agrees more closely with the WRF vertical velocity field with zero velocity and mass flux across the upper model boundary.  Thus, the spurious velocity noise and excessive diffusion in the upper layer are eliminated.  The main drawback of this scheme is that mass conservation is not guaranteed so density must be updated from the meteorology inputs every timestep.  
+CMAQ有两个选项可以最小化追踪物质平流中的质量守恒误差。在一个方案中（在BuildScript中指定为“local_cons”），首先在CMAQv4.5中实现，然后在CMAQv4.7.1中改进，CMAQ对空气密度进行平流分析，并根据逐层质量连续性方程重新诊断垂直速度场，从而确保CCTM平流密度与从气象模型输入得出的密度相匹配（如Odman和Russell，2000）。简单地说，首先进行x和y平流（每一步的顺序都是相反的，以最小化混叠误差），以产生中间的示踪和密度场。然后，中间密度场用PPM格式进行垂直平流，以便在平流时间步长结束时产生WRF导出的密度场。该方案得到一个估计的垂直速度场，在较低的模型层中相对于WRF导出的场进行最小的调整，但在CMAQ中产生严格的质量守恒的示踪平流。这种方法的一个缺点是，在诊断出的垂直速度场中，错误的“噪声”以非零速度和质量通量的形式积聚在模型的顶部。垂直速度场中的“噪声”导致上层的过度扩散。因此，自CMAQv5.0起推出了一种紧跟wrf中垂直速度计算的方案“wrf_cons”。该方案解决了垂直积分质量连续性方程，使得列积分水平质量散度通过列质量的净变化来平衡（Skamarock等人，2019）。该方案的一个优点是诊断出的垂直速度与WRF垂直速度场的一致性更高，其速度和质量通量均为零。从而消除了上层的速度杂散噪声和过度扩散。该方案的主要缺点是质量守恒得不到保证，因此每个时间步长时必须从气象输入中更新密度。
 
-The **“WRF_CONS”** option is the recommended configuration for CMAQv5.3.
+**“WRF_CONS”**选项是CMAQv5.3的推荐配置。
 
-To invoke the "WRF_CONS" option in 3-D advection, set the following in the BuildScript within the CCTM Science Modules section:
+在3D平流中如需调用"WRF_CONS"选项，应在CCTM的BuildScript中科学模块（Science Modules）部分设置以下内容：
 
 ```
 set ModAdv = wrf_cons
 ```
-To invoke the "LOCAL_CONS" option in 3-D advection, set the following in the BuildScript within the CCTM Science Modules section: 
+在3D平流中如需调用"LOCAL_CONS"选项，应在CCTM的BuildScript中科学模块（Science Modules）部分设置以下内容：
 ```
 set ModAdv = local_cons
 ```
-***Note: The local_cons option is a legacy extension and can cause unexpected results when used.***
+***注：local_cons选项是旧版本的设置，使用时可能导致意外结果。***
 
 <a id=6.6_Horizontal_Diff></a>
 
-## 6.6 Horizontal Diffusion
+## 6.6 水平扩散
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-The lack of adequate turbulence measurements has limited the development of robust model parameterizations for horizontal turbulent diffusion, a scale and resolution dependent problem. With the advent of very accurate minimally diffusive numerical advection schemes and need for high resolution modeling, horizontal diffusion algorithms are needed to balance the numerical diffusion inherent in advection schemes relative to the physical horizontal diffusion in the atmosphere. Currently in CMAQ, horizontal diffusion fluxes for transported pollutants are parameterized using eddy diffusion theory. The horizontal diffusivity coefficients are in turn formulated using the approach of Smagorinsky (1963) which accounts for local horizontal wind deformation and are also scaled to the horizontal grid size.
+适当湍流测量的缺陷限制了水平湍流扩散的稳健模型参数的发展，其规模和分辨率取决于问题的解决。由于极其精确的最小漫射逆向方案和需要高分辨率建模，需要水平扩散算法来平衡与大气物理水平扩散相关的逆向方案中的数值扩散。目前在CMAQ中，使用EDDY扩散理论对输送污染物的水平扩散流进行参数化。用Smagorinsky的方法（1963年）转换成水平扩散系数，该方法计算局部水平风变形，并将其缩小到水平网格尺寸。
 
 <a id=6.7_Vertical_Diff></a>
 
-## 6.7 Vertical Diffusion
+## 6.7 垂直扩散
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-The vertical diffusion model in CMAQ is the Asymmetrical Convective Model Version 2 (ACM2) (Pleim 2007a,b).  The ACM2 is a combined local and non-local closure PBL scheme that is implemented in CMAQ and WRF for consistent PBL transport of meteorology and chemistry.  Thus, it is recommended that the ACM2 option in WRF or MPAS also be used when preparing meteorology for CMAQ.  
+CMAQ中的垂直扩散模型是不对称对流模型第2版（“ACM2”）（“PLEIM 2007a.b.”）。ACM2是一种本地和非本地混合封闭PBL方案，它在CMAQ和WRF中得到了实施，用于连续的PBL运输气象和化学。因此，建议在为CMAQ准备气象时也使用WRF或MPAS中的ACM2选项。
 
-There are two options for the ACM2 model in the BuildScript that are compatible with either the M3Dry or STAGE dry deposition options.  
+BuildScript中的ACM2模型有两个选项，分别与与M3Dry或Stage干沉降选项兼容。
 
-When running m3dry dry deposition:
+当运行M3Dry干沉降时：
 
 ```
 Set ModVdiff   = acm2_m3dry
 ```
 
-When running STAGE dry deposition:
+运行运行Stage干沉降时：
 
 ```
 Set ModVdiff   = acm2_stage
 ```
 <a id=6.8_Dry_Dep/Air></a>
 
-## 6.8 Dry Deposition/Air-surface exchange
+## 6.8 干沉降/空气-地面交换
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-Exchange of pollutants between the atmosphere and Earth's surface can be modeled as unidirectional exchange, commonly referred to as dry deposition, or bidirectional exchange where the direction of the flux depends on the relative concentration of the pollutant in the atmosphere and the surface (e.g. soil, plant stomata).  If the concentration in the atmosphere is greater than the concentration at the surface, then deposition occurs. If the concentration in the atmosphere is lower than the concentration at the surface, emission occurs.  CMAQ contains algorithms for modeling either of these situations.  The rate of exchange is controlled by surface characteristics such as vegetation type, leaf area index, and surface roughness as well as meteorological influences such as temperature, radiation, and surface wetness which are provided to CMAQ from the land surface model (LSM) in the driving meteorological model.
+大气和地球表面之间的污染物交换可模拟为单向交换（通常称为干沉降），或双向交换，其中通量的方向取决于大气和地表（如土壤、植物气孔）中污染物的相对浓度。如果大气中的浓度大于地表的浓度，则会发生沉降。如果大气中的浓度低于地表的浓度，就会发生排放。CMAQ包含了对这两种情况进行模拟的算法。交换率由地表特征（如植被类型、叶面积指数、地表粗糙度）以及气象影响（如温度、辐射和地表湿度）控制，这些特征由驱动气象模型中的地表模型（LSM）提供给CMAQ。
 
-Currently, most chemicals in CMAQ are modeled as depositing only.  However, ammonia and mercury can be both emitted from the surface and deposited and are therefore modeled as bidirectional. Estimates of the soil and stomatal compensation concentrations needed to compute the bidirectional ammonia flux in CMAQ are derived from input provided by the Environmental Policy Integrated Climate (EPIC) agricultural ecosystem model that is executed using the Fertilizer Emission Scenario Tool for CMAQ (FEST-C, https://www.cmascenter.org/fest-c ) (Ran et al., 2011; Cooter et al., 2012). Information for surface concentrations of mercury are initially specified using land use specific tabular data and then by modeling the accumulation, transformation and evasion of mercury in the surface media (Bash 2010).
+目前，CMAQ中的大多数化学物质都被建模为仅发生干沉降（即单向交换）。只有氨和汞可以模拟进行双向交换（从地面排放和干沉降）。计算CMAQ中双向氨通量所需的土壤和气孔补偿浓度的估计值来自环境政策综合气候（Environmental Policy Integrated Climate，EPIC）农业生态系统模型提供的输入，该模型使用CMAQ的肥料排放情景工具（Fertilizer Emission Scenario Tool for CMAQ，FEST-C， https://www.cmascenter.org/fest-c ）来运行（Ran等人，2011年；Cooter等人，2012年）。汞的地表浓度是使用土地利用表格数据确定初始值，然后通过模拟汞在地表介质中的积聚、转化和逃逸来确定（Bash 2010）。
 
-CMAQ v5.3 contains two options for calculating dry deposition/surface exchange which are invoked in the BuildScript as:
+CMAQ v5.3包含两个用于计算干沉降/空气-地面交换的选项，在BuildScript中调用为：
 
 ```
 Set DepMod   = m3dry
 ```
 
-or:
+或者:
 
 ```
 Set DepMod   = stage
 ```
-Deetails of each module are provided in the sections below.
+以下各节提供了每个模块的详细信息。
 
 <a id=6.8.1_Dry_Depm3dry></a>
 
-### 6.8.1 Dry Deposition - m3dry
+### 6.8.1 干沉降 - m3dry
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-The m3dry option for dry deposition and ammonia bidirectional surface flux in CMAQv5.3 is the next evolution of the dry deposition model that has been in CMAQ since its initial release and was originally based on the dry deposition model developed for the Acid Deposition and Oxidant Model (ADOM) (Pleim et al., 1984).  Dry deposition is computed by electrical resistance analogy where concentration gradients are analogous to voltage, flux is analogous to current, and deposition resistance is analogous to electrical resistance (Pleim and Ran, 2011).  In m3dry, several key resistances, such as aerodynamic resistance and bulk stomatal resistance, and other related parameters, such as LAI, vegetation fraction, roughness length, friction velocity etc., are expected to be provided from the meteorological inputs.  Use of common model elements and parameters with the land surface model in the meteorology model ensures consistency between chemical surface fluxes and meteorological surface fluxes (moisture, heat, momentum).  While the m3dry dry deposition model was designed to be used with the PX LSM option in WRF, any LSM can be used if the necessary parameters are output and then provided for input into CMAQ.  It features consideration of subgrid land-use fractions through aggregation of key model parameters, such as LAI, veg fraction, roughness length and minimum stomatal conductance, to the grid cell level. 
+CMAQv5.3中干沉降和地表双向氨通量的m3dry选项是原有干沉降模型的升级，该模型自初始发布以来一直在CMAQ中，最初基于为酸沉降和氧化模型（Acid Deposition and Oxidant Model，ADOM）开发的干沉降模型（Pleim等人，1984）。干沉降通过电阻模拟计算，其中浓度梯度类似于电压，沉降通量类似于电流，沉降阻力类似于电阻（Pleim和Ran，2011）。在m3dry中，一些关键阻力，如空气阻力和气孔阻力，以及其他相关参数，如LAI、植被分数、粗糙度长度、摩擦速度等，将由气象输入数据提供。在气象学模型中使用与陆地地表模型相同的模型元素和参数可确保化学表面通量和气象表面通量（水分、热量、动量）之间的一致性。虽然m3dry干沉积模型设计用于WRF中的PX LSM选项，但如果输出必要的参数，然后输入到CMAQ，则可以使用任何LSM。它通过将LAI、veg分数、粗糙度长度和最小气孔导度等关键模型参数聚集到网格单元水平，考虑子网格土地利用率。
 
-Upgrades for version 5.3 include larger surface resistances for deposition to snow and ice and reduced resistance for deposition to bare ground for ozone with dependence on surface soil moisture content.  The aerosol deposition has also been revised including a new dependence on LAI.  The ammonia bidirectional surface flux from croplands has been substantially revised from earlier versions.  The new version has close linkages with the EPIC agricultural ecosystem model.  Daily values of all soil parameters needed to compute the available soil ammonia concentrations (soil ammonia content, soil moisture, soil texture parameters, soil pH, and Cation Exchange Capacity (CEC)) for each of 21 agricultural production types that are either rainfed or irrigated (42 types total) are input to CMAQ.  Soil ammonia concentrations and soil pH are combined to derive the soil compensation concentration for the bidirectional flux calculation (Pleim et al., 2019).
+CMAQ版本5.3的升级包括更大的雪和冰面沉降的地表阻力，以及减少了裸露地表臭氧的沉降阻力（取决于地表土壤水分含量）。气溶胶的沉降进行了修正，包括与LAI新的关系。农田表面双向氨通量较早期版本有了实质性的修正。新版本与EPIC农业生态系统模型有着密切的联系。计算21种农业作物类型（每种又分为雨养或灌溉的，即旱地和水浇地，总共42种）中每种类型的有效土壤氨浓度所需的所有土壤参数（土壤氨含量、土壤湿度、土壤质地参数、土壤pH值和阳离子交换容量（Cation Exchange Capacity，CEC））的日均值输入CMAQ。结合土壤氨浓度和土壤pH值，得出土壤补偿浓度，用于双向氨通量的计算（Pleim等人，2019）。
 
 <a id=6.8.2_Dry_STAGE></a>
 
-### 6.8.2 Dry Depostion - STAGE
+### 6.8.2 干沉降 - STAGE
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-In CMAQ v5.3., a new tiled, land use specific, dry deposition scheme, the Surface Tiled Aerosol and Gaseous Exchange (STAGE), option has been developed to better estimate atmospheric deposition for terrestrial and aquatic ecosystem health and applications to evaluate the impact of dry deposition on ambient air quality. This new scheme explicitly supports Weather Research and Forecasting (WRF) simulations with a variety of land surface schemes (Noah, Pleim-Xiu, etc). The model resistance framework, [Figure 6-1](#Figure6-1), parameterizes air-surface exchange as a gradient process and is used for both bidirectional exchange and dry deposition following the widely used resistance model of Nemitz et al. (2001). Grid scale fluxes are estimated from sub-grid cell land use specific fluxes and are area weighted to the grid cell totals which are then output in the standard dry deposition file with positive values indicating deposition and negative values indicating evasion. 
-The model resistances are largely estimated following Massad et al. (2010) with the following exceptions.  Deposition to wetted surfaces considers the bulk accommodation coefficient, following Fahey et al. (2017), and can be a limiting factor for highly soluble compounds.  The in-canopy resistance is derived using the canopy momentum attenuation parameterization from Yi (2008). Aerosol dry deposition includes parameterizations for deposition to water or bare ground surfaces (Giorgi 1986), and vegetated surfaces (Slinn 1982), using the characteristic leaf radius parameterization of Zhang et al. (2001). 
-The ammonia bidirectional option follows the ammonia specific parameterizations of Massad et al. (2010). Mercury bidirectional exchange is also available and follows the parameterization of Bash (2010). In this modeling framework, it is possible to consider bidirectional exchange for any species by providing a parametrization or constant that sets the stomatal, cuticular, soil and/or water compensation point as a value greater than 0. 
+在CMAQ v5.3中，开发了一种新的瓦片式的、与土地利用相关的干沉降方法，即地表瓦片气溶胶和气体交换（Surface Tiled Aerosol and Gaseous Exchange，STAGE），用于更好地估算大气沉降，以促进陆地和水生生态系统健康，并应用于评估干沉降对环境空气质量的影响。这一新的方法支持以各种地表方案进行的WRF模拟（Noah，Pleim-Xiu等）。模型阻力框架[图6-1](#Figure6-1)将空气-地表交换参数化为一个梯度过程，并按照Nemitz等人（2001年）广泛使用的阻力模型用于双向交换和干沉降。网格尺度通量根据子网格单元土地利用特征通量进行估算，并根据网格单元总量进行面积加权，然后将其输出到标准干沉降文件中，正值表示沉降，负值表示地表逃逸。
+模型阻力主要是根据Massad等人（2010）的研究估算的，以下情况除外。根据Fahey等人（2017）的研究，沉降在湿润的地表上需要考虑其整体容纳系数，这可能是高可溶性化合物的限制因素。利用Yi（2008）提出的冠层动量衰减参数，推导了冠层内阻力。气溶胶干沉降包括沉降到水或裸露地面的参数化（Giorgi 1986）和植被表面的参数化（Slinn 1982），以及使用Zhang等人（2001年）的特征叶半径参数化。
+双向氨通量选项遵循Massad等人（2010年）的氨特定参数。汞双向交换遵循Bash（2010）的参数化。在这个模型框架中，可以通过提供参数化或常数来考虑任何物种的双向交换，该参数化或常数将气孔、角质层、土壤和/或水补偿点设置为大于0的值。
 <a id=Figure6-1></a>
 
 
-![Figure 6-1](images/Figure6_8_2.png)  
-**Figure 6-1. STAGE resistance diagram (modified from Nemitz et al., 2001) with a table of variables descriptions.**
+![图6-1](images/Figure6_8_2.png)  
+**图6-1. STAGE阻力图（修改自Nemitz等人，2001年）以及变量描述表**
 
-STAGE options in the RunScript:
+RunScript中的STAGE选项：
 ```
 setenv CTM_MOSAIC Y
 ```
-Sets output for land use specific dry deposition and dry deposition velocities. Note: To retrieve the grid cell average from these files it should be area weighted by the land use fraction by summing the product of the land use fraction and the dry deposition/deposition velocity for each grid cell. 
+设置基于土地利用的干沉降量和干沉降速度的输出。注：要从这些文件中检索网格单元平均值，应通过将每个网格单元的土地利用分数和干沉降量/沉降速度的乘积相加，并用土地利用分数对面积进行加权。
 ```
 setenv CTM_FST Y
 ```
-Sets output for land use specific dry deposition to leaf stomata. 
+设定基于土地利用的叶片气孔干沉降量。
 ```
 setenv PX_VERSION   Y
 setenv CLM_VERSION Y
 setenv NOAH_VERSION Y 
 ```
-Sets the correct soil hydrological properties and soil layer information needed to calculate soil NO emissions, NH<sub>3</sub> bidirectional exchange and O<sub>3</sub> deposition. These options are currently based on WRF 3.8.1 and earlier values for PX and CLM and WRF 4.0 for NOAH. If the land surface model is run with another look up table or parameterization, soil moisture will be constrained between saturation and residual water content from the parameterization in CMAQ. This is also the case for the m3dry deposition option, soil NO emissions, and wind blown dust.   
+设置计算土壤NO排放、双向NH<sub>3</sub>交换和O<sub>3</sub>沉降所需的正确土壤水文特性和土壤层信息。这些选项目前基于WRF 3.8.1和更早版本的PX和CLM值，而对于WRF 4.0则基于NOAH。如果用另一个查表或参数化方法对地表模型进行处理，则土壤水分将受到CMAQ参数化后的饱和含水量和残余含水量的约束。这也适用于m3dry沉降选项、土壤NO排放和风吹扬尘。
 
 <a id=6.9_Emissions></a>
 
-## 6.9 Emissions
+## 6.9 排放源
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-CMAQ introduces emissions of trace gases and aerosols from a variety of important sources (e.g. electric generating utilities, vehicles, fires, trees, dust storms, farms, etc.). Some emissions are applied in the surface layer of the model grid, while others are applied at higher altitudes if, for example, they originate from point source like an elevated stack, or a large forest fire. Many sources that are related to local meteorology may be calculated online in CMAQ. However, most sources, especially anthropogenic ones, are preprocessed using software like the Sparse Matrix Operator Kerner Emissions (SMOKE) Modeling System. Once these external tools have calculated the offline emissions, they may merge them into larger aggregated files. We refer to emissions that are either calculated online or read into CMAQ from a file as emission "streams".
+CMAQ包含了各种重要来源（如发电设施、车辆、火灾、树木、沙尘暴、农场等）的追踪气体和气溶胶排放。一些排放物应用于模型网格的地表层，而另一些则应用于更高的海拔，例如来自高架烟囱的点源排放或大型森林火灾。在CMAQ中，许多与当地气象有关的污染源可以实时计算。然而，大多数源，特别是人为源，都是使用SMOKE模型等软件进行预处理的。这些外部工具计算出排放量后，就可以将它们合并到更大的汇总文件中。我们将无论实时计算还是从外部文件读取到CMAQ的排放源都称为排放源（streams）。
 
-Because CMAQ represents both primary and secondary pollutants, emissions are processed for a subset of the species CMAQ treats. The emissions chemical speciation must be compatible with the chemical mechanism chosen for CMAQ (e.g. cb6r3_ae7_aq) because different mechanisms represent large compounds like functionalized hydrocarbons with different surrogates. CMAQv5.3 has introduced new features that make the process of mapping emissions species to CMAQ species more transparent and flexible (see [Appendix B: Emission Control with DESID](Appendix/CMAQ_UG_appendixB_emissions_control.md)). In fact, users can now toggle, modify, and augment emissions from all available streams in order to better tailor their simulations to the questions they are asking CMAQ to help answer. For tutorials covering specific tasks, please see the [DESID tutorial page](Tutorials/CMAQ_UG_tutorial_emissions.md).
+因为CMAQ可以同时计算一次和二次污染物，所以排放源只处理了CMAQ模拟中的一部分物种的排放。排放物的化学形态必须与CMAQ选择的化学机制（如cb6r3_ae7_aq）相兼容，因为不同的化学机理代表了具有不同替代物的大量化合物，如功能化碳氢化合物。CMAQv5.3引入了一些新特性，使得将排放物物种类映射到CMAQ物种的过程更加透明和灵活（参见[附录B：使用DESID的排放控制](Appendix/CMAQ_UG_appendixB_emissions_control.md)）。事实上，用户现在可以切换、修改和增加所有可用排放源的排放，以便更好地根据他们要求CMAQ帮助回答的问题调整他们的模拟。有关涵盖特定任务的教程，请参阅[DESID教程页面](Tutorials/CMAQ_UG_tutorial_emissions.md)。
 
 <a id=6.9.1_Emission_Streams></a>
 
-### 6.9.1 Emission Streams
+### 6.9.1 排放源
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-Depending on the nature of any stream and the information used to quantify its emissions, it may be treated as one of three types:
+根据排放源的性质和用于量化其排放量的信息，可将任意排放源视为以下三种类型之一：
 
-#### Online Stream:
-CMAQ will calculate the emission rates from this source using information about local meteorology, land characteristics, etc. The streams that can be run online in CMAQ are: [biogenics (BEIS)](#BEIS),[ wind-blown dust](#Wind_Blown_Dust), [sea spray](#Sea_Spray), and [lightning NO](#Lightning_NO).
+#### 实时计算排放源：
+CMAQ使用当地气象、土地利用特征等信息“实时”计算该污染源的排放速率。CMAQ中可实时计算的污染源有：[生物源（BEIS）](#BEIS)、[风吹扬尘](#Wind_Blown_Dust)、[海雾排放](#Sea_Spray)和[闪电NO排放](#Lightning_NO)。
 
-#### Gridded Stream (offline):
-CMAQ will read emission rates from an input file, which is organized into an array that is identical in shape to the CMAQ model grid. Typically, these rates are stored at hourly time points and are then interpolated within CMAQ to each time step. These files may be 2D to represent just the surface layer emissions or they may be 3D. If 3D, the file may have the same number or fewer number of layers as the CMAQ grid. Some common examples of Gridded emissions include:
+#### 网格排放源（非实时计算）：
+CMAQ将从输入文件中读取排放速率，该文件被组织成与CMAQ模型网格形状相同的数组。通常，这些速率存储在每小时的时间点上，然后在CMAQ内插值到每个时间步长上。这些文件可以是二维的，仅代表地面最表层的排放，也可以是三维的。如果是三维的，则文件的层数可以与CMAQ网格相同，也可以少于CMAQ网格层数。一些常见的网格排放源包括：
 
-- Mobile sources such as passenger vehicles, trains, ships, scooters, etc.
-- Low-level point source emissions that are not large enough to be treated individually
-- Residential heating
-- Consumer product use (e.g. adhesives, personal care products, pesticides, etc.)
-- Agricultural (e.g. burning, dust, animal waste, etc.)
-- Road, Construction and mechanically generated dust
-- Biogenic VOCs (if not calculated online with BEIS)
+- 移动源，如汽车、火车、轮船、摩托车等。
+- 不足以单独处理的低架点源排放
+- 住宅供暖排放（指独立分散取暖）
+- 消费品用途排放（例如粘合剂、个人护理产品、杀虫剂等）
+- 农业源（如燃烧、扬尘、动物粪便等）
+- 道路、建筑和机械产生的扬尘
+- 生物源排放VOCs（如果未通过BEIS实时计算）
 
-Users add Gridded emissions to a simulation via the RunScript. First the variable N_EMIS_GR must be set to the number of Gridded Streams to be used:
+用户通过RunScript将网格化排放源添加到模拟中。首先，变量N_EMIS_GR必须设置为要使用的网格排放源数量：
 
 ```
 setenv N_EMIS_GR 3
 ```
 
-The RunScript must also specify the location of the input files using three-digit suffixes for the stream number:
+RunScript还必须使用排放源的三位数后缀编号来指定输入文件的位置：
 
 ```
 setenv GR_EMIS_001 /home/user/path-to-file/emiss_stream_1_${DATE}.nc
 ```
 
 
-the short-name label to be used to refer to the Stream in logfiles:
+以及用于在日志文件中输出的排放源的短名称标签：
 
 ```
 setenv GR_EMIS_LAB_001 MOBILE
 ```
 
-and if the stream contains data in a representative day fashion (i.e. data from 2016 maybe used to model emissions in 2019 since the diurnal pattern maybe the same for that stream): 
+如果排放源包含典型日的数据（即2016年的数据可能用于模拟2019年的排放量，因为该排放源的每日数据是相同的），还需要设置如下：
 
 ```
 setenv GR_EM_SYM_DATE_001 F
 ```
 
-Note: if GR_EM_SYM_DATE_XXX is not set, the default value for this variable is false. However, this default value can be changed using the environment variable EM_SYM_DATE like so: 
+注意：如果未设置GR_EM_SYM_DATE_XXX，则此变量的默认值为false。但是，可以使用环境变量EM_SYM_DATE更改此默认值，如下所示：
 ```
 setenv EM_SYM_DATE T #This changes the internal default of GR_EM_SYM_DATE, if not set, to true. [Default value: F]
 ```
-Users should be careful with this variable, as it changes the default value for all gridded streams. If both EM_SYM_DATE and GR_EM_SYM_DATE_XXX are present, GR_EM_SYM_DATE_XXX takes precedent for that individual stream. Example: if GR_EM_SYM_DATE_001 is F and EM_SYM_DATE is T, the emissions module will see that stream 001 is not a symbolic data type, however, stream 002, if not set, will indicate that stream 002 is of symblic data type.
+用户应谨慎使用此变量，因为它会更改所有网格化源的默认值。如果同时存在EM_SYM_DATE和GR_EM_SYM_DATE_XXX，则GR_EM_SYM_DATE_XXX优先于该单个源。例如：如果GR_EM_SYM_DATE_001为F且EM_SYM_DATE为T，则排放模块将源001视为不是典型数据类型，但是，如果未设置源002，则将指示源002视为典型数据类型。
 
-If N_EMIS_GR is set 0, then CMAQ will run with no Gridded emissions even if the values for GR_EMIS_XXX and GR_EMIS_LAB_XXX are all set.
+如果N_EMIS_GR设置为0，则即使GR_EMIS_XXX和GR_EMIS_LAB_XXX的值都已设置，CMAQ也将在无网格排放源的情况下运行。
 
-#### Inline Stream (offline):
-For these streams, emission rates and stack characteristics are provided for many individual sources on the same file. CMAQ uses the stack information to calculate important quantities online like the injection height which is influenced by local meteorology. A specific latitude/longitude pair is given for each source to locate it in the CMAQ grid. Sources outside the CMAQ grid domain are ignored by CMAQ; thus the same files may be used for a large domain and a nest within that domain. Some common examples of Inline emissions include:
+#### “内联（inline）”排放源（非实时计算）：
+对于这些排放源，需要为同一个文件中的多个单独源提供排放速率和排气筒参数。CMAQ利用排气筒信息实时计算重要的参数，比如受当地气象影响的抬升高度。每个源都需要提供特定的经纬度数据，以将其定位在CMAQ网格中。CMAQ会忽略CMAQ网格区域之外的源；因此，相同的排放源输入文件可以同时用于大型区域和该区域内的嵌套网格。一些常见的内联排放源包括：
 
-- Stacks (electric generation units, industrial sources, manufacturing, etc.)
-- Forest fires
-- Large prescribed fire events  
+- 点源（发电机组、工业源、制造业等）
+- 森林火灾
+- 重大规定火灾事件
 
-Users add Inline emissions to a simulation via the RunScript. First the variable N_EMIS_PT must be set to the number of Inline Streams to be used:
+用户通过RunScript向模型添加“内联（inline）”排放源。首先，变量N_EMIS_PT必须设置为要使用的内联排放源的数量：
 
 ```
 setenv N_EMIS_PT 3
 ```
-The RunScript must also specify the location of the input files using three-digit suffixes for the stream number:
+RunScript还必须使用排放源的三位数后缀编号来指定输入文件的位置：
 
 ```
 setenv STK_EMIS_002 /home/user/path-to-file/inline_emiss_stream_2_${DATE}.nc
 ```
 
-The location to the "stack file" with static information about the properties of each source on the stream:
+以及“点源文件”的位置，该文件中应包含排放源中每个源的静态属性信息：
 
 ```
 setenv STK_GRPS_002 /home/user/path-to-file/inline_stack_groups_2.nc
 ```
 
 
-the short-name label to be used to refer to the Stream in logfiles:
+以及用于在日志文件中输出的排放源的短名称标签：
 
 ```
 setenv STK_EMIS_LAB_002 POINT_FIRES
 ```
 
-and if the stream contains data in a representative day fashion (i.e. data from 2016 maybe used to model emissions in 2019 since the diurnal pattern maybe the same for that stream): 
+如果排放源包含典型日的数据（即2016年的数据可能用于模拟2019年的排放量，因为该排放源的每日数据是相同的），还需要设置如下：
 
 ```
 setenv STK_EM_SYM_DATE_002 F
 ```
 
-Note: if STK_EM_SYM_DATE_XXX is not set, the default value for this variable is false. However, this default value can be changed using the environment variable EM_SYM_DATE like so: 
+注意：如果未设置STK_EM_SYM_DATE_XXX，则此变量的默认值为false。但是，可以使用环境变量EM_SYM_DATE更改此默认值，如下所示：
 ```
 setenv EM_SYM_DATE T #This changes the internal default of STK_EM_SYM_DATE, if not set, to true. [Default value: F]
 ```
-Users should be careful with this variable, as it changes the default value for all stack streams. If both EM_SYM_DATE and STK_EM_SYM_DATE_XXX are present, STK_EM_SYM_DATE_XXX takes precedent for that individual stream. Example: if STK_EM_SYM_DATE_001 is F and EM_SYM_DATE is T, the emissions module will see that stream 001 is not a symbolic data type, however, stream 002, if not set, will indicate that stream 002 is of symblic data type.
+用户应谨慎使用此变量，因为它会更改所有点源的默认值。如果同时存在EM_SYM_DATE和STK_EM_SYM_DATE_XXX，则STK_EM_SYM_DATE_XXX优先于该单个源。例如：如果STK_EM_SYM_DATE_001为F，而EM_SYM_DATE为T，则排放模块将源001视为不是典型数据类型，但是，如果未设置源002，则将源002视为是典型数据类型。
 
-If N_EMIS_PT is set 0, then CMAQ will run with no Inline emissions even if the values for STK_EMIS_XXX, STK_GRPS_XXX and STK_EMIS_LAB_XXX are all set.
+如果N_EMIS_PT设置为0，则即使STK_EMIS_XXX、STK_GRPS_XXX和STK_EMIS_LAB_XXX的值都已设置，CMAQ也将在没有内联排放源的情况下运行。
 
-*Plume Rise* - Plume rise can be calculated inline within CMAQ using the Briggs solution as it is implemented in SMOKE and documented in the SMOKE user guide (https://www.cmascenter.org/smoke/documentation/4.6/html/ch06s03.html). It is required that emission files have been processed to include the necessary stack parameters (e.g. exit velocity, diameter, stack gas temperature, stack height, etc.). 
+*烟羽抬升* — 烟羽抬升可在CMAQ内使用Briggs方案进行内联实时计算，因为它在SMOKE中实现并记录在SMOKE用户指南（ https://www.cmascenter.org/smoke/documentation/4.6/html/ch06s03.html ）中。实现此功能需要排放文件包括必要的排气筒参数（例如出口速度、直径、烟气出口温度、烟囱高度等）。
 
 <a id=6.9.2_Online_Emission></a>
 
-### 6.9.2 Online Emission Streams
+### 6.9.2 实时计算排放源
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
 <a id=BEIS></a>
-#### Biogenics
-To calculate online biogenic emissions, CMAQ uses the [Biogenic Emission Inventory System (BEIS)](https://www.epa.gov/air-emissions-modeling/biogenic-emission-inventory-system-beis). BEIS calculates emissions resulting from biological activity from land-based vegetative species as well as nitric oxide emissions produced by microbial activity from certain soil types.
+#### 生物源排放
+为了实时计算生物源排放量，CMAQ使用了[生物源排放清单系统（BEIS）]( https://www.epa.gov/air-emissions-modeling/biogenic-emission-inventory-system-beis )。BEIS可以计算陆生植被生物活动产生的排放量，以及某些土壤类型中微生物活动产生的一氧化氮排放量。
 
-This biogenic model is based on the same model that is included in SMOKE. Before using the CMAQ online version of BEIS users should confirm that biogenic emissions are not already included in their emissions files from SMOKE to avoid double counting biogenic emissions.  User documentation for BEIS can be found in [Chapter 6.17 of the SMOKE manual](https://www.cmascenter.org/help/documentation.cfm?model=smoke&version=4.6). 
+这种生物源模型是基于和SMOKE中相同的模型。在使用CMAQ实时计算版本的BEIS之前，用户应确认SMOKE排放文件中未包含生物源排放，以避免重复计算生物源排放量。BEIS的用户文档可见[SMOKE用户手册第6.17节]( https://www.cmascenter.org/help/documentation.cfm?model=smoke&version=4.6 )。
 
-Speciation of biogenic emissions is controlled by gspro_biogenics.txt under CCTM/src/biog/beis.
+生物源排放的物种由CCTM/src/biog/beis下的gspro_biogenics.txt文件来控制。
 
-Running CMAQ with online biogenics is controlled by the following RunScript flag:
+使用实时计算的生物源排放来运行CMAQ，由以下RunScript参数控制：
 
 ```
 setenv CTM_BIOGEMIS Y
 ```
-Running CMAQ with online biogenic emissions requires a user-supplied, gridded normalized biogenic emissions input netCDF file, B3GRD.  This file is created with the [normbeis3](https://www.cmascenter.org/smoke/documentation/4.6/html/ch06s12.html) program in SMOKE prior to running the inline biogenic option in CMAQ and contains winter and summer normalized emissions and Leaf Area Indices. The location of the B3GRD file is set in the RunScript:
+使用实时计算的生物源排放来运行CMAQ，需要用户提供网格化标准化的生物源排放输入文件B3GRD（文件类型为netCDF）。此文件是在运行CMAQ中的实时计算生物源排放选项之前用SOMKE中的[normbeis3]( https://www.cmascenter.org/smoke/documentation/4.6/html/ch06s12.html ) 程序创建的，包含冬季和夏季标准化的排放量和叶面积指数。B3GRD文件的位置在RunScript中设置如下：
 
 ```
 setenv B3GRD /home/user/path-to-file/b3grd.nc
 ```
 
-For short simulations that span only summer months set the SUMMER_YN flag to Y and the BIOSW_YN flat to N in the RunScript so that biogenic emissions will be calculated using summer factors throughout the entire domain.  
+对于仅跨越夏季月份的短期模拟，可以在RunScript中将SUMMER_YN设置为Y，将BIOSW_YN设置为N，以便使用整个区域的夏季因子计算生物源排放量。
 ```
 setenv BIOSW_YN N
 ```
@@ -428,9 +428,9 @@ setenv BIOSW_YN N
 setenv SUMMER_YN Y
 ```
 
-For simulations that span only winter months, set the SUMMER_YN flag to N so that biogenic emissions will be calculated using winter factors throughout the entire domain.
+对于仅跨越冬季的模拟，可以将BIOSW_YN和SUMMER_YN都设置为N，以便使用整个区域的冬季因子计算生物源排放量。
 
-For simulations of spring or fall, or simulations covering multiple seasons, a user must set the BIOSW_YN to Y and provide a BIOSEASON file to enable an appropriate mixture of winter and summer emission values across the domain and simulation period.  The BIOSEASON file is created with the [metscan](https://www.cmascenter.org/smoke/documentation/4.0/html/ch05s03s10.html) program in SMOKE using the MCIP data for the modeling domain prior to running the inline biogenic option in CMAQ. It provides daily gridded values of an indicator variable derived from MCIP temperature fields to determine whether winter or summer biogenic emission values should be used for a given grid cell and day. To use the BIOSEASON file set the following two environment variables in the RunScript:
+对于春季或秋季的模拟，或跨越多个季节的模拟，用户必须将BIOSW_YN设置为Y，并提供BIOSEASON文件，以便在整个区域和模拟期内实现冬季和夏季排放值的适当混合。BIOSEASON文件是在运行CMAQ中的实时计算生物源排放选项之前，使用SMOKE中的[metscan]( https://www.cmascenter.org/smoke/documentation/4.0/html/ch05s03s10.html )程序，利用模拟区域的MCIP数据创建的。它提供从MCIP温度场导出的每日网格值数据的指示变量，以确定给定网格单元和日期应使用冬季还是夏季生物源排放值。要使用BIOSEASON文件，请在RunScript中设置以下两个环境变量：
 
 ```
 setenv BIOSW_YN Y
@@ -440,9 +440,9 @@ setenv BIOSW_YN Y
 setenv BIOSEASON /home/user/path-to-file/bioseason.nc
 ```
 
-Additionally, when using the inline biogenic option, the user must point to the SOILOUT file from one day’s simulation as the SOILINP file for the next day. The user must also decide whether to write over SOILOUT files from previous days or create a uniquely named SOILOUT file for each day. The latter approach is recommended if the user wishes to retain the capability to restart simulations in the middle of a sequence of simulations.
+此外，当使用实时计算生物源排放选项时，用户必须将一天模拟生成的SOILOUT文件作为第二天的SOILINP文件。用户还必须决定是重写前几天的SOILOUT文件，还是为每一天创建一个唯一命名的SOILOUT文件。如果用户希望保留在一系列模拟过程中重新启动模拟的能力，则建议使用后一种方法。
 
-The INITIAL_RUN variable in the RunScript to Y if this is the first time that biogenic NO soil emissions will be calculated. If there is a previously created file, set to N.  When INITIAL_RUN is set to N, the directory path and file name of biogenic NO soil emissions file must be set in the RunScript:
+如果这是第一次计算生物源土壤NO排放量，则需将RunScript中的INITIAL_RUN变量为Y。如果有先前创建的文件，则设置为N。当INITIAL_RUN设置为N时，必须在RunScript中设置生物源土壤NO排放文件的路径和文件名：
 
 ```
 setenv INITIAL_RUN N
@@ -453,145 +453,145 @@ setenv SOILNP /home/user/path-to-file/cctm_soilout.nc
 ```
 
 <a id=Wind_Blown_Dust></a>
-#### Wind-Blown Dust
-The actual amount of dust emitted from an arid surface depends on wind speed, surface roughness, moisture content of the soil, vegetation coverage, soil type and texture, and air density.  The main mechanism behind strong dust storms is called “saltation bombardment” or “sandblasting.” The physics of saltation include the movement of sand particles due to wind, the impact of these particles to the surface that removes part of the soil volume, and the release of smaller dust particles. CMAQ first calculates friction velocity at the surface of the Earth. Once this friction velocity exceeds a threshold value, saltation, or horizontal movement, flux is obtained. Finally, the vertical flux of the dust is calculated based on a sandblasting efficiency formulation – a vertical-to-horizontal dust flux ratio.
+#### 风吹扬尘
+干旱地表的实际扬尘量取决于风速、地表粗糙度、土壤含水量、植被覆盖率、土壤类型和质地以及空气密度。强沙尘暴背后的主要机理被称为“盐渍轰击（saltation bombardment）”或“喷砂（sandblasting）”。“盐渍轰击（saltation bombardment）的物理机制包括风引起的沙粒运动、这些沙粒对地表的冲击，从而清除部分土壤体积，以及释放较小的沙粒。CMAQ首先计算地球表面的摩擦速度。一旦摩擦速度超过阈值，盐渍的水平运动就会生成一定的通量。最后，根据“喷砂（sandblasting）”效率公式（垂直与水平粉尘通量比）计算粉尘的垂直通量。
 
-CMAQ uses time-varying vegetation coverage, soil moisture and wind speed from the meteorological model, WRF. The vegetation coverage in WRF can vary depending on the configuration. In WRFv4.1+, the Pleim-Xiu land-surface model (PX LSM) was modified to provide CMAQ vegetation fraction (VEGF_PX in WRF renamed VEG in MCIP) from either the old fractional landuse weighting table lookup method (pxlsm_modis_veg = 0), or a new option where vegetation fraction is directly read from the monthly MODIS derived vegetation coverage (pxlsm_modis_veg = 1) found in the wrflowinp_d0* file(s). This was done because in recent years WRF has provided high resolution ~1 km monthly vegetation coverage that is more accurate than tables. Updates are backward compatible with older version of MCIP or WRF as long as VEG and VEGF_PX/VEGFRA are in those files. If users employ a different land surface model like the NOAH LSM, MCIP will assign the values of VEGFRA in WRF to VEG for CMAQ and the dust module will operate the same. Using the MODIS data in WRF via the new PX vegetation option provides the dust model a more accurate representation of vegetation in regions where windblown dust most occurs. 
+CMAQ使用来自WRF气象模型的随时间变化的植被覆盖率、土壤湿度和风速。WRF中的植被覆盖率可能因配置而异。在WRFv4.1+中，对Pleim-Xiu地表模型（PX LSM）进行了修改，以从旧的土地利用分数加权表查找方法（pxlsm_modis_veg = 0）中提供CMAQ植被分数（WRF中的VEGF_PX重命名为MCIP中的VEG），或者采用一个新的选项，使CMAQ植被分数直接从wrflowinp_d0* 文件中的每月MODIS衍生植被覆盖率（pxlsm_modis_veg = 1）中读取。之所以这样做，是因为近年来WRF提供了高分辨率~1km的每月植被覆盖率，比原来的查表法更精确。而只要VEG和VEGF_PX/VEGFRA在这些文件中，更新就向后兼容旧版本的MCIP或WRF。如果用户使用了不同的地表模型如NOAH LSM，MCIP将把WRF中的VEGFRA值分配给VEG，用于CMAQ，并且扬尘模块将运行相同的操作。通过新的PX植被选项使用WRF中的MODIS数据，可为扬尘模型提供一个更准确的描述风吹扬尘最常发生地区植被的方法。
 
-The CMAQ windblown dust module optionally utilizes additional land use information beyond the land use information contained in the MCIP files. This optional additional land use information is generally available for North American domains only and is provided by specifying two (DUST_LU_1 and DUST_LU_2) additional input data files. See [Chapter 4](CMAQ_UG_ch04_model_inputs.md) for more information on these optional model input files. If these optional additional input files are not available (e.g. for a hemispheric modeling domain), the windblown dust module can function with only the land use information contained in the MCIP files. See [Appendix A](Appendix/CMAQ_UG_appendixA_model_options.md) on further information on how to specify the land use information for the windblown dust module.
+CMAQ风吹扬尘模块可选择利用MCIP文件中包含的土地利用信息之外的其他土地利用信息。此可选的附加土地利用信息通常仅适用于北美地区，并通过指定两个（DUST_LU_1和DUST_LU_2）附加输入数据文件来提供。有关这些可选模型输入文件的详细信息，请参见[第4章](CMAQ_UG_ch04_model_inputs.md)。如果这些可选的附加输入文件不可用（例如对于半球建模区域），则风吹扬尘模块只能使用MCIP文件中包含的土地利用信息。请参阅[附录A](Appendix/CMAQ_UG_appendixA_model_options.md)了解有关如何指定风吹扬尘模块土地利用信息的更多内容。
 
-The CMAQ windblown dust module is controlled by the following RunScript flag:
+CMAQ风吹扬尘模块由以下RunScript标志控制：
 
 ```
 setenv CTM_WB_DUST Y
 ```
 
-Note that if this flag is set to N to indicate zero wind-blown dust emissions, users should set the CTM_EMISCHK variable in the RunScript to FALSE to avoid crashing CMAQ when it cannot find species it is looking for from dust emissions.
+请注意，如果将此标志设置为N以表示风吹扬尘排放为零，则用户应将RunScript中的CTM_EMISCHK变量设置为FALSE，以避免CMAQ无法从扬尘排放中找到要查找的物种时发生崩溃。
 
-Alternatively, users can also edit the emission control file by commenting out the coarse and fine species expected for the wind-blown dust module. The following species are emitted by the Dust module and may be referenced in the emission control file [Table 6-1](#Table6-1):
+或者，用户也可以编辑排放控制文件，注释掉风吹扬尘模块需要的粗颗粒和细颗粒物种。[表6-1](#Table6-1)中的物质由扬尘模块排放，可在排放控制文件中引用：
 
 <a id=Table6-1></a>
-**Table 6-1. Aerosol Species Predicted by the Wind-Blown Dust Module** 
+**表6-1. 由风吹扬尘模块预测的气溶胶物种**
 
-|**Dust Surrogate Name** | **Default CMAQ Species** | **Description** |
+|**扬尘替代名称** | **默认的CMAQ物种** | **描述** |
 | --------------- | ---------|--------------------------------------- |
-| PMFINE_SO4      | ASO4     | Fine-mode Sulfate                      |               
-| PMCOARSE_SO4    | ASO4     | Coarse-mode Sulfate                    |             
-| PMFINE_NO3      | ANO3     | Fine-mode Nitrate                      |                       
-| PMCOARSE_NO3    | ANO3     | Coarse-mode Nitrate                    |                       
-| PMFINE_CL       | ACL      | Fine-mode Chlorine                     |                       
-| PMCOARSE_CL     | ACL      | Coarse-mode Chlorine                   |                       
-| PMFINE_NH4      | ANH4     | Fine-mode Ammonium                     |                       
-| PMFINE_NA       | ANA      | Fine-mode Sodium                       |                       
-| PMFINE_CA       | ACA      | Fine-mode Calcium                      |                       
-| PMFINE_MG       | AMG      | Fine-mode Magnesium                    |                       
-| PMFINE_K        | AK       | Fine-mode Potassium                    |                       
-| PMFINE_POC      | APOC     | Fine-mode Organic Carbon               |                       
-| PMFINE_PNCOM    | APNCOM   | Fine-mode Non-Carbon Organic Matter    |                       
-| PMFINE_LVPO1    | ALVPO1   | Fine-mode Low-Volatility hydrocarbon-like OA |                       
-| PMFINE_LVOO1    | ALVOO1   | Fine-mode Low-Volatility Oxygenated OA |                       
-| PMFINE_EC       | AEC      | Fine-mode Black or Elemental Carbon    |                       
-| PMFINE_FE       | AFE      | Fine-mode Iron                         |                       
-| PMFINE_AL       | AAL      | Fine-mode Aluminum                     |                       
-| PMFINE_SI       | ASI      | Fine-mode Silicon                      |                       
-| PMFINE_TI       | ATI      | Fine-mode Titanium                     |                       
-| PMFINE_MN       | AMN      | Fine-mode Manganese                    |                       
-| PMFINE_H2O      | AH2O     | Fine-mode Water                        |                       
-| PMCOARSE_H2O    | AH2O     | Coarse-mode Water                      |                       
-| PMFINE_OTHR     | AOTHR    | Fine-mode Other                        |                       
-| PMCOARSE_SOIL   | ASOIL    | Coarse-mode Non-Anion Dust             |             
-| PMFINE_MN_HAPS  | AMN_HAPS | Fine-mode Air toxics Manganese         |        
-| PMCOARSE_MN_HAPS| AMN_HAPS | Coarse-mode Air toxics Manganese       |      
-| PMFINE_NI       | ANI      | Fine-mode Nickel                       |           
-| PMCOARSE_NI     | ANI      | Coarse-mode Nickel                     |         
-| PMFINE_CR_III   | ACR_III  | Fine-mode Trivalent Chromium           |           
-| PMCOARSE_CR_III | ACR_III  | Coarse-mode Trivalent Chromium         |         
-| PMFINE_AS       | AAS      | Fine-mode Arsenic                      |            
-| PMCOARSE_AS     | AAS      | Coarse-mode Arsenic                    |          
-| PMFINE_PB       | APB      | Fine-mode Lead                         |           
-| PMCOARSE_PB     | APB      | Coarse-mode Lead                       |         
-| PMFINE_CD       | ACD      | Fine-mode Cadmium                      |            
-| PMCOARSE_CD     | ACD      | Coarse-mode Cadmium                    |          
-| PMFINE_PHG      | APHG     | Fine-mode Mercury                      |
-| PMCOARSE_PHG    | APHG     | Coarse-mode Mercury                    |
+| PMFINE_SO4      | ASO4     | 细颗粒硫酸盐                      |               
+| PMCOARSE_SO4    | ASO4     | 粗颗粒硫酸盐                    |             
+| PMFINE_NO3      | ANO3     | 细颗粒硝酸盐                      |                       
+| PMCOARSE_NO3    | ANO3     | 粗颗粒硝酸盐                    |                       
+| PMFINE_CL       | ACL      | 细颗粒氯化物                     |                       
+| PMCOARSE_CL     | ACL      | 粗颗粒氯化物                   |                       
+| PMFINE_NH4      | ANH4     | 细颗粒铵盐                     |                       
+| PMFINE_NA       | ANA      | 细颗粒钠盐                       |                       
+| PMFINE_CA       | ACA      | 细颗粒钙盐                      |                       
+| PMFINE_MG       | AMG      | 细颗粒镁盐                    |                       
+| PMFINE_K        | AK       | 细颗粒钾盐                    |                       
+| PMFINE_POC      | APOC     | 细颗粒有机碳               |                       
+| PMFINE_PNCOM    | APNCOM   | 细颗粒非碳有机物    |                       
+| PMFINE_LVPO1    | ALVPO1   | 细颗粒低挥发性烃类-比如有机气溶胶（OA） |                       
+| PMFINE_LVOO1    | ALVOO1   | 细颗粒低挥发性有氧有机气溶胶（OA） |                       
+| PMFINE_EC       | AEC      | 细颗粒炭黑或元素碳    |                       
+| PMFINE_FE       | AFE      | 细颗粒铁                         |                       
+| PMFINE_AL       | AAL      | 细颗粒铝                     |                       
+| PMFINE_SI       | ASI      | 细颗粒硅                      |                       
+| PMFINE_TI       | ATI      | 细颗粒钛                     |                       
+| PMFINE_MN       | AMN      | 细颗粒锰                    |                       
+| PMFINE_H2O      | AH2O     | 细颗粒水                        |                       
+| PMCOARSE_H2O    | AH2O     | 粗颗粒水                      |                       
+| PMFINE_OTHR     | AOTHR    | 细颗粒其他物质                        |                       
+| PMCOARSE_SOIL   | ASOIL    | 粗颗粒非阴离子粉尘             |             
+| PMFINE_MN_HAPS  | AMN_HAPS | 细颗粒空气中有毒物质         |        
+| PMCOARSE_MN_HAPS| AMN_HAPS | 粗颗粒空气中有毒物质       |      
+| PMFINE_NI       | ANI      | 细颗粒镍                       |           
+| PMCOARSE_NI     | ANI      | 粗颗粒镍                     |         
+| PMFINE_CR_III   | ACR_III  | 细颗粒三价铬           |           
+| PMCOARSE_CR_III | ACR_III  | 粗颗粒三价铬         |         
+| PMFINE_AS       | AAS      | 细颗粒砷                      |            
+| PMCOARSE_AS     | AAS      | 粗颗粒砷                    |          
+| PMFINE_PB       | APB      | 细颗粒铅                         |           
+| PMCOARSE_PB     | APB      | 粗颗粒铅                       |         
+| PMFINE_CD       | ACD      | 细颗粒镉                      |            
+| PMCOARSE_CD     | ACD      | 粗颗粒镉                    |          
+| PMFINE_PHG      | APHG     | 细颗粒汞                      |
+| PMCOARSE_PHG    | APHG     | 粗颗粒汞                    |
  
 <a id=Sea_Spray></a>
-#### Sea Spray
-Because sea spray particles are emitted during wave breaking and bubble bursting at the ocean surface, the main factor affecting the emission rate is the wind speed. The temperature of the ocean also affects bubble bursting and subsequent emission rate of sea spray particles. Wave breaking is enhanced near the surf zone just offshore, and CMAQ accounts for this by increasing sea spray particle emission rates in the surf zone.
+#### 海浪排放
+海面波浪破碎和气泡破裂时会产生海雾颗粒，而影响其排放速率的主要因素是风速。海洋的温度也会影响气泡的破裂和随后的海雾颗粒的排放速率。波浪的破碎在岸边的碎浪区（surf zone）附近得到加强，而CMAQ通过增加碎浪区内的海雾颗粒排放速率来模拟这一点。
 
-The current open ocean sea spray particle emission rate in CMAQ, as described in Gantt et al. (2015), is based on Gong (2003) with a temperature dependence derived from Jaeglé et al. (2011) and Ovadnevaite et al. (2014) and an adjustment of Θ from 30 to eight to account for higher accumulation mode emissions. The current surf zone sea spray particle emission rate in CMAQ as described in Gantt et al. (2015) is based on Kelly et al. (2010) with a reduction of the assumed surf zone width from 50 to 25 meters.
-The CMAQ sea spray emissions module is controlled by the following RunScript flag:
+Gantt等人（2015）所描述的CMAQ中当前使用的远洋区（open ocean）海雾颗粒排放速率，基于Gong（2003）、温度依赖性来自Jaeglé等人（2011）和Ovadnevaite等人（2014）。并将Θ从30调整为8，以解释更高的累积模式排放。Gantt等人（2015）描述的CMAQ中当前使用的碎浪区内的海雾颗粒排放速率是基于Kelly等人（2010）的研究，但假设碎浪区宽度从50米减少到25米。
+CMAQ海浪排放排放模块由以下RunScript标志控制：
 
 ```
 setenv CTM_OCEAN_CHEM Y
 ```
 
-Speciation of sea spray emissions is controlled by AERO_DATA.F under CCTM/src/aero. 
-Note that CMAQ employing Carbon Bond 6 version r3 with DMS and marine halogen chemistry (cb6r3m_ae7_kmtbr) slightly modifies the speciation of Sea Spray emissions by including bromide from Sea Spray emissions.
+海浪排放的物种由CCTM/src/AERO文件夹下的AERO_DATA.F文件控制。
+注意，CMAQ采用的cb6r3m_ae7_kmtbr化学机理略微改变了海浪排放的污染物种类，以包括来自海浪排放的溴化物。
 
-Note that if the CTM_OCEAN_CHEM flag is set to N to indicate zero sea spray emissions, users should set the CTM_EMISCHK variable in the RunScript to FALSE to avoid crashing CMAQ when it cannot find species it is looking for from sea spray. 
+请注意，如果将CTM_OCEAN_CHEM标志设置为N以表示海浪排放为零，则用户应将RunScript中的CTM_EMISCHK变量设置为FALSE，以避免CMAQ在无法从海浪排放中找到所需物种时发生崩溃。
 
-Alternatively, users can also edit the emission control file by commenting out the coarse and fine species expected for the sea spray module. The following species are emitted by the Dust module and may be referenced in the emission control file [Table 6-2](#Table6-2):
+或者，用户也可以编辑排放控制文件，注释掉用于“海浪排放”的粗颗粒和细颗粒物种。[表6-2](#Table6-2)中以下物质由海浪模块排放，可在排放控制文件引用：
 
 <a id=Table6-2></a>
-**Table 6-2. Aerosol Species Predicted by the Sea-Spray Aerosol Module** 
+**表6-2. 由海浪排放模块预测的气溶胶种类**
 
-|**Sea Spray Surrogate Name** | **Default CMAQ Species** | **Description** |
+|**海浪排放替代名称** | **默认的CMAQ物种** | **描述** |
 | --------------- | ---------|--------------------------------------- |
-| PMFINE_SO4      | ASO4     | Fine-mode Sulfate                      |               
-| PMCOARSE_SO4    | ASO4     | Coarse-mode Sulfate                    |             
-| PMFINE_CL       | ACL      | Fine-mode Chlorine                     |                       
-| PMCOARSE_CL     | ACL      | Coarse-mode Chlorine                   |                       
-| PMFINE_NA       | ANA      | Fine-mode Sodium                       |                       
-| PMFINE_CA       | ACA      | Fine-mode Calcium                      |                       
-| PMFINE_MG       | AMG      | Fine-mode Magnesium                    |                       
-| PMFINE_K        | AK       | Fine-mode Potassium                    |                       
-| PMCOARSE_SEACAT | ASEACAT  | Coarse-mode Sea Spray Cations          |      
-| PMFINE_CR_VI    | ACR_VI   | Fine-mode Hexavalent Chromium          |                       
-| PMFINE_NI       | ANI      | Fine-mode Nickel                       |           
-| PMCOARSE_NI     | ANI      | Coarse-mode Nickel                     |         
-| PMFINE_AS       | AAS      | Fine-mode Arsenic                      |            
-| PMCOARSE_AS     | AAS      | Coarse-mode Arsenic                    |          
-| PMFINE_BE       | ABE      | Fine-mode Beryllium                    |            
-| PMCOARSE_BE     | ABE      | Coarse-mode Beryllium                  |          
-| PMFINE_PHG      | APHG     | Fine-mode Mercury                      |
-| PMCOARSE_PHG    | APHG     | Coarse-mode Mercury                    |
-| PMFINE_PB       | APB      | Fine-mode Lead                         |           
-| PMCOARSE_PB     | APB      | Coarse-mode Lead                       |         
-| PMFINE_CD       | ACD      | Fine-mode Cadmium                      |            
-| PMCOARSE_CD     | ACD      | Coarse-mode Cadmium                    |          
-| PMFINE_MN_HAPS  | AMN_HAPS | Fine-mode Manganese (air toxic)        |        
-| PMCOARSE_MN_HAPS| AMN_HAPS | Coarse-mode Manganese (air toxic)      |      
-| PMFINE_BR       | ABR      | Fine-mode Bromine                      |                       
-| PMCOARSE_BR     | ABR      | Coarse-mode Bromine                    |                       
-| PMFINE_H2O      | AH2O     | Fine-mode Water                        |                       
-| PMCOARSE_H2O    | AH2O     | Coarse-mode Water                      |                       
+| PMFINE_SO4      | ASO4     | 细颗粒硫酸盐                      |               
+| PMCOARSE_SO4    | ASO4     | 粗颗粒硫酸盐                    |             
+| PMFINE_CL       | ACL      | 细颗粒氯化物                     |                       
+| PMCOARSE_CL     | ACL      | 粗颗粒氯化物                   |                       
+| PMFINE_NA       | ANA      | 细颗粒钠盐                       |                       
+| PMFINE_CA       | ACA      | 细颗粒钙盐                      |                       
+| PMFINE_MG       | AMG      | 细颗粒镁盐                    |                       
+| PMFINE_K        | AK       | 细颗粒钾盐                    |                       
+| PMCOARSE_SEACAT | ASEACAT  | 粗颗粒海浪排放阳离子          |      
+| PMFINE_CR_VI    | ACR_VI   | 细颗粒六价铬          |                       
+| PMFINE_NI       | ANI      | 细颗粒镍                       |           
+| PMCOARSE_NI     | ANI      | 粗颗粒镍                     |         
+| PMFINE_AS       | AAS      | 细颗粒砷                      |            
+| PMCOARSE_AS     | AAS      | 粗颗粒砷                    |          
+| PMFINE_BE       | ABE      | 细颗粒铍                    |            
+| PMCOARSE_BE     | ABE      | 粗颗粒铍                  |          
+| PMFINE_PHG      | APHG     | 细颗粒汞                      |
+| PMCOARSE_PHG    | APHG     | 粗颗粒汞                    |
+| PMFINE_PB       | APB      | 细颗粒铅                         |           
+| PMCOARSE_PB     | APB      | 粗颗粒铅                       |         
+| PMFINE_CD       | ACD      | 细颗粒镉                      |            
+| PMCOARSE_CD     | ACD      | 粗颗粒镉                    |          
+| PMFINE_MN_HAPS  | AMN_HAPS | 细颗粒锰（大气有毒物）        |        
+| PMCOARSE_MN_HAPS| AMN_HAPS | 粗颗粒锰（大气有毒物）     |      
+| PMFINE_BR       | ABR      | 细颗粒溴化物                      |                       
+| PMCOARSE_BR     | ABR      | 粗颗粒溴化物                    |                       
+| PMFINE_H2O      | AH2O     | 细颗粒水                        |                       
+| PMCOARSE_H2O    | AH2O     | 粗颗粒水                      |                       
 
 
 <a id=Lightning_NO></a>
-#### Lightning NO
-In retrospective applications over the continental U.S., National Lightning Detection Network (NLDN) lightning data can be used directly to generate NO produced by lightning in CMAQ. For real-time forecasts or other applications where lightning data are not available, lightning NO is produced based on statistical relationships with the simulated convective rainfall rate (Kang et al., 2019).
+#### 闪电排放NO
+在美国大陆的回顾性应用中，国家闪电探测网（National Lightning Detection Network，NLDN）的闪电数据可以直接用于在CMAQ中模拟闪电产生的NO。对于没有闪电数据的实时预报或其他应用，可以根据与模拟对流降雨率的统计关系生成闪电排放的NO（Kang等人，2019）。
 
-There are three options for including NO from lighting.  All three options require setting the CTM_LTNG_NO flag to Y in the RunScript.
+有三个选项可用于从闪电生成NO。所有这三个选项都需要在RunScript中将CTM LTNG_NO标志设置为Y。
 ```
 setenv CTM_LTNG_NO Y
 ```
 
-##### Option 1 - Offline NO -- user provides a gridded lightning NO emissions file calculated with a preprocessor external to the CMAQ repository
+##### 选项1 —— 非实时计算NO —— 用户提供一个网格化的闪电NO排放文件，该文件由CMAQ存储库外部的预处理器计算得出
 
-For this option set the LTNGNO environment variable in the RunScript to the location of the gridded netCDF file of NO emissions:
+对于此选项，请将RunScript中的LTNGNO环境变量设置为NO排放文件（网格化的netCDF文件）的路径：
 
 ```
 setenv LTNGNO /home/user/path-to-file/ltngno_emiss_from_user.nc
 ```
 
-##### Option 2 - Inline NO with NLDN Data -- user uses hourly NLDN lightning strike netCDF file.
+##### 选项2 —— 利用NLDN数据实时计算NO —— 用户使用每小时的NLDN闪电文件（netCDF格式）
 
-Hourly NLDN lightning strike data can be purchased.
-In addition to the hourly lightning strike netCDF file, this option requires a lightning parameters netCDF file.  This file contains  the intercloud to cloud-to-ground flash ratios, which are the scaling factors for calculating flashes using the convective precipitation rate, land-ocean masks, and the moles of NO per flash (cloud-to-ground and intercloud).  The lightning parameters file for a domain over the continental US at 12km horizontal resolution (12US1) can be downloaded from the [CMAS Data Warehouse](https://drive.google.com/drive/folders/1R8ENVSpQiv4Bt4S0LFuUZWFzr3-jPEeY).  This file can be regridded to support other domains within the continental US. 
+用户可购买每小时的NLDN闪电数据。
+除了每小时的NLDN闪电文件（netCDF格式）外，此选项还需要闪电参数文件（netCDF格式）。该文件包含发生在云之间与云与地面之间的闪电比例，该比例因子用于使用对流降水率、陆-海遮罩和每次闪电NO摩尔数（云与地面之间和云之间）计算闪电排放量。可以从[CMAS数据仓库]( https://drive.google.com/drive/folders/1R8ENVSpQiv4Bt4S0LFuUZWFzr3-jPEeY )下载美国大陆建模区域上水平分辨率为12km（12US1）的闪电参数文件。此文件可以重新进行网格化处理，以支持美国大陆上的其他建模区域。
 
 
-For this option, set the following environment variables in the RunScript:
+对于此选项，请在RunScript中设置以下环境变量：
 
 ```
 setenv LTNGNO INLINE
@@ -606,11 +606,11 @@ setenv NLDN_STRIKES /home/user/path-to-file/nldn_hourly_ltng_strikes.nc
 setenv LTNGPARMS_FILE /home/user/path-to-file/LTNG_AllParms_12US1.nc
 ```
 
-##### Option 3 - Inline NO without NLDN Data --  lightning NO is calculated within CCTM based on statistical relationships with the simulated convective rainfall rate.
+##### 选项3 —— 无NLDN数据的实时计算NO —— 根据与模拟对流降雨率的统计关系，在CCTM内计算闪电NO
 
-This option also requires a lightning parameters netCDF file which contains the linear regression parameters for generating lightning NO.  The lightning parameters file for the continental US at 12km horizontal resolution can be downloaded from the [CMAS Data Warehouse](https://drive.google.com/drive/folders/1R8ENVSpQiv4Bt4S0LFuUZWFzr3-jPEeY). This file can be regridded to support other domains within the continental US. 
+此选项也需要一个闪电参数文件（netCDF格式），其中包含生成闪电NO的线性回归参数。可以从[CMAS数据仓库]( https://drive.google.com/drive/folders/1R8ENVSpQiv4Bt4S0LFuUZWFzr3-jPEeY )下载美国大陆建模区域上水平分辨率为12km（12US1）的闪电参数文件。此文件可以重新进行网格化处理，以支持美国大陆上的其他建模区域。
 
-For this option, set the following environment variables in the RunScript:
+对于此选项，请在RunScript中设置以下环境变量：
 
 ```
 setenv LTNGNO INLINE
@@ -624,89 +624,89 @@ setenv LTNGPARMS_FILE /home/user/path-to-file/LTNG_AllParms_12US1.nc
 
 <a id=6.9.3_Emission_Compatability></a>
 
-### 6.9.3 Emission Compatability for CMAQv5.3+
+### 6.9.3 CMAQv5.3及以后版本的排放兼容性
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
 <a id=PCSOA></a>
-#### Potential Combustion SOA
-Potential Combustion SOA (PCSOA) was added to CMAQv5.2 to account for missing PM2.5 from fossil-fuel combustion sources (Murphy et al., 2017).  PCSOA is not intended to be applied to non-fossil-fuel combustion sources such as residential wood combustion (RWC).  The new DECID option introduced in CMAQv5.3 introduces the ability to read multiple gridd emissions files, allowing RWC to be treated as an entirely separate emissions source from the rest of the gridded emissions.  Using DECID, PCSOA can be applied to the other gridded combustion sources, but not RWC.
+#### 潜在燃烧SOA（二次有机气溶胶）
+潜在燃烧SOA（Potential Combustion SOA，PCSOA）被添加到CMAQv5.2中，以计算化石燃料燃烧源中缺少的PM2.5（Murphy等人，2017）。PCSOA不打算应用于非化石燃料燃烧源，如住宅木材燃烧（residential wood combustion，RWC）。CMAQv5.3中新的DECID选项引入了读取多个网格排放文件的能力，使得RWC可以被视为与其他网格排放源完全分离的排放源。利用DECID，PCSOA可以应用于其它网格燃烧源，但不能应用于RWC。
 
-[Jump to DESID Appendix](Appendix/CMAQ_UG_appendixB_emissions_control.md) for an introduction to using the Emissions Control Namelist for customization of emissions processing.
+[跳转至DESID附录](Appendix/CMAQ_UG_appendixB_emissions_control.md)了解如何使用排放控制名称列表定制排放源处理。
 
-[Jump to DESID Tutorial](Tutorials/CMAQ_UG_tutorial_emissions.md) for step by step instructions on performing some basic manipulation of emission streams.
+[跳转到DESID教程](Tutorials/CMAQ_UG_tutorial_emissions.md)了解有关处理排放源的基本操作的逐步说明。
 
 <a id=a-pinene></a>
-#### &#945;-Pinene separated from other monoterpenes
-If using chemical mechanism CB6r3 and aerosol module AERO7 (cb6r3_ae7) with offline biogenic emissions, &#945;-pinene should be separated from all other monoterpenes. This will prevent overestimation in PM2.5 SOA as &#945;-pinene should not make SOA through nitrate radical reaction.  Users can use biogenic emission files created for older model versions by updating the emission control file to separate &#945;-pinene. No action is required for aerosol module AERO6 (any mechanism), in-line biogenics (any mechanism, any aerosol module), or aero7 with SAPRC mechanisms. See the [AERO7 overview release notes](../Release_Notes/aero7_overview.md) for further details. 
+#### 从其他萜类物质中分离出的&#945;-蒎烯
+如果使用具有非实时计算的生物源排放的化学机理CB6r3和气溶胶模块AERO7（即CB6r3_ae7），则应将&#945;-蒎烯与所有的其他萜类物质分离。这将防止PM2.5 SOA被高估，因为&#945;-蒎烯不应通过硝酸根反应生成SOA。用户可以使用为旧版本创建的生物源排放文件，方法是更新排放控制文件以分离&#945;-蒎烯。而使用气溶胶模块AERO6（任何机制）、实时计算生物源排放（任何机制、任何气溶胶模块）或aero7（具有SAPRC机制）则无需采取任何改动。有关更多详细信息，请参阅[AERO7发行说明概述](../Release_Notes/aero7_overview.md)。
 
 <a id=6.10_Gas_Phase_Chem></a>
 
-## 6.10 Gas Phase Chemistry
+## 6.10 气相化学
 
 <a id=6.10.1_Gas_Phase_Mech></a>
 
-### 6.10.1 Gas Phase Chemical Mechanisms
+### 6.10.1 气相化学机理
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-The CMAQ modeling system accounts for chemistry in three phases: a gas, particulate (solid or liquid), and aqueous-cloud phase. Refer to the release notes to find the gas‑phase chemistry mechanisms available in each version of CMAQ. Several variations of the base gas-phase mechanisms, with and without chlorine, mercury, and toxic species chemistry, are distributed with CMAQ. The modularity of CMAQ makes it possible to create or modify the gas-phase chemical mechanism.
+CMAQ模型系统将化学分为三个相：气态、颗粒物（固体或液体）和水-云相。请参阅发行说明以查找每个版本的CMAQ中可用的气相化学机理。含或者不含氯、汞和有毒化学物质的基础气相机理的几种变化，都随CMAQ发布。CMAQ的模块化特性使得气相化学机理的建立和修正成为可能。
 
-Gas-phase chemical mechanisms are defined in CMAQ based on Fortran source files. Located in subdirectories of the CCTM/src/MECHS directory (each corresponding to a mechanism name), these files define the source, reaction parameters, and atmospheric processes (e.g., diffusion, deposition, advection) of the various mechanism species. The species definitions for each mechanism are contained in namelist files that are read in during execution of the CMAQ programs. The CMAQ mechanism configuration is more similar to the science module configuration than to the horizontal grid or vertical layer configuration in that the mechanism is defined at build time, resulting in executables that are hard-wired to a specific gas-phase mechanism. To change chemical mechanisms between simulations, a new executable that includes the desired mechanism configuration must be compiled.
+基于Fortran源文件，在CMAQ中定义了气相化学机理。这些文件位于CCTM/src/MECHS目录的子目录中（每个目录对应一个化学机理名称），定义了各种化学机理种的源、反应参数和大气过程（例如扩散、沉降、平流）。每个机理的物种定义都包含在执行CMAQ程序期间读取的名称列表文件中。CMAQ化学机理的配置更类似于科学模块的配置，而不是水平网格或垂直层的配置，因为该化学机理是在编译构建时定义的，从而生成硬连接到特定气相化学机理的可执行文件。要改变模拟时的化学机理，必须重新编译包含所需化学机理配置的新的可执行文件。
 
-#### Using predefined chemical mechanisms
-To select a predefined mechanism configuration in CMAQ, set the *Mechanism* variable in the BuildScript to one of the mechanism names listed in [Table 6-3](#Table6-3). 
+#### 使用预定义的化学机理
+要在CMAQ中选择预定义的化学机理配置，请将BuildScript中的*Mechanism*变量设置为[表6-3](#Table6-3)中列出的化学机理名称之一。
 
 ```
  set Mechanism = MECHANISM_NAME
 ```
 
-Refer to the [README.md](../../CCTM/src/MECHS/README.md) under CCTM/src/MECHS for detailed information reactions and on model species names for each mechanism. 
+请参阅CCTM/src/MECHS下的[README.md](../../CCTM/src/MECHS/README.md)文件以了解详细的反应信息和每个化学机理的模型物种名称。
 
-Chemical mechanisms available with CMAQv5.3 can be found in [Table 6-3](#Table6-3). Atmospheric chemistry mechanisms of varying complexity are available to support diverse applications across scales and explore extensions for emerging problems and contaminants.
+CMAQv5.3可用的化学机理见[表6-3](#Table6-3)。各种复杂的大气化学机理可用于支持不同规模的应用，还可以进行扩展以探索新的问题和污染物。
 
 <a id=Table6-3></a>
-**Table 6-3. Chemical Mechanisms Available with CMAQv5.3** 
+**表6-3. CMAQv5.3提供的化学机理**
 
-|**Mechanism Name** | **Comment** |
+|**化学机理名称** | **注解** |
 | ----------------- | ---------------------------------------------------- |
-| cb6r3_ae7_aq      | Carbon Bond 6 version r3 with aero7 treatment of SOA set up for standard cloud chemistry |
-| cb6r3_ae7_aqkmt2    | Carbon Bond 6 version r3 with aero7 treatment of SOA set up for expanded organic cloud chemistry version 2  |
-| cb6r3m_ae7_kmtbr  | Carbon Bond 6 version r3 with aero7 treatment of SOA and DMS and marine halogen chemistry set up for expanded organic and halogen cloud chemistry  | 
-| cb6r3_ae6_aq      | Carbon Bond 6 version r3 with aero6 treatment of SOA set up for with standard cloud chemistry | 
-| cb6mp_ae6_aq      | Carbon Bond 6 version r3 with air toxics and aero6 treatment of SOA set up for standard cloud chemistry | 
-| racm2_ae6_aq      | Regional Atmospheric Chemistry Mechanism version 2 with aero6 treatment of SOA set up for with standard cloud chemistry |
-| saprc07tic_ae7i_aq | State Air Pollution Research Center version 07tc with extended isoprene chemistry and aero7i treatment of SOA set up for with standard cloud chemistry | 
-| saprc07tic_ae7i_aqkmt2 | State Air Pollution Research Center version 07tc with extended isoprene chemistry and aero7i treatment of SOA for expanded organic cloud chemistry version 2  |
-| saprc07tic_ae6i_aq | State Air Pollution Research Center version 07tc with extended isoprene chemistry and aero6i treatment of SOA set up for standard cloud chemistry | 
-| saprc07tic_ae6i_aqkmti | State Air Pollution Research Center version 07tc with extended isoprene chemistry and aero6i treatment of SOA for expanded organic cloud chemistry for isoprene  | 
-| saprc07tc_ae6_aq | State Air Pollution Research Center version 07tc with aero6 treatment of SOA set up for with standard cloud chemistry  | 
+| cb6r3_ae7_aq      | Carbon Bond 6 version r3 with aero7，用于标准云化学的SOA处理 |
+| cb6r3_ae7_aqkmt2    | Carbon Bond 6 version r3 with aero7，用于扩展有机云化学版本2的SOA处理  |
+| cb6r3m_ae7_kmtbr  | Carbon Bond 6 version r3 with aero7，用于扩展有机和卤素云化学的SOA和DMS以及海洋卤素化学处理  | 
+| cb6r3_ae6_aq      | Carbon Bond 6 version r3 with aero6，用于标准云化学的SOA处理 | 
+| cb6mp_ae6_aq      | Carbon Bond 6 version r3 with air toxics and aero6，用于标准云化学的SOA处理 | 
+| racm2_ae6_aq      | Regional Atmospheric Chemistry Mechanism version 2 with aero6，用于标准云化学的SOA处理 |
+| saprc07tic_ae7i_aq | State Air Pollution Research Center version 07tc with extended isoprene chemistry and aero7i，用于标准云化学的SOA处理 | 
+| saprc07tic_ae7i_aqkmt2 | State Air Pollution Research Center version 07tc with extended isoprene chemistry and aero7i，用于扩展有机云化学版本2的SOA处理  |
+| saprc07tic_ae6i_aq | State Air Pollution Research Center version 07tc with extended isoprene chemistry and aero6i，用于标准云化学的SOA处理| 
+| saprc07tic_ae6i_aqkmti | State Air Pollution Research Center version 07tc with extended isoprene chemistry and aero6i，用于异戊二烯的扩展有机云化学的SOA处理 | 
+| saprc07tc_ae6_aq | State Air Pollution Research Center version 07tc with aero6 ，用于标准云化学的SOA处理  | 
 
 <a id=6.10.2_Solver></a>
 
-### 6.10.2 Solvers
+### 6.10.2 求解器
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-To solve the photochemistry, the model uses one of three numerical methods or solvers. They differ by accuracy, generalization, and computational efficiency, i.e. model run times. Options include Euler Backward Iterative (EBI) solver (Hertel et al., 1993),  Rosenbrock (ROS3) solver (Sandu et al., 1997), and Sparse Matrix Vectorized GEAR (SMVGEAR) solver (Jacobson and Turco, 1994). The EBI solver is default method because it is the fastest but is less accurate and must be _tailored_ for each mechanism. The BuildScript defines which EBI solver to use as below.   
+为了解决光化学问题，模型使用三种数值方法或求解器之一。它们在准确性、广泛性和计算效率（即模型运行时间）方面有所不同。选项包括欧拉向后迭代（Euler Backward Iterative，EBI）求解器（Hertel等，1993），Rosenbrock（ROS3）求解器（Sandu等，1997）和稀疏矩阵矢量化GEAR（Sparse Matrix Vectorized，SMVGEAR）求解器（Jacobson和Turco，1994）。EBI求解器是默认方法，因为它是最快的方法，但准确性较低，而且必须为每种化学机理“量身定做”。在BuildScript中如下定义使用哪个化学机理的EBI求解器。
 
 ```
  set ModGas    = gas/ebi_${Mechanism} 
 ``` 
- 
-If a user creates new FORTRAN modules representing the photochemical mechanism or modifies the existing modules, they must create a new EBI solver by using the create_ebi utility.  Documentation on compiling and running create_ebi is available under the [UTIL/create_ebi](../../UTIL/create_ebi/README.md) folder. The remaining two solvers, SMVGEAR and ROS3, are more accurate and less prone to convergence errors. Both methods are labeled as “generalized” because they only require the mechanism’s namelist and FORTRAN modules representing the photochemical mechanism. Rosenbrock is preferred over SMVGEAR because it several times faster. To use either SMVGEAR and ROS3, the BuildScript defines ModGas as below. 
+
+如果用户创建了用于光化学机理的新的FORTRAN模块或修改了现有模块，则必须使用create_ebi实用工具来创建新的EBI求解器。UTIL/create_ebi文件夹下提供了有关编译和运行create_ebi的[文档](../../UTIL/create_ebi/README.md)。剩下的两个求解器SMVGEAR和ROS3更准确，并且不易出现收敛误差。这两种方法都标记为“通用”，因为它们仅需要化学机理的名称列表和用于光化学机理的FORTRAN模块。Rosenbrock更优于SMVGEAR，因为它快了好几倍。要使用SMVGEAR和ROS3，需要在BuildScript如下定义ModGas：
 
 ```
  set ModGas    = gas/smvgear
@@ -720,7 +720,7 @@ or
 
 <a id=6.10.3_Photolysis></a>
  
-### 6.10.3 Photolysis
+### 6.10.3 光解作用
 
 <!-- BEGIN COMMENT -->
 
@@ -728,139 +728,139 @@ or
 
 <!-- END COMMENT -->
 
-All the mechanisms include photolysis rates. The BuildScript has two options for calculating the rates.
+所有化学机理都包括了光解速率。BuildScript有两个计算速率的选项。
 
 ```
  set ModPhot    = phot/inline
 ```   
 
-or
+或者
 
 ```
  set ModPhot    = phot/table
 ``` 
 
-The in-line method (Binkowski et al., 2007) is the preferred option because it includes feedbacks from meteorology in addition to predicted ozone and aerosol concentrations. Three ASCII files support the in-line method. **PHOT_OPTICS** describes the optical properties of clouds, aerosols, and the earth’s surface. The **OMI** file is used to determine how much light is absorbed by ozone above the model domain. Both files are included in the released version of CMAQ. Calculating photolysis rates uses one more file, the 
+实时计算（inline）方法（Binkowski等人，2007年）是首选方法，因为它除了预测臭氧和气溶胶浓度外，还包括来自气象学的反馈。实时计算方法需要三个ASCII文件支持。**PHOT_OPTICS**描述了云、气溶胶和地球表面的光学特性。**OMI**文件用于确定模型区域上方的臭氧吸收了多少光。这两个文件都包含在发布的CMAQ版本中。计算光解速率还需要一个
 `**CSQY_DATA_${Mechanism}**` 
-file, that depends on the mechanism used. It contains the cross sections and quantum yields of photolysis rates used by the mechanism. The files are provided for each mechanism in a released version of CMAQ. If a user creates a mechanism using new or additional photolysis rates, they have to create a new `**CSQY_DATA_${Mechanism}**` file. The [inline_phot_preproc utility](../../UTIL/inline_phot_preproc/README.md) produces this file based on the Fortran modules describing the mechanism and data files describing the absorption cross-section and quantum yields described for each photolysis reaction. The CCTM RunScript sets values for each file's path through the environment variables OPTICS_DATA, OMI, and CSQY_DATA.
+文件，该文件取决于使用的化学机理。它包含了该化学机理使用的光解速率的横截面和量子产率。在发布的CMAQ版本中为每个化学机理提供了这个文件。如果用户使用新的或额外的光解速率创建一个化学机理，他们必须创建一个新的`**CSQY_DATA_${Mechanism}**` 文件。[inline_phot_preproc实用程序](../../UTIL/inline_phot_preproc/README.md)可基于描述化学机理的Fortran模块和描述每个光解反应的吸收截面和量子产率的数据文件生成此文件。CCTM的RunScript通过环境变量OPTICS_DATA、OMI和CSQY_DATA为以上三个ASCII文件设置路径。
 
-The other option uses look-up tables that contain photolysis rates under cloud free conditions based on a fixed meridional cross-section of atmospheric composition, temperature, density and aerosols. The values represent rates as a function of altitude, latitude and the hour angle of the sun on a specified Julian date. In model simulations, the method interpolates rates in the table for the date and corrects them to account for clouds described by the meteorology. Tables are dependent on the photochemical mechanism used. The [jproc utility](../../UTIL/jproc/README.md) creates them based on the photochemical mechanism's FORTRAN modules. The CCTM RunScript sets the value for a table's path with the environment variable XJ_DATA.
+另一种选择是使用查找表，其中包含基于大气成分、温度、密度和气溶胶的固定经向横截面的无云条件下的光解速率。这些值表示在指定的儒略日期时的太阳高度、纬度和时角的函数。在模型模拟中，该方法根据日期在表中差值计算速率，并对其进行校正，以考虑气象描述的云。查询的表格取决于使用的光化学机理。[jproc实用程序](../../UTIL/jproc/README.md)可以基于光化学机理的FORTRAN模块创建这些表格文件。CCTM的RunScript使用环境变量XJ_DATA来设置表格文件的路径。
 
 
 <a id=6.10.4_HONO></a>
- 
-### 6.10.4 Nitrous Acid (HONO)
+
+### 6.10.4 亚硝酸盐（HONO）
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-In CMAQ, HONO is produced from emissions, gas-phase chemical reactions, and a heterogenous reaction on aerosol and ground surfaces. The contribution of emissions to HONO production is accounted for by including HONO emissions estimates from certain combustion sources. Each gas-phase chemical mechanism contains several gas-phase chemical reactions which also contributes to the HONO production. The heterogeneous production of HONO from the interaction of NO2 on aerosol surface is accounted for by including a heterogeneous reaction in the chemical mechanism. The heterogeneous production of HONO from the interaction of NO2 on ground surface is included in the air-surface exchange calculation and is controlled by the following RunScript flag:
+在CMAQ中，HONO来自于排放源、气相化学反应以及气溶胶表面和地表上的非均相反应产生。排放源对HONO产量的贡献是通过某些燃烧源中包含的HONO排放量估算来计算的。每一种气相化学机理都包含若干气相化学反应，这些气相化学反应也对HONO的生成有贡献。气溶胶表面的NO2相互作用产生的HONO是通过在化学机理中包含一个非均相反应来解释的。地表上的NO2相互作用产生的非均相HONO包含在空气-地表交换计算过程中，并由以下RunScript标志控制：
 
 ```
 setenv CTM_SFC_HONO Y 
 ```
 
-CMAQ uses a default setting of Y to include the production of HONO from the heterogeneous reaction on ground surface. The user can set it to N to exclude the heterogeneous production from the reaction. Note that the default setting for the inline deposition calculation (CTM_ILDEPV) flag is Y. If the flag is changed to N, then the production of HONO from the heterogeneous reaction on ground surface will not work properly. Additional description of the HONO chemistry in CMAQ can be found in Sarwar et al. (2008).
+CMAQ使用默认设置Y来包括从地面上的非均相反应产生的HONO。用户可以将其设置为N以从反应中排除非均相产物。请注意，实时沉降计算（CTM_ILDEPV）标志的默认设置为Y。如果将该标志更改为N，则从地面上的非均相反应生成的HONO将无法正常工作。有关CMAQ中HONO化学的其他内容，请参见Sarwar等人的描述（2008年）。
 
 
 <a id=6.11_Aerosol_Dynamics></a>
 
-## 6.11 Aerosol Dynamics and Chemistry
+## 6.11 气溶胶动力学与化学
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-Particulate Matter (PM) can be either primary (directly emitted) or secondary (formed in the atmosphere) and from natural or anthropogenic (man-made) sources. Secondary sources include gas-phase oxidation of SO<sub>2</sub> to sulfate, condensation of ammonia and nitrate, and oxidation of gas-phase VOCs such as isoprene, monoterpenes, aromatics, and alkanes. Cloud processes also contribute to the formation of PM; for example, aqueous oxidation of sulfur dioxide in cloud droplets is a significant pathway for production of particulate sulfate. CCTM represents PM size using three interacting lognormal distributions, or modes. Two modes (Aitken and accumulation) are generally less than 2.5 &#956;m in diameter while the coarse mode contains significant amounts of mass above 2.5 &#956;m. PM<sub>2.5</sub> and PM<sub>10</sub>, species aggregate metrics within the NAAQS, can be obtained from the model-predicted mass concentration and size distribution information.
+颗粒物（PM）可以是一次的（直接排放的）或二次的（在大气中形成的），其来源可以是自然的或人为的（人造的）。二次颗粒物来源包括SO<sub>2</sub>气相氧化为硫酸盐，氨和硝酸盐的缩合，异戊二烯、单萜、芳烃和烷烃等气相VOCs的氧化。云过程也有助于PM的形成；例如，云滴中二氧化硫的水氧化是产生硫酸盐颗粒物的重要途径。CCTM使用三个相互作用的对数正态分布模态表示PM的大小。其中两种模态（Aitken模态和累积模态）的颗粒物直径通常小于2.5 &#956;m，而粗模态的颗粒物直径显著高于2.5 &#956;m。根据模型预测的质量浓度和尺寸分布信息，可以获得NAAQS（国家环境空气质量标准）中PM<sub>2.5</sub>和PM<sub>10</sub>的物种合计指标。
 
-The 6th generation CMAQ aerosol module (AERO6) was introduced in CMAQv5.0.2 and expanded the chemical speciation of PM. Eight new PM species were added to CMAQ in AERO6: Al, Ca, Fe, Si, Ti, Mg, K, and Mn. Four species that were explicitly treated in previous versions of CMAQ but were not modeled can now be treated as primary anthropogenic species: H<sub>2</sub>O, Na, Cl, and NH<sub>4</sub>. The PM emissions mass that remains after speciation into the new components is now input to the model as PMOTHER. AERO6 requires 18 PM emissions species: OC, EC, sulfate, nitrate, H<sub>2</sub>O, Na, Cl, NH<sub>4</sub>, NCOM, Al, Ca, Fe, Si, Ti, Mg, K, Mn, and Other (Reff et al., 2009).  AERO6 continued to be incrementally updated in CMAQ v5.1-5.2.1 (see https://www.epa.gov/cmaq/how-cite-cmaq or release notes for when specific updates occured).
+CMAQv5.0.2中引入了第6代CMAQ气溶胶模块（AERO6），扩展了PM的化学形态。将八种新的PM物种添加到CMAQ的AERO6中：Al、Ca、Fe、Si、Ti、Mg、K和Mn。在先前的CMAQ版本中明确处理但不能模拟的四个物种：H<sub>2</sub>O、Na、Cl和NH<sub>4</sub>，现在可以被视为主要的人造源排放物种。去除新组分后剩余的PM排放质量现在作为PMOTHER输入到模型中。AERO6需要18种PM排放物：OC、EC、硫酸盐、硝酸盐、H<sub>2</sub>O、Na、Cl、NH<sub>4</sub>、NCOM、Al、Ca、Fe、Si、Ti、Mg、K、Mn和其他（Reff等，2009年）。AERO6继续在CMAQ v5.1-5.2.1中进行增量更新（具体更新时间见 https://www.epa.gov/cmaq/how-cite-cmaq 或发行说明）。
 
-The 7th generation aerosol module (AERO7) is introduced in CMAQv5.3 with modifications and updates to the speciation and prediction of organic aerosols. For computational efficiency, the 2-product style speciation for SOA species from traditional aromatic VOC precursors (alkanes, toluene, xylenes, and benzene) has been replaced with four surrogate species with specific vapor pressures, following a VBS-style approaches used widely in models. In addition, the yield of organic aerosol from monoterpene reactions with OH and ozone has been increased, and monoterpene organic nitrates are explicitly treated as a SOA source. The treatment of alpha-pinene has also been made explicit in AERO7 in order to exclude alpha-pinene reactions with nitrate as a source of SOA. If users are employing online biogenic VOC emissions (via BEIS), then the alpha-pinene emissions will be treated correctly. If however, users are providing biogenic emissions to CMAQ from offline and only TERP is specified, we recommend scaling the alpha-pinene emissions to 30% of the total TERP emisisons and treating the remaining 70% of emitted TERP as TERP in CMAQ. This can be accomplished with the DESID emissions interface. AERO7 also includes consideration of water uptake to the organic particle phase (ORGH2O).
+CMAQv5.3中引入了第7代气溶胶模块（AERO7），对有机气溶胶的形态和预测进行了修改和更新。为了提高计算效率，采用在模型中广泛使用的VBS方法，将传统芳香族VOC前体（烷烃、甲苯、二甲苯和苯）中的SOA物种的2种产物替换为具有特定蒸气压的4个替代物种。此外，单萜烯与OH和臭氧反应生成的有机气溶胶的产率有所提高，单萜烯有机硝酸盐被明确视为SOA源。在AERO7中，α-蒎烯的处理也已明确，以排除α-蒎烯与硝酸盐作为SOA来源的反应。如果用户使用实时计算生物源VOC排放（通过BEIS），那么α-蒎烯排放将得到正确地处理。但是，如果用户在CMAQ中采用非实时计算的生物源排放，并且仅指定了TERP的话，我们建议将α-蒎烯排放量缩放到总TERP排放量的30%，并将剩余的70%的TERP作为CMAQ中的TERP。这可以通过DESID排放接口来实现。AERO7还包括考虑了有机颗粒相（ORGH2O）的吸水性。
 
-Selection of AERO7 or AERO6 is accomplished through selection of the chemical mechanism in the build script as described in section 6.10 and [Table 6-3](#Table6-3). The aerosol microphysics (i.e. coagulation, condensation, new particle formation, deposition, etc.) are consistent for the two modules. The modules differ by the chemical species used to treat the PM constituents.
+选择AERO7或AERO6是在第6.10节和[表6-3](#Table6-3)中描述的BuildScript中选择对应的化学机理来完成的。两个模块的气溶胶微物理（即凝结、冷凝、新粒子形成、沉降等）是一致的。这些模块因用于处理PM组分的化学物质种类而异。
 
-Both AERO7 and AERO6 mechanisms available in CMAQv5.3 are compatible with semivolatile primary organic aerosol (POA). For the nonvolatile POA configuration, mass is tracked separately in terms of its carbon (OC) and non-carbon (NCOM) content. With this approach, mass can be added to the non-carbon species to simulate the aging of POA in response to atmospheric oxidants. Simon and Bhave (2012) document the implementation of the second-order reaction between primary organic carbon and OH radicals. The semivolatile POA configuration segregates POA into several model species based on a combination of volatility and oxidation state. There are five POA species at low oxidation state representing low volatility, semivolatile and intermediate volatility compounds (LVPO1, SVPO1, SVPO2, SVPO3, IVPO1). As the gas-phase species (e.g. VLVPO1) oxidize with OH they form species with higher oxidation state (i.e. LVOO1, LVOO2, SVOO1, SVOO2, SVOO3). The multigenerational aging chemistry for the semivolatile POA configuration is derived from the approach of Donahue et al. (2012) which takes into account the functionalization and fragmentation of organic vapors upon oxidation. The semivolatile POA configuration also includes the option (on by default) of potential secondary organic aerosol from combustion sources (pcSOA). This species is emitted as a VOC (pcVOC) and forms SOA after reaction with OH. The emissions of pcVOC may be zeroed out by the user for specific sources using the DESID emissions control file; zeroing out pcVOC emissions is recommended for biomass and wood burning sources.
+CMAQv5.3中提供的AERO7和AERO6机理都与半挥发性一次有机气溶胶（POA）兼容。对于不挥发的POA结构，根据其碳（OC）和非碳（NCOM）含量分别跟踪质量。通过这种方法，可以在非碳物种中加入质量来模拟大气中氧化物对POA的老化。Simon和Bhave（2012）记录了一次有机碳和OH自由基之间的二级反应的实现。半挥发性POA结构基于挥发性和氧化状态的组合将POA分离为几个模型物种。在低氧化状态下有五种POA，分别代表低挥发性、半挥发性和中等挥发性化合物（LVPO1、SVPO1、SVPO2、SVPO3、IVPO1）。当气相物种（例如VLVPO1）与OH氧化时，它们形成具有更高氧化状态的物种（例如LVOO1、LVOO2、SVOO1、SVOO2、SVOO3）。半挥发性POA结构的多代老化化学由Donahue等人（2012）的方法导出，考虑了有机蒸气在氧化时的功能化和裂解。半挥发性POA结构还包括（默认情况下）来自燃烧源的潜在二次有机气溶胶（pcSOA）的选项。该物种以VOC（pcVOC）的形式释放，与OH反应后形成SOA。用户可使用DESID排放控制文件将特定来源的pcVOC排放量设置为零；建议将生物质和木材燃烧源的pcVOC排放量设置为零。
 
-The aerosol module uses ISORROPIA v2.2 in the reverse mode to calculate the condensation/evaporation of volatile inorganic gases to/from the gas-phase concentrations of known coarse particle surfaces. It also uses ISORROPIA in the forward mode to calculate instantaneous thermodynamic equilibrium between the gas and fine-particle modes. The mass transfer of all semivolatile organic species is calculated assuming equilibrium absorptive partitioning, although some nonvolatile species do exist (e.g. cloud-processed organic aerosol, oligomers, nonvolatile POA (if selected)).
+气溶胶模块使用ISORROPIA v2.2在反向模式下计算挥发性无机气体在已知粗颗粒表面气相浓度之间的冷凝/蒸发。在正向模式下，它还利用ISORROPIA来计算气体模式和细粒子模式之间的瞬时热力学平衡。在假设平衡吸收分配的情况下，计算所有半挥发性有机物的质量传递，尽管确实还存在一些非挥发性物质（如经云处理的有机气溶胶、低聚物、非挥发性POA（如选择的话））。
 
-CMAQ can output the reduction in visual range caused by the presence of PM, perceived as haze. CCTM integrates Mie scattering (a generalized particulate light-scattering mechanism that follows from the laws of electromagnetism applied to particulate matter) over the entire range of particle sizes to obtain a single visibility value for each model grid cell at each time step. More detailed descriptions of the PM calculation techniques used in CCTM can be found in Binkowski and Shankar (1995), Binkowski and Roselle (2003), and Byun and Schere (2006).
+CMAQ可以输出由PM存在导致的能见度降低（也就是霾）。CCTM将Mie散射（一种遵循适用于颗粒物的电磁定律的广义颗粒光散射机制）整合到整个颗粒尺寸范围内，以在每个时间步长上为每个模型网格单元获得能见度值。关于CCTM中使用的PM计算技术的更详细描述，可以在Binkowski和Shankar（1995）、Binkowski和Roselle（2003）以及Byun和Schere（2006）中找到。
 
-For easier comparison of CMAQ's output PM values with measurements, time-dependent cutoff fractions may be output by the model (e.g. Jiang et al., 2006). These include quantities for describing the fraction of each mode that would be categorized as PM<sub>2.5</sub> (i.e. PM25AT, PM25AC, and PM25CO) and PM<sub>1.0</sub> (i.e. PM1AT, PM1AC, and PM1CO) as well as the fraction of particles from each mode that would be detected by an AMS (i.e AMSAT, AMSAC, and AMSCO). There is also a surface interaction module in the multipollutant version of CMAQ that calculates the flux of mercury to and from the surface (rather than just depositing mercury).
+为了更容易地比较CMAQ输出的PM值和监测值，模型可以输出与时间相关的截止分数（例如Jiang等人，2006）。其中包括描述将被分类为PM<sub>2.5</sub>（即PM25AT、PM25AC和PM25CO）和PM<sub>1.0</sub>（即PM1AT、PM1AC和PM1CO）的每种模式的分数的量，以及AMS可以检测到的每种模式下的颗粒分数（即AMSAT、AMSAC和AMSCO）。CMAQ的多污染物模型中还有一个表面相互作用模块，它可以计算汞进出表面的通量（而不仅仅是汞沉降）。
 
-Further discussion on the scientific improvements to the CMAQ PM treatment is available in the release notes.
+有关CMAQ中PM处理的科学改进的进一步讨论，请参阅发行说明。
 
 <a id=6.12_Aqueous_Chemistry></a>
 
-## 6.12 Aqueous Chemistry, Scavenging and Wet Deposition
+## 6.12 水相化学、清除和湿沉降
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-Clouds are an important component of air quality modeling and play a key role in aqueous chemical reactions, vertical mixing of pollutants, and removal of pollutants by wet deposition. Clouds also indirectly affect pollutant concentrations by altering the solar radiation, which in turn affects photochemical pollutants (such as ozone) and the flux of biogenic emissions. The cloud module in CMAQ performs several functions related to cloud physics and chemistry. Three types of clouds are modeled in CMAQ: sub-grid convective precipitating clouds, sub-grid nonprecipitating clouds, and grid-resolved clouds. Grid-resolved clouds are provided by the meteorological model and no additional diagnosis is performed by CMAQ for those clouds. For the two types of sub-grid clouds, the cloud module in CCTM vertically redistributes pollutants, calculates in-cloud and precipitation scavenging, performs aqueous chemistry calculations, and accumulates wet deposition amounts. Aqueous chemistry and scavenging is calculated for resolved clouds as well, using the cell liquid water content and precipitation from the meteorological model.
+云是空气质量模拟的重要组成部分，在水相化学反应、污染物垂直混合、湿沉降去除污染物等方面发挥着重要作用。云层还通过改变太阳辐射间接影响污染物浓度，进而影响光化学污染物（如臭氧）和生物源排放量。CMAQ中的云模块执行与云物理和化学相关的几个功能。在CMAQ中模拟了三种云：子网格对流降水云、子网格非降水云和网格分解云。网格分解云由气象模型提供，CMAQ对这些云不进行额外的诊断。对于另外两种子网格云，CCTM中的云模块会垂直重新分配污染物，计算云中和降水清除，执行水相化学计算，并累积湿沉降量。利用气象模型中的细胞液态水含量和降水量，还为分解云计算了水相化学和清除。
 
-When liquid water content (LWC), represented as the sum of cloud water, rain water, and graupel, in a cell (or column average in the case of sub-grid clouds) exceeds a critical threshold of 0.01 gm<sup>-3</sup>, a call is made to the cloud chemistry module where in-cloud scavenging and wet deposition are calculated in addition to aqueous phase chemistry.  Accumulation and coarse mode aerosols are assumed to be instantaneously activated (i.e., nucleation scavenging), and Aitken mode particles (i.e., interstitial aerosol) are scavenged by the cloud droplets for the duration of cloud processing (Binkowski and Roselle, 2003).  Gas phase species that participate in aqueous chemistry are taken up into the cloud water according to their Henry’s Law coefficient, dissociation constants, and droplet pH.  For each cloud chemistry time step, dissolved gas and aerosol species and associated ions are deposited out of the system according to a scavenging rate that is based on precipitation rate, cloud/layer thickness, and total water content (i.e., the sum of cloud water, rain water, graupel, ice, and snow).  When the liquid water content does not exceed the threshold to call the cloud chemistry module (or for all species that do not participate in cloud chemistry), the wet deposition is calculated in a similar way in the “scavwdep” subroutine.  Using the same expression for the washout coefficient as in the aqueous chemistry module, aerosol species are subject to wet removal assuming they are incorporated into cloud/rain water as above; while the fraction of gas phase species’ concentrations subject to wet removal is a function of their effective Henry’s Law coefficients at a prescribed droplet pH of 4. Essentially what is represented in CMAQ is in-cloud scavenging (or “rainout”); though arguably some effects of below-cloud scavenging (or “washout”) may also be represented by including rain water in the LWC considered in calling/calculating cloud chemistry, as well as calculating aqueous chemistry and scavenging for the column (extending from the cloud top to the ground) in the case of sub-grid raining clouds.  Explicit treatment of below-cloud scavenging (e.g., impaction scavenging of below-cloud aerosols by rain drops and snow) is not implemented at this time.  
+当一个网格单元（对于子网格云是列平均）中的液态水含量（liquid water content，LWC，即云水、雨水和霰的总和）超过0.01 gm<sup>-3</sup>的临界阈值时，则会调用云化学模块，其中除了水相化学外，还计算了云中清除和湿沉降。假设聚集模态和粗模态气溶胶是瞬时激活的（即成核清除），并且在云处理期间，Aitken模态颗粒物（即间隙气溶胶）被云滴清除（Binkowski和Roselle，2003）。参与水相化学的气相物种根据其亨利定律系数、离解常数和液滴pH值被带入云水中。对于每个云水化学时间步长，溶解气体和气溶胶物种以及相关离子根据基于降水率、云/层厚度和总含水量（即云水、雨水、霰、冰和雪的总和）的清除率沉降出系统。当液态水含量不超过调用云化学模块的阈值时（或对于不参与云化学的所有物种），湿沉降量以类似的方式在“scavwdep”子程序中计算。使用与水相化学模块中相同的冲刷系数表达式，假设气溶胶物种如上文所述被并入云水/雨水中，则它们将被湿去除；而在规定的液滴pH值为4时，受湿去除影响的气相组分浓度分数是其有效亨利定律系数的函数。基本上，CMAQ中表示的是云中清除（或“雨淋”）；尽管可以说，云下清除（或“冲刷”）的一些影响也可以表示为在调用/计算云化学时考虑的LWC中包括雨水，以及在子网格雨云的情况下计算水相化学和柱清除（从云顶延伸到地面）。目前还没有对云下清除（例如雨滴和雪对云下气溶胶的撞击清除）进行明确的处理。
 
-CMAQ’s standard cloud chemistry treatment (AQCHEM) estimates sulfate production from five sulfur oxidation pathways and also includes a simple parameterization to estimate secondary organic aerosol formation from the reactions of glyoxal and methylglyoxal with the hydroxyl radical. The distribution between gas and aqueous phases is determined by instantaneous Henry’s law equilibrium, and the bisection method is used to estimate pH (and the distribution of ionic species) assuming electroneutrality.  Beginning with CMAQv5.1 a new set of options for cloud chemistry was introduced that relies on the Kinetic PreProcessor (KPP), version 2.2.3 (Damian et al., 2002) to generate a Rosenbrock integrator to solve the chemical kinetics, ionic dissociation, wet deposition, and kinetic mass transfer between the gas and aqueous phases in CMAQ clouds.  These options can be collectively referred to as the AQCHEM "KMT” cloud chemistry treatments (Fahey et al., 2017).  
+CMAQ的标准云化学处理（AQCHEM）估算了五种硫氧化途径产生的硫酸盐，还包括一个简单的参数化，用于估算乙二醛和甲基乙二醛与羟基自由基反应生成的二次有机气溶胶。气相和水相之间的分布由瞬时亨利定律平衡确定，在电中性条件下，用等分法估算pH值（以及离子种类的分布）。从CMAQv5.1开始，引入了一组新的云化学选项，该选项依赖于动力学预处理器（Kinetic PreProcessor，KPP），版本2.2.3（Damian等人，2002），以生成Rosenbrock积分器来解决CMAQ云中气相和水相之间的化学动力学、离子离解、湿沉降和动力学传质。这些方案统称为AQCHEM “KMT”云化学处理（Fahey等人，2017）。
 
-There are several KMT chemistry options currently available in CMAQv5.3.  AQCHEM-KMT treats the standard cloud chemistry mechanism and only differs from AQCHEM with the treatment of kinetic mass transfer between the phases (Schwartz, 1986) and Rosenbrock solver.  AQCHEM-KMTI also includes an expanded aqueous-phase chemical mechanism that treats SOA formation from biogenic-derived epoxides (Pye et al., 2013) in cloud, in addition to the standard sulfur and alpha-dicarbonyl oxidation reactions. With CMAQv5.3 we introduce two additional cloud chemistry options: AQCHEM-KMT2 and AQCHEM-KMTBR.  AQCHEM-KMT2 replaces the simple yield parameterization of SOA from glyoxal and methylglyoxal with a more mechanistic representation of the multi-step formation of oxalic acid/oxalate and other organic acids (assumed here to remain in the aerosol phase after cloud droplet evaporation) from the reactions of hydroxyl radical with glyoxal, methylglyoxal, glycolaldehyde, and acetic acid (Lim et al., 2005; Tan et al., 2009).  AQCHEM-KMT2 also expands upon the reactions in AQCHEM-KMTI with additional chemistry for S, N, O-H, and C species (Leriche et al., 2013; Warneck, 1999; Lee and Schwartz, 1983). AQCHEM-KMTBR is the companion aqueous chemistry routine to the gas-phase cb6r3m_ae7_kmtbr mechanism and contains the standard 5 S(IV) oxidation reactions, SOA parameterization from glyoxal and methylglyoxal, as well as additional reactions involving Bromine species in cloud water (Sarwar et al., 2019).  
+CMAQv5.3中目前提供了几个KMT化学选项。AQCHEM-KMT处理标准云化学机理，仅与AQCHEM处理不同相之间的动力学传质方法（Schwartz，1986）和Rosenbrock求解器不同。AQCHEM-KMTI还包括一种扩展的水相化学机理，除标准硫和α-二羰基氧化反应外，该机理还处理云中生物源排放的环氧化合物（Pye等人，2013）形成的SOA。在CMAQv5.3中，我们引入了两个额外的云化学选项：AQCHEM-KMT2和AQCHEM-KMTBR。AQCHEM-KMT2取代了简单的乙二醛和甲基乙二醛的SOA产率参数化，用一种更为机械化的表示法，说明了羟基自由基与乙二醛、甲基乙二醛、乙醇醛和乙酸反应中草酸/草酸和其他有机酸（假设在云滴蒸发后仍保持在气溶胶相）的多步形成（Lim等人，2005年；Tan等人，2009年）。AQCHEM-KMT2还扩展了AQCHEM-KMTI中的反应以及S、N、O-H和C物种的附加化学（Leriche等人，2013；Warneck，1999；Lee和Schwartz，1983）。AQCHEM-KMTBR是气相cb6r3m_ae7_KMTBR化学机理的伴生水相化学程序，包含标准5 S（IV）氧化反应、乙二醛和甲基乙二醛的SOA参数化以及涉及云水中溴化物种附加反应（Sarwar等人，2019）。
 
-The AQCHEM KMT family of cloud chemistry options can be significantly more computationally demanding than standard AQCHEM and may be thus better suited for research applications, particularly those investigating cloud/fog events or the evolution of species whose concentrations are potentially heavily influenced by cloud processing and not explicitly represented in the standard AQCHEM mechanism (e.g., oxalate – AQCHEM-KMT2).  Note that when using the gas-phase mechanism with marine chemistry (CB6R3M_AE7_KMTBR), one is required to also run the companion aqueous chemistry routine, AQCHEM-KMTBR.  For limited-area simulations where the primary focus is on simulating ozone or total PM<sub>2.5</sub> concentrations, especially for longer-term averages, standard AQCHEM would likely capture the most important cloud chemistry impacts (i.e., sulfate formation from the main aqueous oxidation pathways) and is significantly more computationally efficient.
+AQCHEM-KMT系列的云化学选项比标准AQCHEM在计算上要求更高，因此可能更适合于研究，特别是那些研究云/雾事件或物种进化的人，其浓度可能受到云处理的严重影响，并且没有在标准AQCHEM机制中明确表示（例如，草酸 – AQCHEM-KMT2）。注意，将气相机理与海洋化学（CB6R3M_AE7_KMTBR）结合使用时，还需要运行相应的水相化学程序AQCHEM-KMTBR。对于以模拟臭氧或总PM<sub>2.5<sub>浓度为主的有限区域，特别是对于长期平均值而言，标准AQCHEM选项可能会捕获最重要的云化学影响（例如硫酸盐形成的主要水氧化途径），以及显著的更有效率的计算（运行速度更快）。
 
-To invoke the default AQCHEM cloud chemistry option, the BuildScript under the CCTM Science Modules section should be set as follows: 
+要调用默认的AQCHEM云化学选项，应将CCTM的BuildScript中科学模块部分设置如下：
 
 ```
 set ModCloud  = cloud/acm_ae7
 or
 set ModCloud  = cloud/acm_ae6
 ```
-For the AQCHEM-KMT cloud chemistry option, use the following option in the BuildScript: 
+对于AQCHEM-KMT云化学选项，请在BuildScript中使用以下选项：
 
 ```
 set ModCloud  = cloud/acm_ae6_kmt
 ```
 
-AQCHEM and AQCHEM-KMT can be used with any of the cb6r3_ae6, cb6r3_ae7, racm, or saprc07 gas phase chemistry mechanisms.
+AQCHEM和AQCHEM-KMT可用于cb6r3_ae6、cb6r3_ae7、racm或saprc07中任意一个的气相化学机理。
 
-For the AQCHEM-KMTI cloud chemistry option, use the following option in the BuildScript: 
+对于AQCHEM-KMTI云化学选项，请在BuildScript中使用以下选项：
 ```
 set ModCloud  = cloud/acm_ae6i_kmti
 ```
-AQCHEM-KMTI is meant to be used with the saprc07tic_ae6i gas phase chemistry option; i.e., in the BuildScript:
+AQCHEM-KMTI用于saprc07tic_ae6i气相化学选项，即在BuildScript中设置如下：
 
 ```
 set Mechanism = saprc07tic_ae6i_aqkmti
 ```
 
-For the AQCHEM-KMT2 cloud chemistry option, use the following option in the BuildScript: 
+对于AQCHEM-KMT2云化学选项，请在BuildScript中使用以下选项：
 ```
 set ModCloud  = cloud/acm_ae7_kmt2
 ```
-AQCHEM-KMT2 should only be used in conjunction with the cb6r3_ae7 or saprc07tic_ae7i gas phase chemical mechanisms; i.e., in the BuildScript:
+AQCHEM-KMT2只能与cb6r3_ae7或saprc07tic_ae7i气相化学机制结合使用；即在BuildScript中使用以下选项：
 
 ```
 set Mechanism = cb6r3_ae7_aqkmt2
 ```
-OR
+或者
 
 ```
 set Mechanism = saprc07tic_ae7i_aqkmt2
 ```
 
-For the AQCHEM-KMTBR cloud chemistry option, use the following option in the BuildScript: 
+对于AQCHEM-KMTBR云化学选项，请在BuildScript中使用以下选项：
 ```
 set ModCloud  = cloud/acm_ae7_kmtbr
 ```
-Note that this cloud chemistry option will be used automatically (and should be used only) when the gas phase chemistry option “cb6r3m_ae7_kmtbr” is chosen.
+请注意，当选择气相化学选项“cb6r3m_ae7_kmtbr”时，将自动使用该云化学选项（且仅应使用）。
 
-For toxics/Hg simulations (using the gas phase “cb6mp_ae6_aq” mechanism), one may also invoke the complementary cloud chemistry routine that includes aqueous phase chemistry for some toxic species in addition to the default chemistry:
+对于有毒物质/Hg模拟（使用气相“cb6mp_ae6_aq”化学机理时），还可以调用补充云化学程序，该程序除了默认化学外，还包括了某些有毒物质的水相化学：
 
 ```
 set ModCloud  = cloud/acm_ae6_mp
@@ -868,25 +868,32 @@ set ModCloud  = cloud/acm_ae6_mp
 
 <a id=6.13_Potential_Vort></a>
 
-## 6.13 Potential Vorticity Scaling
+## 6.13 潜在涡度尺度
 
 <!-- BEGIN COMMENT -->
 
-[Return to Top](#Return_to_Top)
+[返回顶部](#Return_to_Top)
 
 <!-- END COMMENT -->
 
-Since cross-tropopause transport of O<sub>3</sub> can be a significant contributor to the tropospheric O<sub>3</sub> budget, accurately characterizing the fraction of O<sub>3</sub> in the troposphere, especially at the surface, that is of stratospheric origin is of interest in many model applications. This fraction varies spatially and seasonally in response to the tropopause height, and perhaps even more episodically, from deep intrusion events associated with weather patterns and frontal movement (e.g., Mathur et al., 2017). Potential vorticity (PV; 1 PV unit = 10<sup>6</sup> m<sup>2</sup> K kg<sup>-1</sup> s<sup>-1</sup>) has been shown to be a robust indicator of air mass exchange between the stratosphere and the troposphere with strong positive correlation with O<sub>3</sub> and other trace species transported from the stratosphere to the upper troposphere (Danielsen, 1968).  This correlation can be used to develop scaling factors that specify O<sub>3</sub> in the modelled upper troposphere/lower stratosphere (UTLS) based on estimated PV. CMAQ uses a dynamical PV-scaling parameterization developed by correlating model potential vorticity fields and measured O<sub>3</sub> (from World Ozone and Ultraviolet Radiation Data Centre) between 100-50mb over a 21-year period. This generalized parameterization, detailed in Xing et al. (2016), can dynamically represent O<sub>3</sub> in the UTLS across the Northern Hemisphere. The implementation of the new function significantly improves CMAQ's simulation of UTLS O<sub>3</sub> in both magnitude and seasonality compared to observations, which results in a more accurate simulation of the vertical distribution of O<sub>3</sub> across the Northern Hemisphere (Xing et al., 2016; Mathur et al., 2017).  It should be noted that to represent stratosphere-troposphere exchange of O<sub>3</sub>, appropriate vertical grid resolution near the tropopause should also be used with the PV scaling scheme.
+由于O<sub>3<sub>的跨对流层输运是对流层O<sub>3<sub>总量的一个重要贡献因素，因此精确描述对流层中O<sub>3<sub>的分数，特别是在地表，这是平流层起源的，在许多模型应用中都很有意义。这一部分在空间和季节上随对流层顶高度的变化而变化，甚至可能在更大程度上随与天气模式和锋面运动相关的深部入侵事件而变化（例如Mathur等人，2017年）。潜在涡度（Potential vorticity，PV；1pv单位=10<sup>6</sup> m<sup>2</sup> K kg<sup>-1</sup> s<sup>-1</sup>）已被证明是平流层和对流层之间空气质量交换的有力指标，和从平流层向对流层上部输送的O<sub>3<sub>与其他微量物种具有很强的正相关性（Danielsen，1968）。这种相关性可用于发展尺度因子，在模拟的对流层上部/平流层下部（upper troposphere/lower stratosphere，UTLS）根据估计的PV指定O<sub>3</sub>。CMAQ使用了一个动态的PV尺度参数化，该参数化是通过关联模式潜在涡度场而发展起来的，在21年的时间里测量了在100-50mb之间的O<sub>3</sub>（来自世界臭氧和紫外线辐射数据中心）。这种广义参数化可以动态表示北半球UTLS中的O<sub>3</sub>，详见Xing等人的描述（2016）。与观测值相比，新功能的实现显著改善了CMAQ对UTLS中O<sub>3</sub>的数值模拟，从而更准确地模拟了O<sub>3</sub>在北半球的垂直分布（Xing等人，2016；Mathur等人，2017）。值得注意的是，为了表示O<sub>3<sub>在平流层和对流层的交换，对流层顶附近的垂直网格分辨率与PV尺度方案一起使用是比较合理的。
 
-To invoke the potential vorticity scaling of modeled O<sub>3</sub> in the upper layers (100-50mb), 
+如需调用上层（100-50mb）中O<sub>3<sub>模式的潜在涡度尺度，应该在BuildScript中指定：
 ```
 set potvortO3
 ```
-should be specified in the BuildScript.  Also, potential vorticity fields must be available in the METCRO3D files generated by MCIP. This is enabled by setting LPV = 1 in the MCIP runscript.
+此外，潜在涡度场必须在MCIP生成的METCRO3D文件中可用。这是通过在MCIP运行脚本中设置LPV=1来启用的。
 
 <a id=6.14_References></a>
 
-## 6.14 References
+## 6.14 参考文献
+
+<!-- BEGIN COMMENT -->
+
+[返回顶部](#Return_to_Top)
+
+<!-- END COMMENT -->
+
 Bash, J.O. (2010). Description and initial simulation of a dynamic bidirectional air-surface exchange model for mercury in Community Multiscale Air Quality model. J. Geophys. Res., 115, D06305, [doi:10.1029/2009JD012834](https://doi.org/10.1029/2009JD012834).
 
 Binkowski, F.S., Arunachalam, S., Adelman, Z., & Pinto, J. (2007). Examining photolysis rates with a prototype on-line photolysis module in CMAQ. J. Appl. Meteor. and Clim., 46, 1252-1256. [doi:10.1175/JAM2531.1](https://doi.org/10.1175/JAM2531.1).
@@ -992,8 +999,8 @@ Yi, C. (2008). Momentum transfer within canopies. J. App. Meteor. Clim., 47, 262
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Chapter](CMAQ_UG_ch05_running_a_simulation.md) - [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch07_model_outputs.md)
+[<< 前一章](CMAQ_UG_ch05_running_a_simulation.md) - [返回](README.md) - [下一章 >>](CMAQ_UG_ch07_model_outputs.md)
 <br>
-CMAQ User's Guide (c) 2020<br>
+CMAQ用户指南 (c) 2020<br>
 
 <!-- END COMMENT -->

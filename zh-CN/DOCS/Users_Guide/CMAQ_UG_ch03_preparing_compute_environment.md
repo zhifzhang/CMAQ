@@ -1,116 +1,116 @@
 
 <!-- BEGIN COMMENT -->
 
- [<< Previous Chapter](CMAQ_UG_ch02_program_structure.md)- [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch04_model_inputs.md)
+ [<< 前一章](CMAQ_UG_ch02_program_structure.md)- [返回](README.md) - [下一章 >>](CMAQ_UG_ch04_model_inputs.md)
 
 <!-- END COMMENT -->
 
-# 3. Preparing Compute Environment for CMAQ Simulations
+# 3 为CMAQ模拟准备计算环境
 
-## 3.1 Introduction
+## 3.1 简介
 
-In this chapter the user will learn basic hardware and software requirements to run CMAQ. In addition, if the user does not have the required software, this chapter provides links to download the required software. 
+在本章中，用户将学习运行CMAQ的基本硬件和软件要求。如果用户没有所需的软件，本章还提供了下载所需软件的链接。
 
-## 3.2 Hardware Requirements
+## 3.2 硬件要求
 
-The suggested hardware requirements for running the CMAQ Southeast Benchmark case on a Linux workstation are:
+在Linux工作站上运行CMAQ美国东南部区域基准测试案例的推荐硬件要求是：
 
--   8 processors
--   4 GB RAM
--   400 GB hard drive storage
+- 8核处理器
+- 4GB内存
+- 400GB硬盘储存空间
 
-However, to use CMAQ in a production environment where multiple iterations of the model will be executed for different spatial domains and/or emissions control strategies, either a cluster of multiprocessor PCs on a high-end network or an expandable rack-mounted Linux server is recommended.
+但是，要在生产环境中使用CMAQ，针对不同的模拟区域和/或排放控制措施执行模型的多次迭代，则建议使用网络多处理器PC集群或可扩展的机架式Linux服务器。
 
-For example, the CMAQ team at the EPA uses a Dell cluster. The cluster consists 128 nodes and each node contain two Intel Xeon E5-2697A v4 16-core processors (with a total of 4096 processors), 256 GB memory (8 GB/core), EDR InfiniBand interconnect and runs on Red Hat Enterprise Linux 7 operating system.
+例如，EPA的CMAQ团队使用Dell群集。该集群包含128个节点，每个节点包含两个Intel Xeon E5-2697A v4 16核处理器（总共4096核处理器）、256 GB内存（8GB/每核处理器），EDR InfiniBand互连，运行Red Hat Enterprise Linux 7操作系统。
 
-Table 3-1 provides a general snapshot of three different CMAQ setups for a day of simulation conducted at the EPA. The output only included: the concentration file (CONC), the average concentration file (ACONC), 3-D average concentration file (CGRID), hourly dry deposition file (DRYDEP), and wet deposition from the clouds file (WETDEP1). The run time and domain size are dictated by the system hardware. Furthermore, the run time may vary due to compiler choice and system load.
+表3-1提供了EPA采用三种不同CMAQ设置进行了一天模拟时的情况。输出仅包括：浓度文件（CONC）、平均浓度文件（ACONC）、3-D平均浓度文件（CGRID）、每小时干沉降文件（DRYDEP）和来自云文件的湿沉降文件（WETDEP1）。运行时间和模拟区域大小由系统硬件决定。此外，由于编译器的选择和系统负载，运行时间可能会有所不同。
 
 <a id=Table3-1></a>
 
-**Table 3‑1. Example of job scenarios at EPA for a single day simulation**
+**表3-1. EPA进行一天模拟的情景示例**
 
-|**Domain**|**Domain size**|**Species Tracked**|**Input files size**|**Output files size**| **Run time (# cores)**  | 
+|**模拟区域**|**区域大小**|**追踪物种**|**输入文件大小**|**输出文件大小**| **运行时间(使用的CPU核心数)**  | 
 |:--------------:|:----:|:-:|:-:|:-:|:--------:|
-| 2016 Southeast US | 100 X 80 X 35| 218 |6.7GB |6.3GB |8 min/day (32); 47 min/day (4) |
-| 2016 CONUS | 459 X 299 X 35 | 219 |18GB| 107GB | 50 min/day (128); 90 min/day (32) |
-| 2016 N. Hemisphere | 187 X 187 X 44 | 255 |15GB| 40GB | 25 min/day (128) |
+| 2016年美国东南部 | 100 × 80 × 35| 218 |6.7GB |6.3GB |8 min/day (32); 47 min/day (4) |
+| 2016年美国本土 | 459 × 299 × 35 | 219 |18GB| 107GB | 50 min/day (128); 90 min/day (32) |
+| 2016年北半球 | 187 × 187 × 44 | 255 |15GB| 40GB | 25 min/day (128) |
 
 
-## 3.3 Software Requirements
+## 3.3 软件要求
 
-To build the CMAQ program suite, users must install these libraries in the order listed: MPI, netCDF and IOAPI. As always, we recommend using the latest release available at the time of your CMAQ installation. A table of the minimum required software versions is shown below: 
+要构建CMAQ程序套件，用户必须按照列出的顺序安装这些库：MPI、netCDF、IOAPI。与往常一样，我们建议您在安装CMAQ时使用这些库的最新版本。 所需的最低软件版本如下表所示：
 
 <a id=Table3-2></a>
 
-**Table 3‑2. Minimum required software versions**
+**表3-2. 所需的最低软件版本**
 
-|**Software**|**Version**|
+|**需要的软件**|**最低版本**|
 |:--------------:|:----:|
 | Intel Compiler | 17.0 | 
 | GNU Compiler | 6.1.0 | 
 | PGI Compiler | 17.4 |
 
-**NOTE: The CMAQ team recommends using a single compiler suite when building these libraries. Mixing compiler suites when building these libraries can cause unexpected behavior (e.g., mixing intel 18.0 to build netCDF C libraries and gcc 6.1.0 to build netCDF fortran libraries is not going to work).** 
+**注意：CMAQ团队建议在构建这些库时使用单个编译器套件（即其中之一）。在构建这些库时混合使用不同的编译器套件可能会导致意外的行为（例如，将intel 18.0用于构建netCDF C库，而将gcc 6.1.0用于构建netCDF fortran库是不行的）。**
 
-### 3.3.1 Message Passing Interface (MPI) library
+### 3.3.1 MPI（Message Passing Interface，消息传递接口）库
 
-CMAQ is a MPI based program that runs on parallel programming platforms. Various flavour of MPI libraries are available for users to choose. CMAQ has been tested with the [OpenMPI](https://www.open-mpi.org), [MPICH](https://www.mpich.org/downloads), [MVAPICH2](http://mvapich.cse.ohio-state.edu), and the [Intel MPI](https://software.intel.com/en-us/intel-mpi-library) libraries. The choice of MPI library may affect model run time. For example, if you have Intel compiler suite available on your system, chooses Intel MPI or if your system is using InfiniBand (IB) interconnect, chooses MVAPICH2 which is tailored for IB.
+CMAQ是基于MPI的程序，可在并行编程平台上运行。有多种MPI库可供用户选择。CMAQ已采用[OpenMPI]( https://www.open-mpi.org )、[MPICH]( https://www.mpich.org/downloads )、[MVAPICH2]( http://mvapich.cse.ohio-state.edu )和[Intel MPI]( https://software.intel.com/en-us/intel-mpi-library )库进行了测试。MPI库的选择可能会影响模型的运行时间。例如，如果您的系统上提供了Intel编译器套件，则选择Intel MPI，或者如果系统使用InfiniBand（IB）互连，则应选择针对IB定制的MVAPICH2。
 
-Users can download the MPI library source code from one of these sites and follow provided procedures for proper installation. **Minimum versions: IntelMPI 2017.0 | MPICH 3.3.1 | MVAPICH2 2.3.1 | OpenMPI 2.1.0**
+用户可以从上述站点之一下载MPI库的源代码，并按照提供的过程进行正确安装。**最低版本要求: IntelMPI 2017.0 | MPICH 3.3.1 | MVAPICH2 2.3.1 | OpenMPI 2.1.0**
 
-### 3.3.2 netCDF library
+### 3.3.2 netCDF库
 
-Most of the CMAQ input files and all output files are in netCDF format (the rest are in ASCII format). Hence the netCDF library is an essential component of the CMAQ model. The netCDF library is available for download at http://www.unidata.ucar.edu/software/netcdf/ and users should follow the instructions for proper installation. Users should install **classic shared netCDF C and Fortran libraries only without netCDF4, HDF5, HDF4, DAP client, PnetCDF, or zlib support.** In order to do so, users should provide the appropriate flags to build and install minimal netCDF-3 with no DAP client support, such as --disable-netcdf-4 and --disable-dap, at the configure stage for netCDF C. After successful installation, check the environment PATH & LD_LIBRARY_PATH to ensure that the paths have been updated to include the path of the netCDF C and Fortran libraries and bin. Note you may have to set these paths manually if not set, and these paths must be loaded every time you start a new shell. **Minimum versions: NetCDF-C 4.2 | NetCDF-Fortran 4.4.2**
+大多数CMAQ输入文件和所有输出文件均为netCDF格式（其余均为ASCII格式）。因此，netCDF库是CMAQ模型的重要组成部分。您可以从 http://www.unidata.ucar.edu/software/netcdf/ 下载netCDF库，并按照用户说明进行正确的安装。**用户应仅安装经典共享netCDF C和Fortran库，而无需netCDF4、HDF5、HDF4、DAP客户端、PnetCDF或zlib支持**。为此，在netCDF C的配置阶段，用户应提供适当的参数来构建和安装最少的netCDF-3而不需要DAP客户端支持，例如--disable-netcdf-4和--disable-dap。安装成功后，请检查环境PATH和LD_LIBRARY_PATH确保已更新为包括netCDF C和Fortran库以及bin的路径。请注意，如果这些路径未被设置，则必须手动设置，并且每次启动新的Shell时必须加载这些路径。**最低版本要求：NetCDF-C 4.2 | NetCDF-Fortran 4.4.2**
 
-### 3.3.3 I/O API library
+### 3.3.3 I/O API库
 
-The I/O API library provides an interface between the netCDF libraries and CMAQ, as well as WRF-CMAQ, to handle input and output (I/O) calls throughout the CMAQ code. The version of the I/O API library supported with CMAQv5.3.2 (version 3.2 tagged 20200828) is available for download at https://github.com/cjcoats/ioapi-3.2/releases/tag/20200828. Users should note that the I/O API library requires netCDF files to be adhere to a strict formatting guidelines that can be found in the I/O API documentation. For simplicity, files following the IOAPI-netCDF formatting guidelines will be called "IOAPI FILES" from now on. **Version Supported: IOAPI 3.2 tagged 20200828**
+I/O API库在netCDF库和CMAQ以及WRF-CMAQ之间提供接口，以处理整个CMAQ代码中的输入和输出（I/O）调用。CMAQv5.3.2支持的I/O API库版本（版本3.2，标记为20200828）可从 https://github.com/cjcoats/ioapi-3.2/releases/tag/20200828 下载。 用户应注意，I/O API库要求netCDF文件严格遵守I/O API文档中的格式指南。为简单起见，从现在起，遵循IOAPI-netCDF格式指南的文件将称为"IOAPI文件"。 **支持的版本：IOAPI 3.2 tagged 20200828**
 
-The general steps for installation of I/O API libraries on a Linux system (with C-shell and GNU compilers) are below. These instructions are an example and we recommend using the latest release available at the time of your CMAQ installation.
+下面是在Linux系统（带有C-shell和GNU编译器）上安装I/O API库的一般步骤。这些说明只是示例，建议您在安装CMAQ时使用可用的最新版本。
 
-The following is a procedure to install "basic" I/O API libraries (this is based on gfortran compiler, for other compilers, look for corresponding Linux2_x86_64*):
+以下是安装“基本” I/O API库的过程（此过程基于gfortran编译器，对于其他编译器，请寻找对应的Linux2_x86_64*）：
 
 ```
 mkdir ioapi_3.2
 cd ioapi_3.2
 
-## Download IOAPI Libraries and untar downloaded source code in this directory
+## 下载IOAPI库，解压缩源代码
 wget http://github.com/cjcoats/ioapi-3.2/archive/20200828.tar.gz
 tar -xzvf 20200828.tar.gz
 cd ioapi-3.2-20200828
 
-### Set up your Linux system environment
+### 设置Linux系统环境
 setenv BIN Linux2_x86_64gfort
 setenv BASEDIR $cwd
 setenv CPLMODE nocpl
 ```
 
-Edit the top level Makefile with the following steps:
+通过以下步骤编辑顶级Makefile：
 
-1. comment out the line with NCFLIBS=
-2. Add explicit netCDF C and Fortran library paths in front of -lnetcdf -lnetcdff, respectively, the following is an example:
+1. 用NCFLIBS = 注释掉该行
+2. 在-lnetcdf -lnetcdff前面分别添加完整的netCDF C和Fortran库路径，下面是一个示例：
 
 ```
 NCFLIBS = -L/usr/local/apps/netcdf-c-4.7.0/gcc-9.1.0/lib -lnetcdf -L/usr/local/apps/netcdf-fortran-4.4.5/gcc-9.1.0/lib -lnetcdff
 ```
 
-Edit the file in the ioapi folder called Makeinclude.Linux2_x86_64gfort to comment out all openMP options as CMAQ does not support openMP. Note: If users are using the ifort compiler you also need to remove -Bstatic flag within the ioapi/Makeinclude.Linux2_x86_64ifort file as well.
+编辑ioapi文件夹中的Makeinclude.Linux2_x86_64gfort文件，注释掉所有openMP选项，因为CMAQ不支持openMP。注意：如果用户使用的是ifort编译器，则还需要删除ioapi/Makeinclude.Linux2_x86_64ifort文件中的-Bstatic标志。
 
 ```
 OMPFLAGS = # -fopenmp 
 OMPLIBS = # -fopenmp
 ```
 
-In the top level IOAPI_3.2 directory run: 
+在顶级IOAPI_3.2目录中运行：
 
 ```
 make configure
 make
 ```
 
-Other I/O API library configuration options are available, and users can see a list of these options within the I/O API documentation. For example, I/O API can be configured in a manner that allows the CMAQ model to be run with the parallel I/O (PIO) feature turned on called the "mpi" I/O API libraries (Wong et al. 2015). More information about how to enable PIO within CMAQ can be found in [Appendix D.3](Appendix/CMAQ_UG_appendixD_parallel_implementation.md#d3-parallel-io). 
+其他I/O API库配置选项可用，用户可以在I/O API文档中看到这些选项的列表。例如，可以配置I/O API，打开“mpi” I/O API库，可以使CMAQ模型采用并行I/O（PIO）功能（Wong等人，2015）。有关如何在CMAQ中启用PIO的更多信息，请参见[附录D.3]( Appendix/CMAQ_UG_appendixD_parallel_implementation.md#d3-parallel-io )。
 
-There is also an I/O API version 3.2 "large" that is designed for applications with a large number of model output files (e.g. utilizing all of CMAQv5.3+ optional diagnostic output files) and/or a large number of model variables (e.g. CMAQ-HDDM or CMAQ-ISAM applications). I/O API v3.2-large increases the MXFILE3 variable from 64 to 512 and increases the MXVARS3 varialbe from 2048 to 16384, both found in PARAMS3.EXT, as noted in the [I/O API documentation](https://www.cmascenter.org/ioapi/documentation/all_versions/html/AVAIL.html#build). Users can [build](https://www.cmascenter.org/ioapi/documentation/all_versions/html/AVAIL.html#build) a copy of the large version by using: 
+还有一个I/O API v3.2-large，该版本设计用来专为处理具有大量模型输出文件的应用程序（例如，处理所有CMAQv5.3可选诊断输出文件）和/或大量模型变量（例如CMAQ-HDDM或CMAQ-ISAM应用程序）。I/O API v3.2-large将MXFILE3变量从64增加到512，并将MXVARS3变量从2048增加到16384，这两个变量都可在PARAMS3.EXT文件中找到，如[I/O API文档]( https://www.cmascenter.org/ioapi/documentation/all_versions/html/AVAIL.html#build )所示。用户可以使用[以下方法]( https://www.cmascenter.org/ioapi/documentation/all_versions/html/AVAIL.html#build )编译large版本：
 
 ```
 cp -r ioapi-3.2-20200828 ioapi-3.2-20200828_large
@@ -118,42 +118,42 @@ cd ioapi-3.2-20200828_large/ioapi/fixed_src
 cp ../PARMS3-LARGE.EXT ./PARMS3.EXT
 ```
 
-This version is also available as a zip file from the following address:
+该版本还可以从以下地址以zip文件形式下载：
 
 https://www.cmascenter.org/ioapi/download/ioapi-3.2-large-20200828.tar.gz
 
-Installation instructions for I/O API v3.2-large are provided in README.txt in the .tar.gz file. 
+I/O API v3.2-large的安装说明在.tar.gz文件的README.txt中提供。
 
-**Note: Users using the I/O API v3.2-large will require additional computional resources during compile and runtime to account for the increase in memory footprint. Additionally, users may encounter upward and backwards compatability issues using different versions of I/O API, if the files are produced with this version of I/O API.**
+**注意：使用I/O API v3.2-large的用户在编译和运行时将需要更多的计算资源，以解决内存占用量增加的问题。此外，如果文件是使用此版本的I/O API生成的，则用户在使用其他不同版本的I/O API时可能会遇到向前和向后兼容性的问题。**
 
 
-## 3.4 Optional Software
+## 3.4 可选软件
 
 <a id=Table3-3></a>
 
-**Table 3‑3. Optional support software for CMAQ**
+**表3-3. CMAQ的可选支持软件**
 
-|**Software**|**Description**|     **Source**    |
+|**软件名称**|**说明**|     **来源**    |
 |------------|-------------------------------|---------------------------------------------|
-|***Evaluation and visualization tools***| | |
-|VERDI|Visualization Environment for Rich Data Interpretation for graphical analysis of netCDF gridded data|[<http://www.verdi-tool.org>](http://www.verdi-tool.org/)|
-|PAVE|Package for Analysis and Visualization of Environmental data for graphical analysis of netCDF gridded data|[<http://www.cmascenter.org>](http://www.cmascenter.org/)|
-|IDV|Integrated Data Viewer for 3-D graphical analysis of netCDF gridded data|[<http://www.unidata.ucar.edu/software/idv/>](http://www.unidata.ucar.edu/software/idv/)|
-|I/O API Tools|Postprocessing tools for manipulating data in the I/O API/netCDF format|[<https://www.cmascenter.org/ioapi/>](https://www.cmascenter.org/ioapi/)|
-|netCDF Tools|Postprocessing tools for manipulating data in the netCDF format|[<http://my.unidata.ucar.edu/content/software/netcdf/index.html>](http://my.unidata.ucar.edu/content/software/netcdf/index.html)|
-| ***Source code diagnostics*** |
+|***评估和可视化工具***| | |
+|VERDI|用于NetCDF网格化数据图形分析的丰富数据解释的可视化环境|[<http://www.verdi-tool.org>](http://www.verdi-tool.org/)|
+|PAVE|用于对NetCDF网格数据进行图形分析的环境数据分析和可视化软件包|[<http://www.cmascenter.org>](http://www.cmascenter.org/)|
+|IDV|集成数据查看器，可对NetCDF网格数据进行3-D图形分析|[<http://www.unidata.ucar.edu/software/idv/>](http://www.unidata.ucar.edu/software/idv/)|
+|I/O API Tools|用于处理I/O API/netCDF格式数据的后处理工具|[<https://www.cmascenter.org/ioapi/>](https://www.cmascenter.org/ioapi/)|
+|netCDF Tools|用于处理netCDF格式数据的后处理工具|[<http://my.unidata.ucar.edu/content/software/netcdf/index.html>](http://my.unidata.ucar.edu/content/software/netcdf/index.html)|
+| ***源代码诊断*** |
 |GDB|Gnu Fortran debugger|[<https://www.sourceware.org/gdb/>](https://www.sourceware.org/gdb/)|
 |PGDBG|Portland Group Fortran debugger|[<http://www.pgroup.com/>](http://www.pgroup.com/)|
 |PGPROF|Portland Group Fortran code profiler|[<http://www.pgroup.com/>](http://www.pgroup.com/)|
 |IDB|Intel Fortran debugger|[<https://software.intel.com/en-us/articles/idb-linux>](https://software.intel.com/en-us/articles/idb-linux)|
 
-## 3.5 References:
+## 3.5 参考文献:
 
 Wong, D. C., Yang, C. E., Fu, J. S., Wong, K., and Gao, Y., “An approach to enhance pnetCDF performance in environmental modeling applications”, Geosci. Model Dev., 8, 1033-1046, 2015.
 
 <!-- BEGIN COMMENT -->
 
- [<< Previous Chapter](CMAQ_UG_ch02_program_structure.md)- [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch04_model_inputs.md)<br>
-CMAQ User's Guide (c) 2020<br>
+ [<< 前一章](CMAQ_UG_ch02_program_structure.md)- [返回](README.md) - [下一章 >>](CMAQ_UG_ch04_model_inputs.md)<br>
+CMAQ用户指南 (c) 2020<br>
 
 <!-- END COMMENT -->
