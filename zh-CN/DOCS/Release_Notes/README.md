@@ -1,114 +1,116 @@
-CMAQv5.3.2 Release Notes
+CMAQv5.3.2发行说明
 =====================================
-[Tutorial on installing and running the CMAQ test case](../Users_Guide/Tutorials/CMAQ_UG_tutorial_benchmark.md)  
-[CMAQv5.3.2 User's Guide](../Users_Guide/README.md)  
-[Frequently asked questions for upgrading to the latest CMAQ version](CMAQ_FAQ.md)  **- Updated for v5.3.2 release.**  
-[CMAQv5.3.2 Known Issues](../Known_Issues/README.md) - Updated after the v5.3.2 release to alert users of issues that will be addressed with the next release. 
+[安装和运行CMAQ测试案例的教程](../Users_Guide/Tutorials/CMAQ_UG_tutorial_benchmark.md)
 
-# Summary of CMAQv5.3.2 Updates 
+[CMAQv5.3.2用户指南](../Users_Guide/README.md)
 
-CMAQv5.3.2 includes significant updates to the CMAQ Integrated Source Apportionment Method (ISAM) and multiple minor fixes to address issues identified in CMAQv5.3.1. The new CMAQ-ISAM version includes substantial updates to the gas-phase chemistry apportionment algorithms that improves both physical and numerical aspects of the method. Users of ISAM are strongly encouraged to update to CMAQv5.3.2.
+[升级到CMAQ最新版本的常见问题](CMAQ_FAQ.md) **-v5.3.2发布中的新问题！**
 
-* [CMAQv5.3.2 Bugfixes](CMAQv5.3.2_bugfixes.md)
-* [Added ISAM support for bidirectional NH3 flux](ISAM_bidi_support.md)
-* [Revised ISAM method on how gas chemistry affects apportionment](ISAM_gas_chemistry_v532.md)
-* [Running with Temporally Finer Meteorology](running_with_temporally_finer_MET.md)
-* [Update to the DMS chemistry with CB6r3](DMS_chemistry_update.md)
-* [Update the Lightning NO Vertical Profile](Update_the_lightning_NO_vertical_profile.md)
-* [Fine aerosol acidity output](specdef_ae7_pH.md)
-* [Add make options to bldmake configuration file](Add_make_options_to_the_cfg_file_for_bldmake.md)
-* [Add 2019 data to CMAQ OMI input file](OMI_through_2019.md)
-* [Column Modeling](Enable_Column_Modeling.md)
-* [Add ERF and SIGN functions to COMBINE](Add_ERF_and_SIGN_to_COMBINEs_grid_cell_functions.md)
+[CMAQv5.3.2已知问题](../Known_Issues/README.md)-在v5.3.2发行版之后进行了更新，以警告用户有关下一发行版将解决的问题。
 
-# Summary of CMAQv5.3.1 Updates  
+# CMAQv5.3.2更新摘要
 
-The Community Multiscale Air Quality (CMAQ) Model version 5.3.1 is a minor update to CMAQv5.3 that includes multiple bug fixes and a few  feature additions.
+CMAQv5.3.2包括对CMAQ集成源分配方法（ISAM）的重大更新，以及针对CMAQv5.3.1中多个存在问题的修复。新的CMAQ-ISAM版本包括对气相化学分配算法的实质性更新，从而在物理和数值方面改善了该方法。强烈建议ISAM用户更新到CMAQv5.3.2。
 
-* [CMAQv5.3.1 Bugfixes](CMAQv5.3.1_bugfixes.md)
-* [MCIPv5.1 Bugfixes](MCIPv5.1_bugfixes.md)
-* [Add support for defining chemical, region and stream families in DESID](DESID_families.md)
-* [New  grid mask files to support regional analysis with DESID and ISAM](regional_12US1_gridmask.md)
+* [CMAQv5.3.2 bug修复](CMAQv5.3.2_bugfixes.md)
+* [ISAM增加了对双向NH3通量的支持](ISAM_bidi_support.md)
+* [修订了ISAM关于气体化学如何影响分配的方法](ISAM_gas_chemistry_v532.md)
+* [可以临时采用更精细的气象运行](running_with_temporally_finer_MET.md)
+* [使用CB6r3更新DMS化学](DMS_chemistry_update.md)
+* [更新闪电NO垂直廓线文件](Update_the_lightning_NO_vertical_profile.md)
+* [细气溶胶酸度输出](specdef_ae7_pH.md)
+* [向bldmake配置文件添加make选项](Add_make_options_to_the_cfg_file_for_bldmake.md)
+* [将2019年数据添加到CMAQ OMI输入文件](OMI_through_2019.md)
+* [可以按列建模](Enable_Column_Modeling.md)
+* [将ERF和SIGN函数添加到COMBINE](Add_ERF_and_SIGN_to_COMBINEs_grid_cell_functions.md)
 
-# Summary of CMAQv5.3 Updates
+# CMAQv5.3.1更新摘要
 
-The Community Multiscale Air Quality (CMAQ) Modeling System, version 5.3, is a major update. CMAQv5.3 includes several changes to the science algorithms in the base model (CCTM), as well as updates to instrumented models, pre-processors, post-processors and utilities. CMAQv5.3 was primarily developed by the U.S. EPA, and it includes contributions from research partners.  The enhancements to the CMAQ modeling system since the previous release (CMAQv5.2.1) are summarized below.
+社区多尺度空气质量（CMAQ）模型版本5.3.1是对CMAQv5.3的小幅更新，其中包括多个错误修复和一些附加功能。
+
+* [CMAQv5.3.1 bug修正](CMAQv5.3.1_bugfixes.md)
+* [MCIPv5.1 bug修复](MCIPv5.1_bugfixes.md)
+* [为“详细排放尺度隔离和诊断模块（Detailed Emission Scaling Isolation and Diagnostic，DESID）”增加新的功能，允许其定义化学、区域和物流族（definition of chemical, region and stream families）](DESID_families.md)
+* [新的网格蒙版文件可支持使用DESID和ISAM进行区域分析](regional_12US1_gridmask.md)
+
+# CMAQv5.3更新摘要
+
+社区多尺度空气质量模型（CMAQ）5.3版是一个重大更新。 CMAQv5.3包括对基本模型（CCTM）中科学算法的一些更改，以及对检测模型，预处理程序，后处理程序和实用工具的更新。 CMAQv5.3主要由美国EPA开发，也包括研究合作伙伴的贡献。自上一版本（CMAQv5.2.1）以来，CMAQ模型的主要功能改进如下。
 
 <a id="instrumented_models"></a>
-## Instrumented Models
- * [ISAM for CMAQv5.3](updates_to_CMAQ_ISAM.md)
- * [Sulfur Tracking Model (STM) for CMAQv5.3](sulfur_tracking.md)
- * CMAQv5.3-DDM-3D will be released later in 2020. 
- * [Documentation for CMAQv5.2-DDM-3D](https://github.com/USEPA/CMAQ/blob/5.2_DDM-3D/DOCS/Instrumented_Docs/CMAQ_DDM.md)
+## 检测模型（Instrumented Models）
+* [CMAQv5.3的ISAM](updates_to_CMAQ_ISAM.md)
+* [CMAQv5.3的硫追踪模型（STM）](sulfur_tracking.md)
+* CMAQv5.3-DDM-3D将于2020年晚些时候发布。
+* [CMAQv5.2-DDM-3D文档](https://github.com/zhifzhang/CMAQ/blob/5.2_DDM-3D/DOCS/Instrumented_Docs/CMAQ_DDM.md )
 
- 
 <a id="chemistry"></a>
-## Chemistry
-### Photochemistry
+## 化学
+### 光化学
 
-  * [Removal of obsolete mechanisms in CMAQv5.3](obsolete_mechanisms.md)
-  * [Revision of halogen-mediated first-order ozone loss (all mechanisms)](simple_halogen_chemistry.md)
-  * [Adding detailed halogen and DMS chemistry to CB6r3](detailed_halogen_and_DMS_chemistry.md)
-  * [Updates to the chlorine chemistry in CB6r3 in CMAQv5.3](chlorine_chemistry_CB6r3.md)
-  * [Updates to the utilities that create an EBI solver](updates_to_create_ebi.md)
-  * [Allow EBI solvers to conduct integrated reaction rate analysis](allow_ebi_to_do_IRR_analysis.md)
-  
-### Photolysis Rates
- * [Updates to inline photolysis diagnostics and OMI data files](inline_phot_diagnostic_and_OMI.md)
- * [Removing sporadic floating point crashes with the PGI Fortran compiler](inline_phot_pgi_floating_point_crashes.md)
- * [Updates to the _inline_phot_preproc_ utility](updates_to_inline_phot_preproc.md)
- 
-### New Aerosol Modules AERO7 and AERO7i
-  * [Overview of *AERO7* and *AERO7i*](aero7_overview.md)  
-  * [Monoterpene SOA](monoterpene_SOA.md)  
-  * [Reorganization of anthropogenic SOA species](anthro_SOA.md)  
-  * [Added uptake of water onto hydrophilic organic aerosol](organic_water.md)  
-  * [Corrected the conversion of inorganic to organic sulfate](inorganicsulfate_iepox_fix.md)  
-  * [Nonvolatile POA Option in CMAQv5.3](nonvolatile_POA.md)
-  * [Streamlined SOA Module](streamlined_SOA.md)
+* [删除过时的化学机制](obsolete_mechanisms.md)
+* [修订卤族元素导致的一次臭氧损失（所有化学机制）](simple_halogen_chemistry.md)
+* [在CB6r3中添加详细的卤族元素和DMS化学成分](detailed_halogen_and_DMS_chemistry.md)
+* [更新B6r3中氯化学](chlorine_chemistry_CB6r3.md)
+* [更新创建EBI求解器的实用程序](updates_to_create_ebi.md)
+* [允许EBI求解器进行综合反应速率分析](allow_ebi_to_do_IRR_analysis.md)
 
-### Other Aerosol Processes
-  * [Aerosol Dry Deposition Algorithm Updated](aerosol_dry_deposition.md)  
-  * [Fix to Gravitational Settling Sub-Time-Step Calculation](gravitational_settling.md)  
-  * [Simplify Propagation of Aerosol Surface Area to Heterogeneous Chemistry Algorithm](HetChem_aerosol_param.md)
-  
-### Aqueous and Heterogeneous Chemistry
- * [AQCHEM-KMT2: Extended inorganic and organic cloud chemistry using the Kinetic PreProcessor](aqchem-kmt2.md)
- 
-## Transport Processes
- * [Changed ACM2 PBL model _vdiff_ to use Z-coordinates](VdiffZ.md)
- * [Changed ACM cloud model to use Z-coordinates](Z-coords%20for%20ACMcloud.md)
- 
-## Air-Surface Exchange
- * [New NH<sub>3</sub> bi-directional flux in M3Dry linked to daily EPIC input](M3dry-Bidi.md)
- * [STAGE: *Surface Tiled Aerosol and Gaseous Exchange* dry deposition option](stage_overview.md)
- * [Minor updates to air-surface exchange options](asx_run_options.md)
+### 光解速率
+* [更新在线光解诊断和OMI数据文件](inline_phot_diagnostic_and_OMI.md)
+* [使用PGI Fortran编译器解决偶发的浮点崩溃问题](inline_phot_pgi_floating_point_crashes.md)
+* [更新在线光解预处理实用程序](updates_to_inline_phot_preproc.md)
 
-## Emission Updates
- * [DESID: *Detailed Emissions Scaling, Isolation and Diagnostic* Module](emissions_redesign.md)
- * [BEIS Default Chemical Mapping](BEIS_mapping.md)
- * [Biogenic speciation update for *AERO7*](biogenic_apinene.md)
+### 新的气溶胶模块AERO7和AERO7i
+* [ *AERO7* 和 *AERO7i* 概述](aero7_overview.md)
+* [单萜SOA（萜类化合物之一）](monoterpene_SOA.md)
+* [重组人为的SOA物种](anthro_SOA.md)
+* [在亲水性有机气溶胶中增加水吸收](organic_water.md)
+* [纠正了无机盐向有机硫酸盐的转化错误](inorganicsulfate_iepox_fix.md)
+* [非易失性POA选项](nonvolatile_POA.md)
+* [精简SOA模块](streamlined_SOA.md)
 
-## Process Analysis
- * [Process analysis for aerosol sub-processes](aerosol_process_analysis.md)
- * [IRR analysis available in EBI solvers](allow_ebi_to_do_IRR_analysis.md)
+### 其他气溶胶处理
+* [更新溶胶干法沉积算法](aerosol_dry_deposition.md)
+* [修正重力沉降子时间步长的计算](gravitational_settling.md)
+* [简化气溶胶表面积向异质化学算法的传播](HetChem_aerosol_param.md)
 
-## Structural Improvements
- * [Log File Output: Streamlining and Centralization](logfile.md)
- * [Move Photolysis Rate Calculation to SCIPROC](move_phot_to_sciproc.md)
- * [Standardized Units for Output Variables](output_units.md)
- * [New Centralized Input/Output Module (CIO)](centralized_io.md)
- * [Implementation of New Chemical Namelist Format](chemical_namelists.md)
+### 水和非均相化学
+* [AQCHEM-KMT2：使用动力学预处理程序扩展了无机和有机云化学](aqchem-kmt2.md)
 
-## Diagnostic Options
- * [Vertical Profile Extraction: extend CCTM to output vertical profiles at specified locations](vertical_extraction.md)
+## 运输过程处理
+* [更改ACM2 PBL模型 _vdiff_ 以使用Z坐标](VdiffZ.md)
+* [更改了ACM云模型以使用Z坐标](Z-coords%20for%20ACMcloud.md)
 
-## Pre-processors, Post-processors, and Utilities
- * [Updates in MCIPv5.0](../../PREP/mcip/docs/ReleaseNotes)
- * [Updates to the ICON and BCON pre-processors.](updates_to_ICON_BCON.md)
- * [*create_omi*: Creating the OMI data file for inline photolysis](Add_create_omi_tool.md)
- * [Updates to the *create_ebi* utility](updates_to_create_ebi.md)
- * [Updates to the *inline_phot_preproc* utility](updates_to_inline_phot_preproc.md)
- * [Updates to species definition files for organic aerosols](specdef_aero.md)
- * [Updates to post-processing utilities](postprocessing_tools.md)
+## 空气地面交换
+* [在M3Dry中新增与每日EPIC输入关联的NH<sub>3</sub>双向通量](M3dry-Bidi.md)
+* [阶段： *表面平铺的气溶胶和气体交换* 干法沉积选项](stage_overview.md)
+* [轻微更新了空气地面交换选项](asx_run_options.md)
 
+## 排放更新
+
+* [DESID： *详细的排放尺度，隔离和诊断* 模块](emissions_redesign.md)
+* [BEIS默认化学图谱](BEIS_mapping.md)
+* [更新 *AERO7* 的生物物种](biogenic_apinene.md)
+
+## 分析程序
+* [气溶胶子过程的过程分析](aerosol_process_analysis.md)
+* [EBI求解器中的IRR分析](allow_ebi_to_do_IRR_analysis.md)
+
+## 结构改进
+* [简化和集中化日志文件输出](logfile.md)
+* [将光解速率计算移至SCIPROC](move_phot_to_sciproc.md)
+* [输出变量的标准化单位](output_units.md)
+* [新的集中式输入/输出模块（CIO）](centralized_io.md)
+* [实现新的化学名称列表格式](chemical_namelists.md)
+
+## 诊断选项
+* [垂直廓线提取：扩展CCTM以在指定位置输出垂直廓线](vertical_extraction.md)
+
+## 前处理器，后处理器和实用程序
+* [MCIPv5.0中的更新](../../PREP/mcip/docs/ReleaseNotes)
+* [更新ICON和BCON预处理器。](updates_to_ICON_BCON.md)
+* [ *create_omi*  ：创建用于在线光解的OMI数据文件](Add_create_omi_tool.md)
+* [更新 *create_ebi* 实用程序](updates_to_create_ebi.md)
+* [更新 *inline_phot_preproc* 实用程序](updates_to_inline_phot_preproc.md)
+* [更新有机气溶胶种类定义文件](specdef_aero.md)
+* [更新后处理实用程序](postprocessing_tools.md)

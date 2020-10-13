@@ -1,7 +1,6 @@
-CMAQv5.3.2 Known Issues
+CMAQv5.3.2已知问题
 =====================
 
-This directory contains descriptions and solutions for Known Issues in the [Community Multiscale Air Quality (CMAQ)](http://www.epa.gov/cmaq) modeling system.
+此目录包含[社区多尺度空气质量模型（CMAQ）]( http://www.epa.gov/cmaq )中已知问题的描述和解决方案。
 
-There are currently no known issues with CMAQv5.3.2.
-
+CMAQv5.3.2当前没有已知问题。
