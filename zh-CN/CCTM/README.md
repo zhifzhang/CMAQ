@@ -1,21 +1,21 @@
-CMAQ Chemistry Transport Model (CCTM)
+CMAQ化学传输模型（CMAQ Chemistry Transport Model，CCTM）
 ========
 
-## Overview
-CCTM is the Eulerian chemistry and transport component of CMAQ. It uses input data produced by the other CMAQ programs and from meteorological and emissions models. CCTM produces multiple output files for each simulation. The basic CCTM outputs include instantaneous and average hourly concentration files, wet and dry deposition files, and visibility estimates. Other CCTM outputs can include diagnostic aerosol and cloud files and processes analysis files.
+## 概述
+CCTM是CMAQ的欧拉化学和传输组件。它使用其他CMAQ程序以及气象和排放模型生成的输入数据。CCTM为每次模拟生成多个输出文件。CCTM的基本输出包括瞬时和平均每小时浓度文件、干湿沉降文件以及能见度估算。CCTM还可以输出诊断气溶胶、云文件、以及过程分析文件。
 
-CCTM contains several science configurations for simulating transport, chemistry, and deposition. All of the science configuration options in CCTM, such as the chemical mechanism to be used, are set when compiling the executable. The model grid and vertical layer structure for CCTM are set at execution. The important distinction between selecting the science configuration and the model grid/layer configuration is that CCTM does not need to be recompiled when changing model grids/layers but does need to be recompiled when new science options are invoked.
+CCTM包含多种用于模拟传输、化学和沉降的科学配置。编译可执行文件时，将设置CCTM中的所有科学配置选项，例如要使用的化学机制。而在执行时设置CCTM的模型网格和垂直层结构。因此，**更改模型网格/垂直层结构时，无需重新编译CCTM，而在调用新的科学选项时，则需要重新编译CCTM**。
 
-Optional output files are created when their associated processes are invoked in CCTM. For example, when CCTM is compiled with process analysis turned on, additional output files are created.
+在CCTM中调用它们的关联过程时，将创建可选的输出文件。例如，当CCTM在打开过程分析的情况下编译时，将创建其他输出文件。
 
-CCTM includes options for the in-line processing of emissions and photolysis rates. In-line refers to the handling of processes that had previously been accomplished outside of CCTM, such as emissions processing with SMOKE, with algorithms internal to CCTM. The benefits of in-line emissions processing include the integration of higher time-resolution meteorology in the computation of biogenic emissions and plume rise from point sources and the avoidance of the large data storage burden required for emissions data. The benefit of in-line photolysis rate calculations is the inclusion of predicted gas and aerosol concentrations in the rate calculations.
+CCTM包括用于排放和光解速率的“内联（in-line）”处理选项。“内联（in-line）”是指使用CCTM内部算法对以前在CCTM之外（例如使用SMOKE进行排放处理）完成的过程进行处理。“内联（in-line）”排放处理的好处在于在计算生物源排放和点源烟羽抬升时可以考虑更高的时间分辨率的气象影响，并避免了排放数据所需的大数据存储负担。“内联（in-line）”光解速率计算的好处是在速率计算中可以包括预测的气体和气溶胶浓度。
 
-Both in-line emissions and photolysis are invoked through compile-time configuration options for CCTM. When CCTM is instrumented for in-line emissions calculations, a series of additional input files and environment variables are required at execution. The details of these additional inputs are provided below. In-line photolysis does not require any additional inputs as CCTM includes all of the photolysis rate data internal to the in-line instrumented version of the model.
+通过CCTM编译时的配置可以调用“内联（in-line）”排放和光解速率选项。当CCTM被用于“内联（in-line）”排放计算时，在执行时需要一系列附加的输入文件和环境变量，这些额外输入的详细信息在下面提供。“内联（in-line）”光解处理不需要其他任何输入，因为CCTM内部已经包括了模型“内联（in-line）”检测版本的所有光解速率数据。
 
-## Directories
-* **scripts**: build and run scripts
-* **src**: model source code
+## 目录
+* **scripts**: 构建和运行脚本
+* **src**: 模型源代码
 
-## Documentation
-* CMAQ Science Options are discussed in [Chapter 6 of the User's Guide](../DOCS/Users_Guide/CMAQ_UG_ch06_model_configuration_options.md).
-* Description of CCTM environment variables are provided in comments in the CCTM build and run scripts and as well as [Appendix A of the User's Guide](../DOCS/Users_Guide/Appendix/CMAQ_UG_appendixA_model_options.md).
+## 文档
+* 更多关于CMAQ科学选项的内容可以参见[用户指南第6章]( ../DOCS/Users_Guide/CMAQ_UG_ch06_model_configuration_options.md )。
+* CCTM构建和运行脚本中的注释以及[用户指南的附录A]( ../DOCS/Users_Guide/Appendix/CMAQ_UG_appendixA_model_options.md )中提供了有关CCTM环境变量的说明。
