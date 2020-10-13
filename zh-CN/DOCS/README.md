@@ -1,21 +1,18 @@
-CMAQ Documentation
+CMAQ文档
 ==================
 
-This directory contains documentation for the [Community Multiscale Air Quality (CMAQ)](http://www.epa.gov/cmaq) modeling system.
-While documentation is packaged with the code when it is downloaded or cloned, users are encouraged to go [online](https://github.com/USEPA/CMAQ/tree/master/DOCS) to view the latest version.
+本目录包含[社区多尺度空气质量（CMAQ）](http://www.epa.gov/cmaq) 虽然在下载或克隆文档时将其与代码打包在一起，但鼓励用户[在线](/README.md) 查看最新版本。
 
-The following documents are available for the CMAQ v5.3.x release:
+以下文档可用于CMAQ v5.3.x版本：
 
-- [Release Notes](Release_Notes/README.md): Technical notes on the new features and science in this release of CMAQ.  
+- [发行说明]( Release_Notes/README.md ) ：有关此CMAQ版本中新功能的技术说明。
 
-- [CMAQ User's Guide](Users_Guide/README.md): Instructions on how to set up and run the model and information on CMAQ's different science options and instrumented versions.
+- [CMAQ用户指南]( Users_Guide/README.md ) ：有关如何设置和运行模型的说明，以及有关CMAQ的不同科学选项和仪器版本的信息。
 
-- [Tutorials](Users_Guide/Tutorials/README.md): Included with the User's Guide, a series of short tutorials provide practical examples of how to set up and run CMAQ, exercise different features in the software, and better understand the software system.
+- [教程](Users_Guide/Tutorials/README.md)：本用户指南随附了一系列简短的教程，提供了有关如何设置和运行CMAQ，如何使用软件中的不同功能以及如何更好地理解软件系统的实用示例。
 
-- [Chemical Mechanism Tables](../CCTM/src/MECHS/README.md): Tables of model species and chemical reactions in each chemical mechanism available in v5.3.
+- [化学机理表]( ../CCTM/src/MECHS/README.md ) ：v5.3中每种化学机理的物质种类和化学反应表。
 
-- [Known Issues](Known_Issues/README.md): A comprehensive list of the issues that have been identified and solved, but not incorporated, in the current release version of CMAQ. Recommended solutions are provided with each issue entry.
+- [已知问题]( Known_Issues/README.md ) ：CMAQ当前版中已发现和解决但尚未合并的问题列表。每个问题均提供了推荐的解决方案。
 
-- [Developers' Guide](Developers_Guide/CMAQ_Dev_Guide.md): A guide to version control practices and expectations adopted by the CMAQ development team and enforced on itself and any other collaborators who wish to contribute code.
-
-
+- [开发人员指南]( Developers_Guide/CMAQ_Dev_Guide.md ) ：CMAQ开发团队采用的版本控制指南，希望提供代码的其他协作者应按此指南进行开发。
