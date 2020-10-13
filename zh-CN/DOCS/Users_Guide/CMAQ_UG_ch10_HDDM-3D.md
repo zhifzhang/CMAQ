@@ -1,39 +1,39 @@
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Chapter](CMAQ_UG_ch09_process_analysis.md) - [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch11_ISAM.md)
+[<< 前一章](CMAQ_UG_ch09_process_analysis.md) - [返回](README.md) - [下一章 >>](CMAQ_UG_ch11_ISAM.md)
 
 <!-- END COMMENT -->
 
-# 10. Decoupled Direct Method in Three Dimensions (CMAQ-DDM-3D)
+# 10 三维解耦直接方法 (Decoupled Direct Method in Three Dimensions，CMAQ-DDM-3D)
 
-## 10.1 Introduction
+## 10.1 简介
 
-The Decoupled Direct Method in Three Dimensions (DDM-3D) provides CMAQ concentration and deposition sensitivity information for user specified model parameters.
+三维解耦直接方法（DDM-3D）可以分析用户指定的模型参数对CMAQ浓度和沉降结果的敏感度。
 
-In air quality modeling, sensitivities measure the response of a model output to a change in one or several predefined model parameters. In policy applications, the parameters of interest are usually emissions and the output of interest is pollutant concentrations. We may be interested in emissions from a particular geographical region, like an urban area, a group of states, or a country, and/or emissions from a particular source, such as wildfires, electricity generating units (EGUs), or light duty diesel trucks.
+在空气质量建模中，敏感度分析是评价模型对一个或多个参数变化的响应情况。在政策应用中，目标参数通常是排放，目标输出是污染物浓度。我们可能会关注来自特定地理区域（例如多个市、州或者国家）的排放和/或来自特定污染源（例如野火、发电机组（EGUs）或轻型柴油卡车）的排放。
 
-Emissions sensitivities can be calculated by simply running the air quality model twice – once with standard emissions inputs, and once with the emissions of interest adjusted in some way. The difference in outputs between the two runs in relation to the size of the adjustment then becomes the model sensitivity. While this process is fairly easy to implement and interpret, it quickly becomes computationally complex as the number of desired sensitivities increases. For example, calculating sensitivity to EGU emissions from 10 southeastern states in the U.S. would require 11 separate air quality model simulations.
+这是我们可以通过简单地运行两次空气质量模型来计算排放的敏感度————一次使用标准的排放源输入，另一次对我们关注的排放源进行某种调整。相对于调整大小，两次运行之间的输出差异将成为模型的敏感度。尽管此过程相当容易实现和解释，但随着需要分析的敏感度参数的增加，采用这种计算方法就很快变得复杂起来。例如，要计算美国东南部10个州对EGU排放的敏感度，将需要进行11次单独的空气质量模型模拟。
 
-Alternatively, model sensitivities can be calculated with CMAQ-DDM-3D. This is done by altering the existing model algorithms to allow for sensitivity propagation through every science module in CMAQ. While this process does require more computational resources than standard CMAQ, it scales favorably with the number of desired parameters.
+或者，我们可以使用CMAQ-DDM-3D计算模型的敏感度。这是通过更改现有模型算法来实现的，该算法通过CMAQ中的每个科学模块来传递敏感度。尽管此过程确实比标准CMAQ运行过程需要更多的计算资源，但它可以随着所需参数的数量扩展而不需要重复多次计算。
 
-Besides emissions, sensitivities to other model parameters can also be calculated. Currently, CMAQ-DDM-3D can be used for sensitivity to emission rates, boundary conditions, initial conditions, reaction rates, potential vorticity, or any combination of these parameters. Second order sensitivity calculations, or sensitivity of sensitivity, sometimes known as higher-order DDM-3D (HDDM-3D) are also available.  Note: second order sensitivity outputs for particulate matter species are still in development and should be considered as a research option. 
+除了排放源，CMAQ-DDM-3D还可以用来计算对其他模型参数的敏感度。目前，CMAQ-DDM-3D可用于对排放速率、边界条件、初始条件、反应速率、潜在涡度或这些参数的任意组合进行敏感度分析。也可以用于二阶敏感度计算、或者称为敏感度的敏感度、有时也称为高阶DDM-3D（HDDM-3D）。注意：关于颗粒物的二阶敏感度分析目前仍在开发中，应被作为一种研究选项而非正式功能。
 
-## 10.2 CMAQ-DDM-3D Releases
+## 10.2 CMAQ-DDM-3D发布
 
-Current CMAQ-DDM-3D implementation is available for version 5.2 of the Community Multiscale Air Quality (CMAQ) model.  
+当前的CMAQ-DDM-3D可用于CMAQ模型的5.2版本。
 
-* [Link to CMAQv5.2 DDM-3D source code and scripts](https://github.com/USEPA/CMAQ/tree/5.2_DDM-3D)
-* [Direct download to CMAQv5.2 DDM-3D source code and scripts](https://github.com/USEPA/CMAQ/archive/5.2_DDM-3D.zip)
-* [Documentation for CMAQv5.2 DDM-3D](https://github.com/USEPA/CMAQ/blob/5.2_DDM-3D/DOCS/Instrumented_Docs/CMAQ_DDM.md)
+* [CMAQv5.2 DDM-3D源代码和脚本储存库](https://github.com/zhifzhang/CMAQ/tree/5.2_DDM-3D)
+* [下载CMAQv5.2 DDM-3D源代码和脚本的压缩包](https://github.com/zhifzhang/CMAQ/archive/5.2_DDM-3D.zip)
+* [CMAQv5.2 DDM-3D文档](https://github.com/zhifzhang/CMAQ/blob/5.2_DDM-3D/DOCS/Instrumented_Docs/CMAQ_DDM.md)
 
-The migration of DDM-3D to the more recent CMAQ release is currently in development and will be included sometime after the base model release.  This documentation will be updated at that time.  
+目前将DDM-3D迁移到CMAQ新版本的开发过程正在进行中，将在基本模型发布之后择时发布。本文档将在那时进行更新。
 
-**A note about I/O API installation for DDM applications**
+**用于DDM应用程序的I/O API安装说明**
 
-I/O APIv3.2  supports up to MXFILE3=64 open files, each with up to MXVARS3=2048. DDM applications configured to calculate sensitivity to a large number of parameters may exceed this upper limit of model variables, leading to a model crash. To avoid this issue, users may use I/O API version 3.2 "large" that increases MXFILE3 to 512 and MXVARS3 to 16384. Instructions to build this version are found in [Chapter 3](https://github.com/USEPA/CMAQ/blob/master/DOCS/Users_Guide/CMAQ_UG_ch03_preparing_compute_environment.md#333-io-api-library).
+I/O API v3.2最多支持MXFILE3=64个打开文件，每个文件最多MXVARS3=2048。DDM应用程序在配置计算大量参数的敏感性时可能会超出模型该变量的上限，从而导致模型崩溃。为避免此问题，用户可以使用I/O API v5.3-large，它将MXFILE3增加到512，将MXVARS3增加到16384。编译该版本的说明详见[第3章]( CMAQ_UG_ch03_preparing_compute_environment.md#333-io-api-library )。
 
-## 10.3 References
+## 10.3 参考文献
 
 Cohan, D.S., & Napelenok, S.L. (2011). Air Quality Response Modeling for Decision Support. Atmosphere, 2(3), 407-425. [doi: 10.3390/atmos2030407](https://www.mdpi.com/2073-4433/2/3/407)
 
@@ -41,13 +41,13 @@ Napelenok, S.L., Cohan, D.S., Odman, M.T., & Tonse, S. (2008). Extension and eva
 
 Napelenok, S.L., Cohan, D.S., Hu, Y.T., & Russell, A.G. (2006). Decoupled direct 3D sensitivity analysis for particulate matter (DDM-3D/PM). Atmospheric Environment, 40(32), 6112-6121. [doi: 10.1016/j.atmosenv.2006.05.039](https://www.sciencedirect.com/science/article/pii/S1352231006005012)
 
-**Contact**
+**联系人**
 
 [Sergey L. Napelenok](mailto:napelenok.sergey@epa.gov), Computational Exposure Division, U.S. EPA
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Chapter](CMAQ_UG_ch09_process_analysis.md) - [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch11_ISAM.md)<br>
-CMAQ User's Guide (c) 2020<br>
+[<< 前一章](CMAQ_UG_ch09_process_analysis.md) - [返回](README.md) - [下一章 >>](CMAQ_UG_ch11_ISAM.md)<br>
+CMAQ用户手册 (c) 2020<br>
 
 <!-- END COMMENT -->
