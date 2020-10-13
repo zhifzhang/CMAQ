@@ -47,25 +47,29 @@ git clone -b master https://github.com/USEPA/CMAQ.git CMAQ_REPO
 
 * [CMAQ用户指南](DOCS/Users_Guide/README.md)   
 * [发行说明](DOCS/Release_Notes/README.md)   
-* [K已知问题](DOCS/Known_Issues/README.md)   
+* [已知问题](DOCS/Known_Issues/README.md)   
 * [教程](DOCS/Users_Guide/Tutorials/README.md)   
 * [开发人员指南](DOCS/Developers_Guide/CMAQ_Dev_Guide.md)   
 * [升级到最新CMAQ版本的常见问题](DOCS/Release_Notes/CMAQ_FAQ.md) 
 
 ## CMAQ测试案例
-可从CMAS的数据仓库中获得每个CMAQ版本的基准/教程数据。输入和输出文件与通过Dataverse整理的元数据存储在Google Drive中。CMAQv5.3.2附带了2016年7月1-2日在美国东南部区域的基准输入输出数据（下面提供了链接）。这两天的输入数据集与v5.3.1发行的数据集相同，除了为美国添加了网格掩码文件：[GRIDMASK_STATES_12SE1.nc](https://drive.google.com/file/d/16JJ4d6ChBJsvMc_ErqwDBrFfGh2MnVYR/view?usp=sharing) 。因此，除非需要网格掩码文件来运行新的[ISAM测试案例](https://github.com/USEPA/CMAQ/blob/master/DOCS/Users_Guide/Tutorials/CMAQ_UG_tutorial_ISAM.md) ，或者需要使用[DESID](https://github.com/USEPA/CMAQ/blob/master/DOCS/Users_Guide/Tutorials/CMAQ_UG_tutorial_emissions.md) 来测试区域排放量缩放比例，否则已经下载了v5.3.1版本东南部区域基准输入数据的用户无需再次下载v5.3.2版本数据。v5.3.2的东南部区域基准测试输出数据与随v5.3发布的数据略有不同，详见[升级到最新CMAQ版本的常见问题](DOCS/Release_Notes/CMAQ_FAQ.md)中所述。
+可从CMAS的数据仓库中获得每个CMAQ版本的基准/教程数据。输入和输出文件与通过Dataverse整理的元数据存储在Google Drive中。CMAQv5.3.2附带了2016年7月1-2日在美国东南部区域的基准输入输出数据（下面提供了链接）。这两天的输入数据集与v5.3.1发行的数据集相同，除了为美国添加了网格掩码文件：[GRIDMASK_STATES_12SE1.nc](https://drive.google.com/file/d/16JJ4d6ChBJsvMc_ErqwDBrFfGh2MnVYR/view?usp=sharing) 。因此，除非需要网格掩码文件来运行新的[ISAM测试案例](DOCS/Users_Guide/Tutorials/CMAQ_UG_tutorial_ISAM.md) ，或者需要使用[DESID](DOCS/Users_Guide/Tutorials/CMAQ_UG_tutorial_emissions.md) 来测试区域排放量缩放比例，否则已经下载了v5.3.1版本东南部区域基准输入数据的用户无需再次下载v5.3.2版本数据。v5.3.2的东南部区域基准测试输出数据与随v5.3发布的数据略有不同，详见[升级到最新CMAQ版本的常见问题](DOCS/Release_Notes/CMAQ_FAQ.md)中所述。
 
 |**CMAQ版本** | **数据类型** | **区域** | **模拟日期** | **Dataverse DOI**|
+
 |v5.3 | 输入 | 美国本土 | 2016年1月1日至12月31日 | https://doi.org/10.15139/S3/MHNUNE |
+
 |v5.3, v5.3.1, v5.3.2| 输入 | 美国东南部 | 2016年7月1日至14日 | https://doi.org/10.15139/S3/IQVABD |
+
 |v5.3, v5.3.1| 输出 | 美国东南部 | 2016年7月1日至14日 | https://doi.org/10.15139/S3/PDE4SS |
+
 |v5.3.2| 输出 | 美国东南部| 2016年7月1日至2日 |https://doi.org/10.15139/S3/PDE4SS |
 
 也可以从美国EPA匿名ftp服务器获得基准数据： ftp://newftp.epa.gov/exposure/CMAQ/V5_3_2/Benchmark/WRFv4.1.1-CMAQv5.3.2/
 
 ## 以前的CMAQ版本
 CMAQ的后续发行版本当前可在GitHub上获得。需要特定版本时，可以使用Zenodo的DOI值。
-* [v5.3.1 (2019年12月)](https://github.com/USEPA/CMAQ/tree/5.3.1) - [doi:10.5281/zenodo.3585898](https://doi.org/10.5281/zenodo.3585898) | [用户指南](https://github.com/USEPA/CMAQ/blob/5.3.1/DOCS/Users_Guide/README.md) | [已知问题](https://github.com/USEPA/CMAQ/blob/5.3.1/DOCS/Known_Issues/README.md) | [发行说明](https://github.com/USEPA/CMAQ/blob/5.3.1/DOCS/Release_Notes/README.md) | [教程](https://github.com/USEPA/CMAQ/blob/5.3.1/DOCS/Users_Guide/Tutorials/README.md) 
+* [v5.3.1 (2019年12月)](https://github.com/zhifzhang/CMAQ/tree/5.3.1) - [doi:10.5281/zenodo.3585898](https://doi.org/10.5281/zenodo.3585898) | [用户指南](https://github.com/zhifzhang/CMAQ/blob/5.3.1/DOCS/Users_Guide/README.md) | [已知问题](https://github.com/zhifzhang/CMAQ/blob/5.3.1/DOCS/Known_Issues/README.md) | [发行说明](https://github.com/zhifzhang/CMAQ/blob/5.3.1/DOCS/Release_Notes/README.md) | [教程](https://github.com/zhifzhang/CMAQ/blob/5.3.1/DOCS/Users_Guide/Tutorials/README.md) 
 * [v5.3（2019年8月）](https://github.com/zhifzhang/CMAQ/tree/5.3 ) [-doi:10.5281/zenodo.1212601](https://doi.org/10.5281/zenodo.3379043 ) | [用户指南](https://github.com/zhifzhang/CMAQ/blob/5.3/DOCS/Users_Guide/README.md ) | [已知问题](https://github.com/zhifzhang/CMAQ/blob/5.3/DOCS/Known_Issues/README.md )  | [发行说明](https://github.com/zhifzhang/CMAQ/blob/5.3/DOCS/Release_Notes/README.md ) | [教程](https://github.com/zhifzhang/CMAQ/blob/5.3/DOCS/Users_Guide/Tutorials/README.MD )
 * [v5.2.1（2018年3月）](https://github.com/zhifzhang/CMAQ/tree/5.2.1 ) [-doi:10.5281/zenodo.1212601](https://zenodo.org/record/1212601 ) | [用户指南](https://github.com/zhifzhang/CMAQ/blob/5.2.1/DOCS/User_Manual/README.md ) | [已知问题](https://github.com/zhifzhang/CMAQ/blob/5.2.1/DOCS/Known_Issues/README.md ) | [发行说明](https://github.com/zhifzhang/CMAQ/blob/5.2.1/CCTM/docs/Release_Notes/README.md ) | [教程](https://github.com/zhifzhang/CMAQ/tree/5.2.1/DOCS/Tutorials )
 * [v5.2 (2017年六月)](https://github.com/zhifzhang/CMAQ/tree/5.2 ) - [doi:10.5281/zenodo.1167892](https://zenodo.org/record/1167892 ) | [用户指南](https://github.com/zhifzhang/CMAQ/blob/5.2/DOCS/User_Manual/README.md ) | [已知问题](https://github.com/zhifzhang/CMAQ/blob/5.2/DOCS/Known_Issues/README.md ) | [发行说明](https://github.com/zhifzhang/CMAQ/blob/5.2/CCTM/docs/Release_Notes/README.md ) | [教程](https://github.com/zhifzhang/CMAQ/blob/5.2/DOCS/Tutorials/README.md )
