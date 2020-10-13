@@ -1,78 +1,104 @@
 <!-- BEGIN COMMENT -->
 
-[<< Previous Appendix](CMAQ_UG_appendixA_model_options.md) - [Home](../README.md) - [Next Appendix >>](CMAQ_UG_appendixC_spatial_data.md)
+[<< 附录A](CMAQ_UG_appendixA_model_options.md) - [返回](../README.md) - [附录C >>](CMAQ_UG_appendixC_spatial_data.md)
 
 <!-- END COMMENT -->
 
 * * *
 
-# Appendix B: Emissions Input and Control
-[Jump to DESID Tutorial](../Tutorials/CMAQ_UG_tutorial_emissions.md) for step by step instructions on performing some basic manipulation of emission streams.
+# 附录B 排放源输入和控制
+跳转到[DESID教程](../Tutorials/CMAQ_UG_tutorial_emissions.md) 查阅有关排放源基本操作的逐步说明。
 
-[Jump to Emissions overview](../CMAQ_UG_ch06_model_configuration_options.md) in Chapter 6 of this User's Guide.
+跳转到本用户指南[第6章的排放源概述](../CMAQ_UG_ch06_model_configuration_options.md)。
 
-## B.1 Emissions Control with the Detailed Emissions Scaling, Isolation and Diagnostics Module (DESID)
+## B.1 带有DESID模块的排放控制
 
-In addition to the options available in the RunScript, CMAQ now reads a dedicated namelist in order to apply comprehensive rules for reading and scaling emissions. The namelist, called the **Emission Control Namelist** is named "EmissCtrl.nml" by default and a separate version exists for every mechanism because these namelists are preloaded with likely rules linking emissions of important CMAQ primary species to their typical surrogate names as output by SMOKE. By default, this namelist is stored in each chemical mechanism folder (e.g. MECHS/cb6r3_ae7_aq) and is copied into the user's build directory when bldit_cctm.csh is executed. If the user modifies the name or location of this namelist, then the following command in the RunScript should be updated as well:
+除了运行脚本中可用的选项之外，CMAQ现在还可以读取专用的名称列表，以应用全面的规则来读取和缩放排放。默认情况下，名为**排放控制名称列表，Emission Control Namelist**的名称列表被命名为“EmissCtrl.nml”，并且每种机理都有一个对应的单独版本，因为在这些名称列表中预载了可能的规则，这些规则将重要的CMAQ主要物种的排放与其由SMOKE输出的典型替代名称联系起来。默认情况下，此名称列表存储在每个化学机理文件夹中（例如MECHS/cb6r3_ae7_aq），并在执行bldit_cctm.csh时复制到用户的构建目录中。如果用户修改了此名称列表的文件名或位置，则还应相应的更新运行脚本中的以下命令：
+
 ```
 setenv EMISSCTRL_NML ${BLD}/EmissCtrl.nml
 ```
 
-The Detailed Emissions Scaling, Isolation and Diagnostics (DESID) module included with CMAQv5.3 provides comprehensive customization and transparency of emissions manipulation to the user. The customization of emissions is accomplished via the Emission Control Namelist, which contains four sections of variables that modify the behavior of the emissions module. These include ***General Specs***, ***Emission Scaling Rules***, ***Size Distributions***, and ***Regions Registry***
+CMAQv5.3中的DESID模块为用户提供了全面的自定义设置和排放操作透明性。通过**排放控制名称列表，Emission Control Namelist**可以实现排放的自定义，该列表包含四个部分的变量，这些变量可以修改排放模块的行为。其中包括***一般规格***、***排放缩放规则***、***尺寸分布***和***地区注册***。
 
-## B.2 General Specs
-These variables modify or constrain the effects of other sections of the namelist. The "Guard_XXX" options allow the user to protect specific streams from being modified by scaling rules (explained in section B.3) with the "ALL" keyword in the stream field. For example, the "Guard_BiogenicVOC" option instructs the model not to scale biogenic VOC emissions from the online BEIS module, even if a rule indicates that "ALL" streams are to be scaled. The other "Guard_XXX" options achieve the same effect for other online emissions sources like wind-blown dust, sea spray, marine gas, and lightning NO.
+## B.2 一般规格
 
-## B.3 Emission Scaling Rules
-With the rules present in this section, the user is able to exert sophisticated, precise control over the scaling applied to emissions from specific streams, in specific geographic areas, and/or for specific compounds. The set of rules used by CMAQ to interpret emissions shall be provided in one array called EM_NML. It is necessary that every field (i.e. column) be populated for every rule. The fields are given and defined here and in the comment section of the Emission Control Namelist:
+这些变量会修改或限制名称列表其他部分的效果。"Guard_XXX"选项允许用户来保护特定的源，使其避免受到源字段中的“ALL”关键字通过缩放规则（在B.3节中进行说明）的修改。例如，"Guard_BiogenicVOC"选项表示模型不要缩放来自实时计算BEIS模块的生物源VOC排放，即使规则指示“ALL”（全部的）排放源将被缩放。其他“Guard_XXX”选项对于其他实时计算排放源（如风吹扬尘、海浪、海洋气体和闪电NO）也具有相同的效果。
+
+## B.3 排放缩放规则
+
+利用本节中的规则，用户可以对应用于特定流、特定地理区域和/或特定化合物的排放量的缩放比例进行复杂、精确的控制。CMAQ用于解释排放的规则集应在一个称为EM_NML的数组中提供。必须为每个规则填充每个字段（即列）。这些字段在此处和“排放控制名称列表”的注释部分中给出和定义：
+
 ```
 ! Region      | Stream Label  |Emission | CMAQ-        |Phase/|Scale |Basis |Op  
 !  Label      |               |Surrogate| Species      |Mode  |Factor|      |
 ```
-- 'Region Label' - Apply scaling for specific regions of the domain. Set this field to "EVERYWHERE" to apply the rule to the entire domain.
-- 'Stream Label' - Short Name from Run Script (e.g. the value of GR_EMIS_01_LAB or STK_EMIS_01_LAB). There are a few reserved names that apply to online emissions streams. These are:
-  - BIOG - Biogenic VOC emissions
-  - MGEM - Marine Gas Emissions
-  - LTNG - Lightning NO Emissions
-  - WBDUST - Wind-Blown Dust Emissions
-  - SeaSpray - Sea Spray Aerosol Emissions  
 
-  Set this field to 'ALL' to apply the rule to all emission streams.  
-- 'Emission Surrogate' - The character string identifying the surrogate on the emission file or in the online calculation that the CMAQ species should be mapped to. Usually this name is the same as the CMAQ species for convenience. For aerosols, it's usually slightly different (e.g ANO3 vs. PNO3). Set this field to 'ALL' to apply the rule to all emission surrogates.  
-- 'CMAQ-Species' - Internal Species Name. Set this field to 'ALL' to apply the rule to all CMAQ internal species.
-- 'Phase/Mode' - If the CMAQ-Species is a Gas, this field should equal 'Gas'. If the CMAQ-Species is an aerosol, this field should indicate one of the possible emission aerosol modes. Every stream by default is given a 'COARSE' and 'FINE' mode. The user may refer to these or define others above and refer to them as well. This level of specificity is needed so that aerosol number and surface area are calculated correctly, and so that any unit conversions between gases and aerosols can be handled correctly.  
-- 'Scale Factor' - Adjustment factor to be applied to the mapping
-- 'Basis' - Specifies whether the scaling option should directly apply, or if the operation should conserve moles or mass when performing scaling operations. CMAQ has a lookup table of molecular weights for known emission surrogate species and can use these to translate molar and mass emission rates from the input file to the CMAQ species. CMAQ determines the units of the emission surrogate species by reading the file header (i.e. it is important the units are accurate. Options for input are:
-  - 'MASS' - Conserve Mass. For example, if emissions of an aerosol are to be scaled to emissions of a gas surrogate, it is common to want to conserve mass.
-  - 'MOLE' - Conserve Moles. For example, if emissions of a gas-phase species are to be scaled to another gas, it is sometimes desired to conserve moles since gas emissions are provided on a mole basis.
-  - 'UNIT' - Ignore molecular weight conversions and apply emission rate directly regardless of units.
-- 'Operation' - Specifies the kind of rule to be carried out. Options are:
-  - 'a' - add the rule to existing instructions. This operation should be used for new entries, too.
-  - 'm' - find existing scaling instructions matching this rule's features (ie. species, streams, etc) and multiply them by the factor in this particular rule.
-  - 'o' - find existing scaling instructions matching this rule and overwrite them.  
+- “区域标签（Region Label）” - 对模型区域的特定区域应用缩放。将此字段设置为“EVERYWHERE”以将规则应用于整个模型区域。
 
-### B.3.1 Default Rules
-The Emission Control Namelists provided with the CMAQ repo have default rules included that correspond to each chemical mechanism. Here is an example default rule that links NO in CMAQ to NO from every emission stream in every model grid cell with a scale factor of 1.0.
+- “源标签（Stream Label）” - 运行脚本的简称（例如GR_EMIS_01_LAB或STK_EMIS_01_LAB的值）。有一些保留名称适用于实时计算排放源。这些是：
+  - BIOG - 生物源VOC排放
+  - MGEM - 海洋气体排放
+  - LTNG - 闪电NO排放
+  - WBDUST - 风吹扬尘排放
+  - SeaSpray - 海浪气溶胶排放
+
+  将此字段设置为“ALL”以将规则应用于所有排放源。
+
+- “排放替代物（Emission Surrogate）” - 标识排放文件或实时计算中应映射CMAQ物种的替代物的字符串。通常，为方便起见，此名称与CMAQ物种相同。对于气溶胶，通常略有不同（例如ANO3与PNO3）。将此字段设置为“ALL”以将规则应用于所有排放替代物。
+
+- “CMAQ-物种（Species）” - 内部物种名称。将此字段设置为“ALL”以将规则应用于所有CMAQ内部物种。
+
+- “相/模态（Phase/Mode）” - 如果CMAQ-物种是气体，则此字段应为“Gas”。如果CMAQ-物种是一种气溶胶，则此字段应指示一种可能的排放气溶胶模态。默认情况下，每个源都被赋予“COARSE（粗）”和“FINE（细）”模态。用户可以直接设置为这些内容，或在上面定义其他类型并设置它们。需要这种特殊性水平，以便正确计算气溶胶数量和表面积，并可以正确处理气体和气溶胶之间的任何单位转换。
+
+- “比例因子” - 应用于映射的调整因子。
+
+- “基数（Basis）” - 指定在执行缩放操作时是否应直接应用缩放选项，或者应用缩放操作时是否保存摩尔或质量。CMAQ拥有一个已知排放替代物种类的分子量查找表，可以使用这些表将摩尔和质量排放率从输入文件转换为CMAQ物种。CMAQ通过读取文件头来确定排放替代物种类的单位，即单位的准确性很重要。输入选项包括：
+
+  - “质量（MASS）” - 保存质量。例如，如果要将气溶胶的排放量与气体替代物的排放量成比例，通常希望保存质量。
+
+  - 'MOLE（MOLE）' - 保存摩尔数。例如，如果要将气相物质的排放按比例缩放到另一种气体，则有时希望保存摩尔数，因为气体排放是以摩尔数为基础提供的。
+
+  - 'UNIT（UNIT）' - 忽略分子量转换并直接应用排放率，与单位无关。
+
+- '执行（Operation）' - 指定要执行的规则的种类，选项有：
+
+  - 'a' - 将规则添加到现有说明中。此操作也应用于新条目。
+
+  - 'm' - 查找与该规则的特征（即物种、流等）匹配的现有缩放指令，并将它们乘以该特定规则中的因子。
+
+  - 'o' - 查找符合此规则的现有扩展指令并覆盖它们。
+
+### B.3.1 默认规则
+
+CMAQ存储库中的“排放控制名称列表”包含默认规则，这些规则与每种化学机理相对应。下面是一个默认规则的示例，该规则将CMAQ中的NO链接到比例因子为1.0的每个模型网格单元中每个排放源的NO。
+
 ```
 ! Region      | Stream Label  |Emission | CMAQ-        |Phase/|Scale |Basis |Op  
 !  Label      |               |Surrogate| Species      |Mode  |Factor|      |
 'EVERYWHERE'  , 'All'         ,'NO'     ,'NO'          ,'GAS' ,1.0  ,'UNIT','a',
 ```
-Many rules are needed here in order to properly link every emitted pollutant to a CMAQ species. Rules are needed for gas- and aerosol-phase species. Additional rules also exist for online aerosol modules like wind-blown dust and sea spray because the names of aerosol surrogates from these modules are different than those typically used for SMOKE output. For example, fine-mode aerosol sulfate is commonly called PSO4 in SMOKE, but is PMFINE_SO4 from dust and sea spray.
 
-### B.3.2 Modifying Default rules
-The user can modify any default rule to change the scale factor applied. Alternatively, the user can add new rules after the default rules to customize the emissions. Typical modifications may include multiplying the emissions of a particular species from a particular stream by a factor of 2, zeroing out emissions of all species from a particular stream, etc. Please see the tutorial on [Prescribing Emissions with DESID](../Tutorials/CMAQ_UG_appendixB_emissions_control.md) for specific examples of modifications and the syntax used to invoke them.
+为了将每种排放源的污染物与CMAQ物种正确关联，此处需要许多规则。气相和气溶胶相物种需要规则。对于实时计算气溶胶模块，例如风吹扬尘和海浪排放模块，还存在其他规则，因为来自这些模块的气溶胶替代物的名称不同于通常用SMOKE输出的名称。例如，细模式的气溶胶硫酸盐在SMOKE中通常称为PSO4，而在风吹扬尘和海浪排放模块中则称为PMFINE_SO4。
 
-#### B.3.2.1 Supporting the Volatility Basis Set
-The *Volatility Basis Set* for treating the semivolatile partitioning of primary organic emissions is an example of a model feature that is well-supported by DESID. The approach involves distributing the emissions of total primary organic aerosol (carbon and noncarbon mass, or POC and PNCOM) among a series of aerosol and gas species of varying volatility.
+### B.3.2 修改默认规则
 
-If the user would like to invoke the nonvolatile partitioning assumption, it can be accomplished by directing all POC and PNCOM emissions to the POC and PNCOM species in CMAQ.
+用户可以修改任何默认规则来更改应用的比例因子。或者，用户可以在默认规则之后添加新规则以自定义排放。典型的修改可能包括将特定源中的特定物种的排放量乘以2倍，或将特定源中的所有物种的排放量乘以零，等等。请参见有关[使用DESID规定排放量]( ../Tutorials/CMAQ_UG_appendixB_emissions_control.md )以获取修改的具体示例以及用于调用它们的语法。
+
+#### B.3.2.1 支持挥发性基础集
+
+用于处理一次有机排放物的半挥发性分区的*挥发性基础集（Volatility Basis Set）*是DESID很好支持的模型特征的一个示例。该方法涉及在一系列挥发性不同的气溶胶和气体种类之间分配总的一次有机气溶胶（碳和非碳质量、或POC和PNCOM）的排放。
+
+如果用户想调用不挥发性划分假设，则可以通过将所有POC和PNCOM排放定向到CMAQ中的POC和PNCOM种类来实现。
+
 ```
   ! --> Nonvolatile POA
   'EVERYWHERE', 'ALL'         ,'POC'    ,'APOC'        ,'FINE',1.   ,'MASS','a',
   'EVERYWHERE', 'ALL'         ,'PNCOM'  ,'APNCOM'      ,'FINE',1.   ,'MASS','a',
 ```
-If the user would like to apply the default volatility distribution to the POA emissions, it can be accomplished with the following default rules.
+
+如果用户希望将默认挥发性划分应用于POA排放，则可以使用以下默认规则来完成。
+
 ```
   ! --> Semivolatile POA
   'EVERYWHERE', 'ALL'         ,'POC'    ,'VLVPO1'      ,'GAS' ,0.   ,'MASS','a',
@@ -96,26 +122,31 @@ If the user would like to apply the default volatility distribution to the POA e
   'EVERYWHERE', 'ALL'         ,'POC'    ,'AIVPO1'      ,'FINE',0.   ,'MASS','a',
   'EVERYWHERE', 'ALL'         ,'PNCOM'  ,'AIVPO1'      ,'FINE',0.   ,'MASS','a',
 ```
-Notice that for each species (e.g. ALVPO1) a rule is needed to link the species to the emissions of POC and another rule is needed to add PNCOM. This is because both carbon and noncarbon mass are part of the emissions of every semivolatile species. To change the volatility distribution for all streams, the user may modify the scaling factors in the default rules above. To introduce specialized volatility distributions for specific stream (e.g. residential wood burning, forest fires, diesel vehicles, etc), rules may be added which explicitly identify a stream in the "Stream Label" field.
 
-## B.4 Applying Masks for Spatial Dependence
-Gridded masks are used to apply rules to specific areas of the domain. For example, the following rule:
+请注意，对于每个物种（例如ALVPO1），都需要一个规则来将该物种与POC的排放联系起来，并且需要另一个规则来添加PNCOM。这是因为碳和非碳质量都是每个半挥发性物质排放的一部分。要更改所有源的挥发性分布，用户可以在上面的默认规则中修改比例因子。如果要为特定源（例如住宅木材燃烧、森林火灾、柴油车辆等）引入专门的挥发性分布，可以在“源标签（Stream Label）”字段中添加规则，以明确标识排放源。
+
+## B.4 为空间依赖性应用蒙版
+
+网格化的蒙版用于将规则应用于模型区域的特定区域。例如，以下规则：
+
 ```
 ! Region      | Stream Label  |Emission | CMAQ-        |Phase/|Scale |Basis |Op  
 !  Label      |               |Surrogate| Species      |Mode  |Factor|      |
 'KENTUCKY'    , 'All'         ,'All'    ,'All'         ,'All' ,1.50 ,'UNIT','m',
 ```
-will scale emissions of all species from all streams by +50% but only in grid cells in the state of Kentucky. One or more I/O API formatted input files containing geographic region definitions are required to take advantage of this option.  Such files should contain a separate variable for each spatial region of interest.  Each variable is a gridded field of real numbers from 0.0 to 1.0, with 0.0 outside of the region of interest and 1.0 completely inside the region. Region border grid cells should have the geographic fraction attributed to the region (for example, a grid cell that 35% in Kentucky and 65% in Tennessee would have have the number 0.35 for the variable representing the Kentucky mask.
 
-These mask files are read by CMAQ through environmental variables, which are identified in the RunScript. For example:
+将使所有排放源中的所有物种的排放量增加50％，但仅限于肯塔基州的网格中。要使用此选项，需要一个或多个包含地理区域定义的I/O API格式的输入文件。对于每个感兴趣的空间区域，此类文件应包含一个单独的变量。每个变量都是从0.0到1.0的实数的网格字段，其中0.0标明该网格在感兴趣区域之外，而1.0标明该网格完全在感兴趣区域内部。区域边界网格单元应具有归属于该区域的地理分数（例如，在肯塔基州35％和田纳西州65％的网格单元中，代表肯塔基州蒙版的变量的数字为0.35。
+
+CMAQ通过运行脚本中标识的环境变量来读取这些蒙版文件。例如：
 
 ```
 setenv US_STATES /home/${CMAQ_HOME}/CCTM/scripts/us_states.nc
 ```
 
-If variables from multiple mask files are used, each of these mask files needs to be defined in the RunScript. 
+如果使用了来自多个蒙版文件的变量，则需要在运行脚本中定义每个蒙版文件。
 
-The *RegionsRegistry* section of the Emission Control Namelist maps each "Region Label" to specific variables on specific files. Here is the *RegionsRegistry* section in the default namelist:
+排放控制名称列表的*地区注册（RegionsRegistry）*部分将每个“区域标签（Region Label）”映射到特定文件上的特定变量。这是默认名称列表中的*地区注册（RegionsRegistry）*部分：
+
 ```
 &RegionsRegistry
  RGN_NML  =   
@@ -125,20 +156,23 @@ The *RegionsRegistry* section of the Emission Control Namelist maps each "Region
  !<Example>    'ALL'         ,'CMAQ_MASKS' ,'ALL',
 /
 ```
-As indicated, the Region Label "EVERYWHERE" is active by default and returns a mask that operates uniformly across the entire domain. The "File_Label" field identifies the environment variable in the RunScript that stores the location and name of the file containing the mask. The user may modify this to any name they wish as long as it is consistent with the variable name on the RunScript. The "Variable on File" field identifies the variable on the input file that stores the gridded field to be used for this region. Examples are provided for two cases.
 
-In the first case, a region with label "WATER" is defined and referenced to the variable "OPEN" (which is short for *open water*) in the file 'CMAQ_MASKS' which needs to be defined in the RunScript. Using this "WATER" region will apply a scaling rule only for open water grid cells and fractionally along coastlines. The second example provides a shortcut for files with many variables that are all desired (e.g. states of the Unites States). Rather than listing out all variables on the file and explicitly linking them to "Region Labels", the user can invoke the "ALL" keyword and all variables will be read and stored with "Region Labels" that equal the names of the variables on the file.
+如上所示，默认情况下，区域标签（Region Label）“EVERYWHERE”处于活动状态，并返回在整个区域中统一操作的蒙版。“File_Label”字段在运行脚本中标识环境变量，该环境变量存储包含蒙版的文件的位置和名称。用户可以将其修改为所需的任何名称，只要它与运行脚本上的变量名称一致即可。“文件上的变量（Variable on File）”字段标识输入文件上的变量，该变量存储要用于此区域的网格化字段。上面提供了两种情况的示例。
 
-Two example mask files are available on the CMAS Data Warehouse: US states grid mask file and NOAA climate regions grid mask file.  These mask files can be used with the 12US1 modeling grid domain (grid origin x = -2556000 m, y = -1728000 m; N columns = 459, N rows = 299).
+第一个示例，需要在运行脚本中定义的文件“CMAQ_MASKS”中，定义一个标签名为“WATER”的区域，并对应到变量“OPEN”（*open water*的缩写）。使用此“WATER”区域，将仅对开放水域网格单元以及沿海岸线的一部分应用缩放规则。第二个示例为具有许多所需变量的文件提供了快捷方式（例如，美国的各个州）。用户可以调用“ALL”关键字，将读取所有变量并与“区域标签”存储在一起，该“区域标签”等于文件上变量的名称，而不是逐个列出文件上的所有变量并将其显式链接到“区域标签（Region Label）”。
 
-* [Link to grid mask files on CMAS Data Warehouse Google Drive](https://drive.google.com/drive/folders/1x9mJUbKjJaMDFawgy2PUbETwEUopAQDl)
-* [Link to metadata for the grid mask files is posted on the CMAS Center Dataverse site](https://doi.org/10.15139/S3/XDYYB9)
+CMAS数据仓库上有两个蒙版示例文件：美国各州的网格蒙版文件和NOAA气候区域网格蒙版文件。这些蒙版文件可用于12US1建模网格区域（网格原点x=-2556000m，y=-1728000m；列数=459，行数=299）。
+
+* [CMAS数据仓库Google Drive上的网格蒙版文件](https://drive.google.com/drive/folders/1x9mJUbKjJaMDFawgy2PUbETwEUopAQDl)
+* [CMAS中心Dataverse上的网格蒙版文件元数据](https://doi.org/10.15139/S3/XDYYB9)
 
 
-## B.5 Aerosol Size Distributions
-The treatment of aerosol size distributions in CMAQv5.3 has been updated to be more consistent with the way particle sizes and modes are treated by the National Emission Inventory and in emissions processing tools like SMOKE, MOVES, SPECIATE, and Speciation Tool. Specifically, in these tools, aerosol emissions are typically parameterized into two main modes, Fine and Coarse. Although the size distribution parameters (i.e. total number, diameter, standard deviation, etc.) for these modes will vary among emission sources, previous versions of CMAQ assumed that all primary fine particles had the same size distribution upon emission. Coarse-mode particles were assumed to exhibit a larger diameter but were also uniform across all sources (excluding wind-blown dust and sea spray).
+## B.5 气溶胶尺寸分布
 
-In CMAQv5.3, users link particle emission surrogates to CMAQ particle species via the [EmissionScalingRules](CMAQ_UG_appendixB_emissions_control.md#b3-emission-scaling-rules) section of the Emission Control Namelist. Examples of default mapping rules can be found in any of the Emission Control Namelists in the CMAQ repository. The three lines below assign emissions for all streams for particulate-phase sulfate, ammonium, and nitrate.
+CMAQv5.3中对气溶胶尺寸分布的处理已更新为与国家排放清单和排放处理工具（如SMOKE、MOVES、SPECIATE和Specification Tool）中处理颗粒大小和模式的方式更加一致。具体而言，在这些工具中，通常将气溶胶排放参数化为两种主要模式：细（Fine）和粗（Coarse）。尽管这些模式的尺寸分布参数（即总数、直径、标准偏差等）在排放源之间会有所不同，但以前版本的CMAQ假定所有一次细颗粒物在排放时都具有相同的尺寸分布。粗粒子被假定具有较大的直径，但在所有来源（风吹扬尘和海浪排放除外）上该参数也是相同的。
+
+在CMAQv5.3中，用户通过“排放控制名称列表”的[EmissionScalingRules](CMAQ_UG_appendixB_emissions_control.md#b3-emission-scaling-rules)部分将粒子排放替代物链接到CMAQ粒子物种。默认映射规则的示例可以在CMAQ存储库中的任何“排放控制名称列表”中找到。下面的三行分配了所有源的硫酸盐、铵盐和硝酸盐颗粒物的排放量。
+
 ```
 ! Region      | Stream Label  |Emission | CMAQ-        |Phase/|Scale |Basis |Op  
 !  Label      |               |Surrogate| Species      |Mode  |Factor|      |
@@ -146,9 +180,11 @@ In CMAQv5.3, users link particle emission surrogates to CMAQ particle species vi
 'EVERYWHERE'  , 'ALL'         ,'PNH4'   ,'ANH4'        ,'FINE',1.0   ,'UNIT','a',
 'EVERYWHERE'  , 'ALL'         ,'PNO3'   ,'ANO3'        ,'FINE',1.0   ,'UNIT','a',
 ```
-The CMAQ-Species field should be populated with bulk chemical names (e.g. ASO4, AEC, AK, ACA, etc). In other words, the 'i','j', or 'k' which usually designates the mode of the aerosol species name should be omitted. A list of the valid aerosol bulknames exists in the source file "[AERO_DATA.F](../../../CCTM/src/aero/aero6/AERO_DATA.F)" in the array named "aerolist". The user should also identify the aerosol mode to be populated using the "Phase/Mode" field. In the example above, all of the rules identify the "FINE" mode as the destination mode. CMAQ uses this value to look up the size distribution parameters (diameter and standard deviation) to apply for this particular emission.
 
-Aerosol mode keywords from the EmissionScalingRules section are linked to reference mode labels in the SizeDistributions section of the Emission Control Namelist. These assignments can be made for all streams at once, as demonstrated by the first two default entries initializing the 'FINE' and 'COARSE' modes, or they can be made on a stream-by-stream basis as shown below for Wind-Blown Dust and Sea Spray aerosol.
+CMAQ-物种（Species）字段应填充大宗化学名称（例如ASO4、AEC、AK、ACA等）。换句话说，应省略通常表示气溶胶种类名称模式的“i”，“j”或“k”。在名为“aerolist”的数组中的源文件“[AERO_DATA.F](../../../CCTM/src/aero/aero6/AERO_DATA.F)”中存在有效的气溶胶批量名称列表。用户还应该使用“相/模态（Phase/Mode）”字段来识别要填充的气溶胶模态。在上面的示例中，所有规则都将“FINE”模态标识为目标模态。CMAQ使用此值来查找尺寸分布参数（直径和标准偏差）以适用于此特定排放。
+
+EmissionScalingRules部分中的气溶胶模态关键字链接到“排放控制名称列表”的SizeDistributions部分中的参考模太标签可以一次为所有源进行这些分配，如初始化“FINE”和“COARSE”模式的前两个默认条目所示，也可以按源的形式进行分配，如下所示为风吹扬尘和海浪排放气溶胶。
+
 ```
 &SizeDistributions
  SD_NML    =
@@ -164,7 +200,9 @@ Aerosol mode keywords from the EmissionScalingRules section are linked to refere
                                                           ! and AIR_COARSE to the data structure
                                                           ! em_aero_ref in AERO_DATA.
 ```
-The 'Ref. Mode Labels' are used to lookup size distribution parameters in [AERO_DATA.F](../../../CCTM/src/aero/aero6/AERO_DATA.F). The following reference modes are defined in this file:
+
+“Ref. Mode”标签用于在[AERO_DATA.F](../../../CCTM/src/aero/aero6/AERO_DATA.F)中查找尺寸分布参数。此文件中定义了以下参考模式：
+
 ```
 TYPE em_aero
     Character( 20 ) :: name
@@ -191,44 +229,55 @@ TYPE( em_aero ), Parameter :: em_aero_ref( n_em_aero_ref ) = (/
                                                                                            !  are calculated online.
 & /)
 ````
-Users can add as many new size distributions as they want, as long as they increment the variable n_em_aero_ref to always equal the number of size distributions in the lookup array (em_aero_ref).
 
-CMAQ will use the size distribution reference value linked to each emissions scaling rule via the phase/mode keyword to calculate the fraction of each aerosol primary emission that should go into the 'i', 'j', and 'k' modes in the internal aerosol module. At first, it may seem that the linking step between phase/mode keywords in the EmissionsScalingRules section, the corresponding mode keywords in the SizeDistributions section, and the reference mode labels is unnecesary, but it serves an important function. As stated earlier, it is common that modes of similar size from a variety of sources will be referred to by common names like 'FINE' and 'COARSE', even though the size distribution parameters may differ considerably. With the linking step provided in the SizeDistributions section, parameters for several streams can be specified individually, but all be labeled 'FINE' and applied with one rule in the EmissionsScalingRules section.
+用户可以根据需要添加任意多个新的尺寸分布，只要它们使变量n_em_aero_ref递增到始终等于查找数组（em_aero_ref）中的尺寸分布数即可。
 
-In the example above, fine mode Wind-Blown Dust are linked to 'FINE_WBDUST', sea spray aerosols are linked to 'FINE_SEASPRAY' and all other sources are linked to 'FINE_REF'. Thus, different size distributions will be calculated for each of these streams. However, if the user wants to scale the mass of all fine mode aerosol by a factor of 2, the following emission rule is valid:
+CMAQ将使用通过相/模态（phase/mode）关键字链接到每个排放比例缩放规则的尺寸分布参考值来计算每种气溶胶一次排放应在内部的“i”，“j”和“k”模式中所占的比例气溶胶模块。乍一看，似乎EmissionsScalingRules部分中的相/模态（phase/mode）关键字，SizeDistributions部分中的相应模式关键字和参考模式标签之间的链接步骤是不必要的，但是它起着重要的作用。如前所述，很常见的是，即使尺寸分布参数可能相差很大，来自各种来源的相似尺寸的模式也会被通用名称（例如“FINE”和“COARSE”）所引用。通过SizeDistributions部分中提供的链接步骤，可以分别指定几个流的参数，但是所有参数都标记为“FINE”，并在EmissionsScalingRules部分中使用一个规则应用。
+
+在上面的示例中，细模式的风吹扬尘链接到“FINE_WBDUST”，细模式的海浪气溶胶链接到“FINE_SEASPRAY”，所有其他来源链接到“FINE_REF”。因此，将为这些源中的每一个计算不同的尺寸分布。但是，如果用户希望将所有细模式气溶胶的质量按比例2来缩放，则需要以下排放规则：
 ```
 ! Region      | Stream Label  |Emission | CMAQ-        |Phase/|Scale |Basis |Op  
 !  Label      |               |Surrogate| Species      |Mode  |Factor|      |
 'EVERYWHERE'  , 'ALL'         ,'ALL'    ,'ALL'         ,'FINE',1.0   ,'UNIT','m',
 ```
 
-## B.6 Additional DESID Features
-### B.6.1 Summary Output to Processor-Specific Logfiles
-Diagnostic output is an important feature of the new emissions module, DESID. Because the impact of emissions is so critical for CMAQ predictions and because the features available for scaling emissions are now quite complex, a comprehensive text-based output has been added to the CMAQ logfiles to enhance transparency.
+## B.6 附加DESID功能
 
-The logfiles now provide several lists of information to help protect users from mistakes like inconsistent naming between emissions and CMAQ speciation. First, CMAQ reports for each stream the number and names of all the surrogate species that were not used. Second, it prints the names of surrogates that the user told it to look for but that it could not find on any of the emission streams. If the environment variable:
+### B.6.1 摘要输出到特定于处理器的日志文件
+
+诊断输出是新排放模块DESID的重要功能。由于排放的影响对于CMAQ预测至关重要，并且由于可用于缩放排放的功能现在非常复杂，因此已将基于文本的全面输出添加到CMAQ日志文件中以提高透明度。
+
+日志文件现在提供了一些信息列表，以帮助保护用户免受诸如排放源与CMAQ物种之间的命名不一致之类的错误的困扰。首先，CMAQ为每个源报告未使用的所有替代物种的数量和名称。其次，它打印用户要求其查找但在任何排放源中都找不到的替代物的名称。如果环境变量：
+
 ```
-setenv CTM_EMISCHK Y         #> Abort CMAQ if missing surrogates from emissions Input files
+setenv CTM_EMISCHK Y  #> 如果缺少排放输入文件中的替代项，则中止CMAQ
 ```
-is set to 'Y' or 'True', then the model will abort if it cannot find any individual surrogate. If the variable is set to 'N' or 'False' then CMAQ will print a warning and proceed.
 
-Finally, CMAQ loops through streams and outputs the size distribution modes available for each stream and the full list of every emission instructions applied to each stream. These are ordered by CMAQ species (with 'i', 'j', and 'k' modes listed separately) and surrogate species name so that a full understanding of the scaling rules applied to each CMAQ species' emissions can be grasped quickly. Columns are printed for the applicable region(s) of the grid, the phase/mode applied, the input scale factor, the scaling basis, the operation, and the final scale factor applied taking into account any molecular weight conversions, if needed, and size distribution fractions.
+设置为“Y”或“True”，则该模型如果找不到任何单个替代项，将会中止运行。如果该变量设置为“N”或“False”，则CMAQ将打印警告并继续。
 
-### B.6.2 Diagnostic Gridded Output Files
-Many complex scaling procedures are now possible with DESID. Users are advised to confirm that the emissions are scaled the way they have intended. One tool to help this step is the Gridded Diagnostic Output. This is enabled on a stream-by-stream basis in the CMAQ RunScript with the following options:
+最后，CMAQ遍历源并输出可用于每个源的尺寸分布模式以及应用于每个源的每个排放的完整列表。这些按CMAQ物种（分别列出了“i”，“j”和“k”模式）进行排序，并替代物种名称，以便可以快速掌握对应用于每个CMAQ物种排放量的换算规则的充分了解。在适用的网格区域，适用的相/模态（phase/mode），输入比例因子，比例基础，操作和最终比例因子的考虑范围内打印列，并考虑到任何分子量的转换（如果需要），以及尺寸分布分数。
+
+### B.6.2 诊断网格化输出文件
+
+现在，使用DESID可以进行许多复杂的缩放过程。建议用户确认排放量已按预期的方式缩放。网格诊断输出是帮助完成此步骤的一种工具。在CMAQ运行脚本中使用以下选项来启用此逐个源的功能：
+
 ```
 # Gridded Emissions Diagnostic files
+# 网格化的排放源诊断文件
   setenv GR_EMIS_DIAG_001 TRUE
   setenv GR_EMIS_DIAG_002 2D
 
 # Stack emissions diagnostic files
+# 排气筒源诊断文件
   setenv STK_EMIS_DIAG_001 2DSUM
   setenv STK_EMIS_DIAG_002 2DSUM
   setenv STK_EMIS_DIAG_003 FALSE
   setenv STK_EMIS_DIAG_004 2DSUM
   setenv STK_EMIS_DIAG_005 2DSUM
 ```
-The lines above set the behavior of the gridded diagnostic output for gridded and inline emission streams. The values available for each stream are 'TRUE', 'FALSE', '2D', '2DSUM', and '3D'. The '2D' option prints just the surface layer of emissions for a particular stream. The '3D' option prints all layers populated by that stream. The '2DSUM' option prints one 2D field, but it equals the column of sum of emissions throughout the gridded model domain. The 'TRUE' option equates to '2D'. The user can also set the diagnostic behavior of online streams using the following variables:
+
+上面的行设置了网格和实时计算排放源的网格化诊断输出文件。每个源可用的值为“TRUE”，“FALSE”，“2D”，“2DSUM”和“3D”。“2D”选项仅打印特定源的地表层的排放。“3D”选项可打印该源填充的所有模型的层。“2DSUM”选项打印一个2D字段，但它等于整个网格化模型区域中的排放列的总和。“TRUE”选项与“2D”选项是相等的。用户还可以使用以下变量设置实时计算源的诊断行为：
+
 ```
 setenv BIOG_EMIS_DIAG TRUE
 setenv MG_EMIS_DIAG TRUE
@@ -236,17 +285,20 @@ setenv LTNG_EMIS_DIAG TRUE
 setenv DUST_EMIS_DIAG TRUE
 setenv SEASPRAY_EMIS_DIAG TRUE
 ```
-The gridded diagnostic output files that are created are named systematically with the format "CCTM_EMDIAG_[XXX]_[CTM_APPL]_[DATE].nc" where XXX is the emissions stream label, CTM_APPL is the application name defined in the CCTM runscript, and DATE is the date of the simulation. To change the default value for the diagnostic output of all emission streams, modify the "EMIS_DIAG" variable:
+
+创建的网格化诊断输出文件以“CCTM_EMDIAG_[XXX]_[CTM_APPL]_[DATE].nc”的格式命名，其中XXX是排放源标签，CTM_APPL是CCTM运行脚本中定义的项目名称，DATE是模拟的日期。要更改所有排放源的诊断输出的默认值，请修改“EMIS_DIAG”变量：
+
 ```
 setenv EMIS_DIAG TRUE
 ```  
-This variable sets the default behavior for all streams. If the variables for any specific streams are provided in the RunScript, they will override this default value.  
 
-The emission rates printed to the diagnostic files reflect all the scaling rules applied and are written just before the emissions are added to the CMAQ transport module. Because the model interpolates in time, it is very likely that the rates written to the diagnostic file will not correspond in time to the rates from the input files. In most cases, the rates will be one-half time step before the top of the hour, the time point of the emission inputs. For this reason, it is not entirely helpful for users to compare the scaled emissions directly to the rates on the input files. However, comparing them qualitatively can be helpful.
+此变量设置所有源的默认行为。如果运行脚本中提供了任何特定源的变量，它们将覆盖此默认值。
+
+诊断文件上打印的排放速率反映了所有已应用的换算规则，并在将排放添加到CMAQ传输模块之前被写入。由于模型是按时间插值的，因此写入诊断文件的排放速率很可能不会及时与输入文件中的排放速率相对应。在大多数情况下，排放速率将是排放量输入的时间点，即每小时的开始时刻之前的一半的时间步长。因此，将比例缩放的排放直接与输入文件中的排放速率进行比较对用户并不是完全有帮助的。但是，定性比较它们可能会有所帮助。
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Appendix](CMAQ_UG_appendixA_model_options.md) - [Home](../README.md) - [Next Appendix >>](CMAQ_UG_appendixC_spatial_data.md)<br>
-CMAQ User's Guide (c) 2020<br>
+[<< 附录A](CMAQ_UG_appendixA_model_options.md) - [返回](../README.md) - [附录C >>](CMAQ_UG_appendixC_spatial_data.md)<br>
+CMAQ用户指南 (c) 2020<br>
 
 <!-- END COMMENT -->

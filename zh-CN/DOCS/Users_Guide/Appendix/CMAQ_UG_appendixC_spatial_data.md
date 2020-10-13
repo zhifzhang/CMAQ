@@ -1,135 +1,84 @@
 <!-- BEGIN COMMENT -->
 
-[<< Previous Appendix](CMAQ_UG_appendixB_emissions_control.md) - [Home](../README.md) - [Next Appendix >>](CMAQ_UG_appendixD_parallel_implementation.md)
+[<< 附录B](CMAQ_UG_appendixB_emissions_control.md) - [返回](../README.md) - [附录D >>](CMAQ_UG_appendixD_parallel_implementation.md)
 
 <!-- END COMMENT -->
 
-# Appendix C: Processing Spatial Data for CMAQ Inputs
+# 附录C 处理用于输入CMAQ的空间数据
 
-## C.1 Geospatial Data
+## C.1 地理空间数据
 
-Air quality modeling requires many spatial data to generate anthropogenic,
-biogenic, fire, sea salt, dust, and NH<sub>3</sub> emissions. In addition, land surface characteristics such as
-land cover types with vegetation leaf area index (LAI) and fraction, albedo, and soil types are required in
-modeling the exchanges of heat, moisture, and momentum between the land and atmosphere and dry deposition
-of trace chemicals (e.g. O<sub>3</sub> and NH<sub>3</sub>). It is important to use a consistent coordinate system for all the
-geospatial data used in emission, meteorology, and air quality modeling. Most of the geospatial data
-required for the Sparse Matrix Operator Kernel Emissions (SMOKE)/Weather Research and Forecasting
-(WRF)/CMAQ modeling can be generated using the Spatial Allocator (SA) that includes three components
-developed for specific applications: Vector, Raster, and Surrogate Tools.
+空气质量模型需要大量的空间数据才能生成人为源、生物源、火灾源、海盐源、粉尘源和NH<sub>3</sub>排放源。此外，在模拟地面与大气之间的热量、水分和动量交换以及模拟物种（如O<sub>3</sub>和NH<sub>3</sub>）的干沉降时，还需要地表特征，例如具有植被叶面积指数（LAI）和分数、反照率和土壤类型的土地利用类型。在排放源、气象和空气质量模型中使用的所有地理空间数据，必须采用一致的坐标系。SMOKE/WRF/CMAQ模型所需的大多数地理空间数据都可以使用空间分配器（Spatial Allocator，SA）生成，其中包括为特定应用开发的三个组件：矢量（Vector）、栅格（Raster）、和代理工具（Surrogate Tool）。
 
-In using the spatial data, it is important to know the datum, which is a spheroidal (either spherical
- or ellipsoidal) surface that represents the surface of the earth, and the projection, which is a
- mathematic transformation that converts a location on the datum to the location on a flat plane.
- The following sections briefly describe the appropriate datum and projections to use with the CMAQ system
- and the methods for generating the needed spatial data in the correct form.
+在使用空间数据时，重要的是要了解基准面（即代表地球表面的球形（球面或椭圆形）表面）和投影（即将基准面上的位置转换为数字的数学转换）在平面上的位置。以下各节简要介绍了与CMAQ系统一起使用的合适的基准面和投影，以及以正确形式生成所需空间数据的方法。
 
-## C.2 Geodetic datum
+## C.2 大地基准
 
- A geodetic datum is a coordinate system used to define a location on the Earth.
- There are many datums used in spatial datasets depending on what geographic regions they are and
- how the Earth’s surface is approximated as a spheroid.  Most of U.S. geospatial data are defined in
- North American Datum of 1983 (NAD83) and the global data sets are often defined in World Geodetic System
-1984 (WGS84).
+大地基准用于定义地球上某个位置的坐标系。空间数据集中使用了许多大地基准，具体取决于它们是什么地理区域以及如何将地球表面近似为球体。美国大部分地理空间数据是在1983年北美基准面（North American Datum of 1983，NAD83）中定义的，而全球数据集通常是在1984年世界大地测量系统（World Geodetic System
+1984，WGS84）中定义的。
 
-WRF datasets are in WGS84.  All latitude-longitude geographic data sets used in a CMAQ simulation,
-such as emissions shapefiles, land use or biogenic data files, and the ocean file, should be in WGS84
-so that they are spatially aligned with the WRF files.  For simulations over North America, NAD83 is only
-slightly different from the WGS84 datum.  As a result, NAD83 can be used for North America domains without
-introducing spatial misalignment issues in the model datasets.
+WRF数据集使用WGS84大地基准。在CMAQ模拟中使用的所有经纬度地理数据集，例如排放源文件、土地利用或生物源数据文件以及海洋文件，都应使用WGS84，以便它们在空间上与WRF文件对齐。对于北美地区的模拟，NAD83与WGS84基准仅稍有不同。因此，NAD83可以用于北美地区而不会在模型数据集中造成空间未对准问题。
 
-## C.3 Spatial Data Projection
+## C.3 空间数据投影
 
-CCTM can use any of the [four map projections defined for WRF.](http://www2.mmm.ucar.edu/wrf/users/docs/user_guide_V3/users_guide_chap3.htm) 
-The four map projection coordinate systems are regular latitude-longitude geographic, Lambert conformal conic, Mercator, and Polar
-stereographic. However, users should note that several of the PREP and POST tools that are part of the CMAQ system do not currently support the Mercator projection.  These include ICON, BCON, sitecmp, sitecmp_dailyo3, bldoverlay, hr2day and writesite.
+CCTM可以使用为WRF定义的[四个地图投影]( http://www2.mmm.ucar.edu/wrf/users/docs/user_guide_V3/users_guide_chap3.htm )中的任何一个。这四个地图投影坐标系是常规经纬度地理投影、兰伯特正形圆锥投影、墨卡托投影和极地立体投影。但是，用户应注意，CMAQ系统中的一些前处理和后处理工具目前不支持墨卡托投影。其中包括ICON、BCON、sitecmp、sitecmp_dailyo3、bldoverlay、hr2day和writesite。
 
-It is important to know that in projecting spatial data that is in WGS84 to the CMAQ projection or projecting CMAQ data to another map projection, users SHOULD NOT do any datum transformation. This is consistent with the WRF preprocessing system (WPS). Datum transformation will result in  geographic location shifting.
+重要的是要知道，在将WGS84中的空间数据投影到CMAQ投影或将CMAQ数据投影到另一个地图投影时，用户不应进行任何基准转换。这与WRF预处理系统（WRF preprocessing system，WPS）一致。因为基准转换将导致地理位置移动。
 
-The CMAQ domain projection is defined through the [PROJ](https://proj.org) coordinate transformation software library using a spherical surface with an earth radius of 6370000 m to match the WRF domain projection definition.  Once an input dataset is in WGS84 the following examples can be used to define the projection transformation needed to match the WRF data:
+[PROJ]( https://proj.org )坐标转换软件库使用地球半径为6370000m的球形表面，来定义CMAQ区域投影，以匹配WRF区域投影定义。采用WGS84的输入数据集可以使用以下示例定义与WRF数据匹配所需的投影变换：
 
-Lambert Conformal Conic:  "+proj=lcc +a=6370000.0 +b=6370000.0 +lat_1=33 +lat_2=45 +lat_0=40 +lon_0=-97"
+兰伯特正形圆锥投影："+proj=lcc +a=6370000.0 +b=6370000.0 +lat_1=33 +lat_2=45 +lat_0=40 +lon_0=-97"
 
-Polar stereographic:  "+proj=stere +a=6370000.0 +b=6370000.0 +lat_ts=33 +lat_0=90 +lon_0=-97 +k_0=1.0"
+极地立体投影："+proj=stere +a=6370000.0 +b=6370000.0 +lat_ts=33 +lat_0=90 +lon_0=-97 +k_0=1.0"
 
-Mercator:  "+proj=merc +a=6370000.0 +b=6370000.0 +lat_ts=33 +lon_0=0"
+墨卡托投影："+proj=merc +a=6370000.0 +b=6370000.0 +lat_ts=33 +lon_0=0"
 
-Geographic:  "+proj=latlong +a=6370000.0 +b=6370000.0"
+常规经纬度地理投影："+proj=latlong +a=6370000.0 +b=6370000.0"
 
-## C.4 Spatial Data Generation
+## C.4 空间数据生成
 
-Emission spatial allocation surrogates are required for generating anthropogenic emissions by SMOKE to
-spatially allocate county-based emission inventories to model grid cells. Emission surrogates can be based
-on population, roads, airports, railroads, and land use spatial data sets. The SA Vector and Surrogate
-Tools can be used to generate all needed emission surrogates for SMOKE.
+SMOKE生成人为排放源时需要排放空间分配替代物，以在空间上分配基于县的排放清单以建模网格单元。排放替代物可以基于人口、道路、机场、铁路和土地利用空间数据集。SA矢量和替代工具可用于生成SMOKE所需的所有排放替代物。
 
-- [SA Vector and Surrogate Tools](https://www.cmascenter.org/sa-tools/) 
+- [SA矢量和替代工具（Vector and Surrogate Tools）](https://www.cmascenter.org/sa-tools/) 
 
-**Biogenic emissions** require land use input including different tree species. There are two ways to
-compute the required input for the domain covering the continental U.S. (CONUS).
+**生物源排放**要求包括不同树种的土地利用输入数据。有两种方法可以计算涵盖美国本土区域所需的输入数据。
 
-1. The original method—re-grid Biogenic Emissions Landuse Database, Version 3 (BELD3) using a SA Vector
-allocation tool. The BELD3 data is generated from the early 1990s AVHRR land cover data and FIA tree
-species at the county level.
-2. The second method—use the SA Raster BELD4 land cover generation tool to generate model domain land use
- data with tree species. Then, a provided utility is used to convert the generated land cover data into
- an I/O API format for CMAQ input. The limitation for this tool is that the early 1990s county-level FIA tree species
- table is still used in allocating FIA tree species (this is also the case for the 1st approach).
+1. 原始方法-使用SA 矢量（Vector）分配工具重新网格化生物源排放土地利用数据库第3版（BELD3）。BELD3数据是根据1990年代初的AVHRR土地利用数据和县一级的FIA树种生成的。
+2. 第二种方法-使用SA Raster BELD4土地利用生成工具来生成具有树种的模型区域的土地利用数据。然后，使用提供的实用程序将生成的土地利用数据转换为用于CMAQ输入的I/O API格式数据。此工具的局限性在于，1990年代初的县级FIA树种表仍用于分配FIA树种（第一种方法也是如此）。
 
-- [SA Vector and Surrogate Tools](https://www.cmascenter.org/sa-tools/) 
-- [SA Raster BELD4 land cover generation tool](https://www.cmascenter.org/sa-tools/documentation/4.2/Raster_Users_Guide_4_2.pdf) 
+- [SA矢量和替代工具（Vector and Surrogate Tools）](https://www.cmascenter.org/sa-tools/) 
+- [SA Raster BELD4土地利用生成工具](https://www.cmascenter.org/sa-tools/documentation/4.2/Raster_Users_Guide_4_2.pdf) 
 
-**Fire emissions** require fire location, burned areas, and detailed fuel load information.
-Fire locations are available via satellite detections from the Hazard Mapping System (HMS) or ground
-level reports from the National Fire and Aviation Management web application.  Burn Area estimates can
-be obtained from GIS based sources such as the Geospatial Multi-Agency Coordination (GeoMac) website or
-the U.S. National Historical Fire Perimeters Data Basin Dataset.  Fuel loading is estimated using a
-geospatial dataset such as the US Forest Service Fuel Characteristic Classification System (FCCS).
-All these information sources can be used to estimate fire emissions. An example of a tool that can
-be used to generate fire emissions is the BlueSky modeling framework.  BlueSky modularly links a variety
-of independent models of fire information, fuel loading, fire consumption, fire emissions, and smoke
-dispersion.  Using these tools and estimating fire emissions can be quite complex so datasets of fire
-emissions have been created for the community. Examples of such datasets are the Fire INventory from
-the National Center for Atmospheric Research (FINN) or the Global Fire Emissions Database (GFED).
+**火灾排放**要求火灾地点、燃烧区域和详细的燃料负荷信息。可以通过危险地图系统（Hazard Mapping System，HMS）的卫星检测或国家消防和航空管理Web应用程序的地面报告来确定火灾地点。可以从基于GIS的来源（例如地理空间多机构协调（Geospatial Multi-Agency Coordination，GeoMac）网站或美国国家历史火警周界数据盆地数据集）获得燃烧面积的估计值。使用地理空间数据集（例如美国森林服务燃料特征分类系统（Fuel Characteristic Classification System，FCCS））估计燃料负荷。所有这些信息源都可用于估计火灾排放。BlueSky建模框架是可用于产生火灾排放的工具的一个示例。BlueSky模块化地链接了各种独立的火灾信息、燃料负荷、火灾消耗、火灾排放和烟雾扩散模型。使用这些工具来估算火灾排放可能非常复杂，因此我们已经为社区创建了火灾排放数据集。此类数据集的示例是美国国家大气研究中心的火灾清单（Fire INventory from
+the National Center for Atmospheric Research，FINN）或全球火灾排放数据库（Global Fire Emissions Database，GFED）。
 
-- [Hazard Mapping System Fire and Smoke Product](https://www.ospo.noaa.gov/Products/land/hms.html)
-- [National Fire and Aviation Management Web Application](https://fam.nwcg.gov/fam-web/)
-- [Geospatial Multi-Agency Coordination website](https://www.geomac.gov/)
-- [U.S. National Historical Fire Perimeters Data Basin Dataset](https://www.arcgis.com/home/item.html?id=6b68271ebee147d99525e0b914823155) 
-- [US Forest Service Fuel Characteristic Classification System](https://www.fs.fed.us/pnw/fera/fft/fccsmodule.shtml)
-- [US Forest Service BlueSky Modeling Framework](https://sites.google.com/firenet.gov/wfaqrp-airfire-info/playground)  
-- [Fire INventory from the National Center for Atmospheric Research](https://www2.acom.ucar.edu/modeling/finn-fire-inventory-ncar)
-- [Global Fire Emissions Database](http://www.globalfiredata.org/)
+- [危险底图系统的火灾和烟雾产品（Hazard Mapping System Fire and Smoke Product）](https://www.ospo.noaa.gov/Products/land/hms.html)
+- [国家消防和航空管理Web应用程序（National Fire and Aviation Management Web Application）](https://fam.nwcg.gov/fam-web/)
+- [地理空间多机构协调网站（Geospatial Multi-Agency Coordination website）](https://www.geomac.gov/)
+- [美国国家历史火警周界数据盆地数据集（U.S. National Historical Fire Perimeters Data Basin Dataset）](https://www.arcgis.com/home/item.html?id=6b68271ebee147d99525e0b914823155) 
+- [美国森林服务燃料特征分类系统（US Forest Service Fuel Characteristic Classification System，FCCS）](https://www.fs.fed.us/pnw/fera/fft/fccsmodule.shtml)
+- [美国森林服务局BlueSky建模框架（US Forest Service BlueSky Modeling Framework）](https://sites.google.com/firenet.gov/wfaqrp-airfire-info/playground)  
+- [美国国家大气研究中心的火灾清单（Fire INventory from
+the National Center for Atmospheric Research，FINN）](https://www2.acom.ucar.edu/modeling/finn-fire-inventory-ncar)
+- [全球火灾排放数据库（Global Fire Emissions Database，GFED）](http://www.globalfiredata.org/)
 
-**Sea spray emissions** require open ocean and surf zone (50m) buffer fractions for the modeling grid
- cells in an I/O API file. For most of North American domain, a SA Vector allocation tool can be used
- to generate the surf zone and open ocean file from a polygon shapefile with land, surf zone buffer,
- and open ocean in SA data directory. For areas outside U.S., users have to generate a surf zone polygon
- shapefile with has the same attribute as the file in the SA to use the tool.  See the [CMAQ Tutorial on creating an ocean file](Appendix/CMAQ_UG_tutorial_oceanfile.md) for step by step instructions on creating this CMAQ input file. [Chapter 6](CMAQ_UG_ch06_model_configuration_options.md#sea-spray) has additional information on sea spray module in CMAQ.
+**海浪排放**需要一个I/O API文件，该文件中为开阔海洋和碎浪区（50m）缓冲区生成在模型网格单元中的占比分数。对于大多数北美地区，可以使用SA Vector分配工具从SA数据目录中具有陆地、碎浪区缓冲区和开阔海洋的多边形shapefile文件生成碎浪区和开阔海洋文件。对于美国以外的地区，用户必须生成一个碎浪区多边形shapefile文件，其属性与SA中的文件具有相同的属性才能使用该工具。有关创建此CMAQ输入文件的逐步说明，请参见[CMAQ创建海洋文件的教程](../Tutorials/CMAQ_UG_tutorial_oceanfile.md)。[用户指南第6章](../CMAQ_UG_ch06_model_configuration_options.md#Sea_Spray)中也包含了有关CMAQ中海浪模块的其他信息。
 
-**NH3 emissions** from agricultural lands can be estimated using the CMAQ bi-directional NH3 model. The
-input for the CMAQ bi-directional NH<sub>3</sub> model is generated by the Fertilizer Emission Scenario Tool for
-CMAQ (FEST-C) system. FEST-C contains three main components: Java interface, Environmental Policy
-Integrated Climate (EPIC) model, and SA Raster Tools. The interface guides users through generating
-required land user and crop data and EPIC input files and simulating EPIC, and extracting EPIC output
-for CMAQ. The generated BELD4 land use data by FEST-C needs to be converted into an I/O API format
-using a utility program in FEST-C for CMAQ input. Note that the BELD4 data used for FEST-C is generated by the 2nd approach described above in Biogenic emission generation approaches.  
+**农田NH3排放**可以使用CMAQ双向NH3模型估算。CMAQ双向NH<sub>3</sub>模型的输入是由CMAQ的肥料排放情景工具（Fertilizer Emission Scenario Tool for
+CMAQ，FEST-C）系统生成的。FEST-C包含三个主要组件：Java接口、环境政策集成（Environmental Policy
+Integrated Climate，EPIC）模型和SA栅格工具。该Java接口指导用户生成所需的土地利用和作物数据以及EPIC输入文件，并模拟EPIC，并提取EPIC的输出用于CMAQ。FEST-C生成的BELD4土地利用数据需要使用FEST-C中的实用程序转换为CMAQ的I/O API格式。注意，用于FEST-C的BELD4数据是通过上述在生物源产生方法中描述的第二种方法产生的。
 
-- [Fertilizer Emission Scenario Tool for CMAQ (FEST-C)](https://www.cmascenter.org/fest-c/) 
-- FEST-C reference: Ran, L., Yuan, Y., Cooter, E., Benson, V., Yang, D., Pleim, J., Wang, R. and Williams, J. (2019). An integrated agriculture, atmosphere, and hydrology modeling system for ecosystem assessments. Journal of Advances in Modeling Earth Systems, 11(12), 4645-4668. DOI: [https://doi.org/10.1029/2019MS001708](https://doi.org/10.1029/2019MS00170)
+- [CMAQ的肥料排放情景工具（Fertilizer Emission Scenario Tool for
+CMAQ，FEST-C）](https://www.cmascenter.org/fest-c/) 
+- FEST-C参考文献: Ran, L., Yuan, Y., Cooter, E., Benson, V., Yang, D., Pleim, J., Wang, R. and Williams, J. (2019). An integrated agriculture, atmosphere, and hydrology modeling system for ecosystem assessments. Journal of Advances in Modeling Earth Systems, 11(12), 4645-4668. DOI: [https://doi.org/10.1029/2019MS001708](https://doi.org/10.1029/2019MS00170)
 
 
-**Land use and land cover data for surface flux modeling** in meteorology and air quality can be
-generated using WPS or the SA Raster Tools. It is important to use consistent land use data in both
-meteorology and air quality modeling. For the U.S., WPS contains re-gridded 9-arc
-second (around 250 m resolution) 2011 NLCD land cover, imperviousness, and canopy data while 2011 MODIS
-land cover is used for areas outside the U.S. In addition, users can use the land use re-gridding tool in the
-SA Raster Tools system to generate land cover data for any domain directly using NLCD (at 30 m resolution)
-or/and MODIS land cover data (at 1 km or 500 m resolution). Users can use a provided R utility in SA to
-update their geogrid land cover data using the more accurate land cover data generating using SA.
+**气象和空气质量模型中用于地表通量建模的土地利用和土地覆盖数据**可以使用WPS或SA栅格工具生成。在气象和空气质量建模中使用一致的土地利用数据非常重要。对于美国，WPS包含了重新网格化的9-arc
+second（约250m分辨率）的2011年NLCD土地利用数据，而2011年的MODIS土地利用数据用于美国以外的地区。此外，用户可以使用土地利用SA Raster Tools系统中的重新网格化工具，可以直接使用NLCD（分辨率为30m）或/和MODIS土地利用数据（分辨率为1km或500m）直接生成任何区域的土地利用数据。用户可以使用SA中提供的R实用程序，使用通过SA生成的更准确的土地利用数据来更新其地理网格化的土地利用数据。
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Appendix](CMAQ_UG_appendixB_emissions_control.md) - [Home](../README.md) - [Next Appendix >>](CMAQ_UG_appendixD_parallel_implementation.md)<br>
-CMAQ User's Guide (c) 2020<br>
+[<< 附录B](CMAQ_UG_appendixB_emissions_control.md) - [返回](../README.md) - [附录D >>](CMAQ_UG_appendixD_parallel_implementation.md)<br>
+CMAQ用户指南 (c) 2020<br>
+
 <!-- END COMMENT -->

@@ -1,63 +1,63 @@
-# CMAQ User's Guide
+# CMAQ用户指南
 
 
-The CMAQ User's Guide is designed to support the installation, configuration, and execution of the [Community Multiscale Air Quality (CMAQ)](http://www.epa.gov/cmaq) model on Linux systems. CMAQ users should be comfortable with Linux scripting conventions and have some familiarity with the Fortran programming language. Users should also have some familiarity with atmospheric structure, and the physical and chemical processes that occur in the atmosphere. 
+本指南用于[Community Multiscale Air Quality (CMAQ)]( http://www.epa.gov/cmaq ) 模型在Linux系统上的安装，配置和使用。 CMAQ用户应该熟悉Linux脚本，并且对Fortran编程语言有所了解。用户还应该了解大气结构以及大气环境中发生的物理和化学过程。
 
-Note: While this User's Guide is packaged with the code when it is downloaded or cloned, users are encouraged to go [online](https://github.com/USEPA/CMAQ/blob/master/DOCS/Users_Guide/README.md) for the latest version.
+注意：虽然本《用户指南》与下载或克隆的代码一起打包，但鼓励用户在线阅读以获取最新版本。
 
-# Table of Contents
+# 目录
 
-[CMAQ Tutorials:](Tutorials/README.md) A series of short tutorials provide practical examples of how to set up and run CMAQ. Tutorials include: 
-* Running the CMAQ Test Case
-* Running the CMAQ-ISAM Test Case
-* Building CMAQ for GNU and Intel
-* Building WRF-CMAQ for GNU
-* Debugging tips
-* Prescribing Emissions Using the DESID Module 
-* Creating an OCEAN File
-* Adding an Inert Tracer Species
-* Creating IC/BCs from Seasonal Average Hemispheric CMAQ Output
+[CMAQ教程：](Tutorials/README.md)一系列简短的教程，提供了有关如何设置和运行CMAQ的实用示例，包括：
+* 运行CMAQ测试案例
+* 运行CMAQ-ISAM测试案例
+* 采用GNU或者Intel编译CMAQ
+* 采用GNU编译WRF-CMAQ
+* 调试技巧（Debugging tips）
+* 使用DESID模块设置污染源排放
+* 创建一个OCEAN文件
+* 添加一种惰性示踪剂
+* 从季平均半球CMAQ输出创建IC/BCs
 
-[Chapter 1 (Overview):](CMAQ_UG_ch01_overview.md) CMAQ background, features, requirements and support resources.
+[第1章（概述）：](CMAQ_UG_ch01_overview.md)CMAQ的背景、功能、运行环境要求和支持资源。
 
-[Chapter 2 (Program Structure):](CMAQ_UG_ch02_program_structure.md) Overview of the programs included with the CMAQ system.
+[第2章（程序结构）：](CMAQ_UG_ch02_program_structure.md) CMAQ包含的程序概述。
 
-[Chapter 3 (Preparing Compute Environment):](CMAQ_UG_ch03_preparing_compute_environment.md) Hardware/software requirements for CMAQ default configuration.
+[第3章（准备计算环境）：](CMAQ_UG_ch03_preparing_compute_environment.md) CMAQ默认配置的硬件/软件要求。
 
-[Chapter 4 (Model Inputs):](CMAQ_UG_ch04_model_inputs.md) Preprocessing tools included with the base code and descriptions of the CMAQ input files. 
+[第4章（模型输入）：](CMAQ_UG_ch04_model_inputs.md)CMAQ输入数据预处理工具的基本代码和说明。
 
-[Chapter 5 (Running CMAQ):](CMAQ_UG_ch05_running_a_simulation.md) Obtain the CMAQ source codes, set-up your environment, run a simulation.
+[第5章（运行CMAQ）：](CMAQ_UG_ch05_running_a_simulation.md)获取CMAQ源代码、设置运行环境、运行模型。
 
-[Chapter 6 (Model Configuration Options):](CMAQ_UG_ch06_model_configuration_options.md) Configuration options for different CMAQ science modules.
+[第6章（模型配置选项）：](CMAQ_UG_ch06_model_configuration_options.md) 不同CMAQ科学模块的配置选项。
 
-[Chapter 7 (Model Outputs):](CMAQ_UG_ch07_model_outputs.md) Descriptions of the CMAQ output files.
+[第7章（模型输出）：](CMAQ_UG_ch07_model_outputs.md)CMAQ输出文件的说明。
 
-[Chapter 8 (Analysis Tools):](CMAQ_UG_ch08_analysis_tools.md) Post-processing, visualization and evaluation tools for CMAQ.
+[第8章（分析工具）：](CMAQ_UG_ch08_analysis_tools.md) CMAQ的后处理、可视化和评估工具。
 
-[Chapter 9 (Process Analysis):](CMAQ_UG_ch09_process_analysis.md) Instrumented Models - Integrated Process Rates (IPR) and Integrated Reaction Rates (IRR).
+[第9章（过程分析）：](CMAQ_UG_ch09_process_analysis.md) 检测模型（Instrumented Models）-集成过程速率（IPR）和集成反应速率（IRR）。
 
-[Chapter 10 (HDDM-3D):](CMAQ_UG_ch10_HDDM-3D.md) Instrumented Models - Decoupled Direct Method in Three Dimensions (DDM-3D).
+[第10章（HDDM-3D）：](CMAQ_UG_ch10_HDDM-3D.md)检测模型（Instrumented Models）-三维直接解耦方法（DDM-3D，Decoupled Direct Method in 3D）。
 
-[Chapter 11 (ISAM):](CMAQ_UG_ch11_ISAM.md) Instrumented Models - Integrated Source Apportionment Method (ISAM).
+[第11章（ISAM）：](CMAQ_UG_ch11_ISAM.md)检测模型（Instrumented Models）-集成源分配方法（ISAM，Integrated Source Apportionment Method）。
 
-[Chapter 12 (Sulfur Tracking):](CMAQ_UG_ch12_sulfur_tracking.md) Instrumented Models - Sulfur Tracking Method (STM).
+[第12章（硫跟踪）：](CMAQ_UG_ch12_sulfur_tracking.md)检测模型（Instrumented Models）-硫跟踪方法（STM，Sulfur Tracking Method）。
 
-[Chapter 13 (WRF-CMAQ):](CMAQ_UG_ch13_WRF-CMAQ.md) WRF-CMAQ model for simulating interactions between chemistry and weather.
+[第13章（WRF-CMAQ）：](CMAQ_UG_ch13_WRF-CMAQ.md) WRF-CMAQ耦合模型用于模拟化学转化和天气变化之间的相互影响作用。
 
-[Tables and Figures:](CMAQ_UG_tables_figures.md) List of Tables and Figures.
+[表格和图件：](CMAQ_UG_tables_figures.md)表格和图件清单。
 
-[Appendix A (Model Options):](Appendix/CMAQ_UG_appendixA_model_options.md) List of model options in configuration, compilation and run scripts.
+[附录A（模型选项）：](Appendix/CMAQ_UG_appendixA_model_options.md)配置、编译和运行脚本中的模型选项列表。
 
-[Appendix B (Emissions Control):](Appendix/CMAQ_UG_appendixB_emissions_control.md) How to use the Emissions Control Namelist for customization of emissions processing.
+[附录B（排放控制）：](Appendix/CMAQ_UG_appendixB_emissions_control.md)如何使用排放控制清单自定义排放处理。
 
-[Appendix C (Spatial Data):](Appendix/CMAQ_UG_appendixC_spatial_data.md) Information on how to create consistent geospatial data for CMAQ inputs.
+[附录C（空间数据）：](Appendix/CMAQ_UG_appendixC_spatial_data.md) 为CMAQ输入创建一致的地理空间数据。
 
-[Appendix D (Parallel Implementation):](Appendix/CMAQ_UG_appendixD_parallel_implementation.md) An introduction to how data-parallelism can be applied in the CMAQ system to increase computational efficiency. 
+[附录D（并行计算）：](Appendix/CMAQ_UG_appendixD_parallel_implementation.md)介绍如何在CMAQ系统中应用数据并行计算以提高效率。
 
-[Appendix E (Configuring WRF):](Appendix/CMAQ_UG_appendixE_configuring_WRF.md) Configuring the Weather Research and Forecasting Model (WRF) for use with CMAQ
+[附录E（配置WRF）：](Appendix/CMAQ_UG_appendixE_configuring_WRF.md)配置用于CMAQ的WRF（Weather Research and Forecasting Model）。
 
-[Appendix F (Importing bugfixes):](Appendix/CMAQ_UG_appendixF_importing_bugfixes.md) Directions on importing bugfixes from CMAQ GitHub Issues page
+[附录F（错误修正）：](Appendix/CMAQ_UG_appendixF_importing_bugfixes.md) 从CMAQ GitHub Issues页面导入的错误修正的说明。
 
 ***
 
-CMAQ User's Guide (c) 2020<br>
+CMAQ用户指南 (c) 2020<br>

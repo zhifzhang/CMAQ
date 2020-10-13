@@ -1,31 +1,27 @@
 <!-- BEGIN COMMENT -->
 
-[<< Previous Appendix](CMAQ_UG_appendixD_parallel_implementation.md) - [Home](../README.md) - [Next Appendix >>](CMAQ_UG_appendixF_importing_bugfixes.md)
+[<< 附录D](CMAQ_UG_appendixD_parallel_implementation.md) - [返回](../README.md)  - [附录F >>](CMAQ_UG_appendixF_importing_bugfixes.md)
 
 <!-- END COMMENT -->
 
-# Appendix E: Configuring the Weather Research and Forecasting Model (WRF) for Use with Air Quality Models 
+# 附录E：用于空气质量模型的WRF配置
 
-## E.1 WRF version 4+
+## E.1 WRF 4+版本
 
-* WRF4.0 has updates to the ACM2 PBL model to account for the new default hybrid coordinate system. Our internal model runs suggest that the hybrid option (hybrid_opt =2) improves the model in areas where topographical variations are more extreme like the Rocky Mountains. As such, it is suggested, but not a requirement, to use this option in WRF that became the default in WRF4.0.
+* WRF4.0更新了ACM2 PBL模型，以配套新的默认混合坐标系。我们的内部模型运行表明，混合选项（hybrid_opt =2）在诸如洛矶山脉等地形变化更为极端的区域可以改进模型的结果。因此，建议（但不是必须）在WRF中使用此选项，而该选项已成为WRF4.0中的默认选项。
 
-* Several important updates were made to the Pleim-Xiu LSM in WRF4.1. Soil hydraulics are calculated using analytical equations (Noilhan and Mahfouf, 1996) rather than lookup tables. And, users can opt to use time-varying vegetation fraction from a wrflowinp input file in WRF that can be based off MODIS satellite data instead of the old weighting method that is based on lookup tables and landuse fraction. This satellite data option is activated using the physics namelist option "pxlsm_modis_veg = 1".
+* WRF4.1中的Pleim-Xiu LSM进行了一些重要更新，使用分析方程式（Noilhan和Mahfouf，1996）而非查表法来计算土壤水力学。而且，用户可以选择使用WRF的wrflowinp输入文件中随时间变化的植被分数，该文件可以基于MODIS卫星数据，而不是基于查找表和土地利用分数的旧加权方法。用户可以使用物理名称列表选项“pxlsm_modis_veg = 1”激活此卫星数据选项。
 
 
-## E.2 WRF version 3.7 
-* **[Section from WRFv3.7 Technical Documentation related to air quality modeling](http://www2.mmm.ucar.edu/wrf/users/docs/PX-ACM.pdf):** This 8 page pdf provides description and procedures for using the Pleim-Xiu LSM, ACM2 PBL and Pleim Surface Layer Scheme in WRF including best practices and namelist options.
+## E.2 WRF 3.7版本
+* **[WRF v3.7技术文档中与空气质量建模有关的部分]( http://www2.mmm.ucar.edu/wrf/users/docs/PX-ACM.pdf )：** 这8页pdf文件提供了WRF中使用Pleim-Xiu LSM、ACM2 PBL和Pleim表面层方案的说明和过程，包括最佳做法和名称列表选项。
 
-## E.3 WRF with lightning assimilation 
-* **[WRF with Lightning Assimilation User's Guide](https://wcms.epa.gov/sites/production/files/2017-02/documents/wrf_with_ltga_userguide.pdf):** This 3 page pdf describes how to run WRF with the lightning assimilation technique described in Heath et al. (2016). 
-The assimilation method uses gridded lightning data to trigger and suppress sub-grid deep convection in Kain-Fritsch. 
-The gridded lightning data (variable name is ‘LNT’) is read in through auxinput8. The lightning data is grouped into 
-30-min intervals and treated as simple zeros (no lightning) or ones (lightning) for the assimilation method. 
-All of the necessary code modifications and data are described in the document.
+## E.3 具有闪电同化功能的WRF
+* **[具有闪电同化功能的WRF用户指南]( https://wcms.epa.gov/sites/production/files/2017-02/documents/wrf_with_ltga_userguide.pdf )：** 这3页pdf文件描述了如何运行Heath等人（2016）描述的具有闪电同化功能的WRF。同化方法使用网格化的闪电数据来触发和抑制K​​ain-Fritsch中的子网格深对流。通过auxinput8读取网格化的闪电数据（变量名称为“LNT”）。闪电数据分为30分钟的间隔，对于同化方法，将其视为简单的零（不闪电）或一个（闪电）。本文档中描述了所有必要的代码修改和数据。
 
-* **[WRF with Lightning Assimilation Code](https://wcms.epa.gov/sites/production/files/2017-02/ltgda_wrf_16feb2017.zip):** This .zip file (ltgda_wrf_16feb2017.zip; 220K) contains the registry and FORTRAN files with the updates needed to run WRF with lightning assimilation, as well as a generic Python script to grid lightning data to your WRF domain.
+* **[带有闪电同化代码的WRF]( https://wcms.epa.gov/sites/production/files/2017-02/ltgda_wrf_16feb2017.zip )：** 此.zip文件（ltgda_wrf_16feb2017.zip;220K）包含了注册和FORTRAN文件，以及通过闪电同化运行WRF所需的更新，以及将闪电数据网格化到WRF模拟区域的通用Python脚本。
 
-## E.4 Reference:
+## E.4 参考文献:
 Heath, N. K., J. E. Pleim, R. C. Gilliam, & D. Kang (2016). A simple lightning assimilation technique for improving retrospective WRF simulations, J. Adv. Model. Earth Syst., 8, 1806 – 1824, http://dx.doi.org/10.1002/2016MS000735.
 
 Noilhan, J., & Mahfouf, J. F. (1996). The ISBA land surface parameterization scheme. Global and planetary Change, 13(1-4), 145-159.
@@ -36,6 +32,6 @@ Noilhan, J., & Mahfouf, J. F. (1996). The ISBA land surface parameterization sch
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Appendix](CMAQ_UG_appendixD_parallel_implementation.md) - [Home](../README.md) - [Next Appendix >>](CMAQ_UG_appendixF_importing_bugfixes.md) <br>
-CMAQ User's Guide (c) 2020<br>
+[<< 附录D](CMAQ_UG_appendixD_parallel_implementation.md) - [返回](../README.md) - [附录F >>](CMAQ_UG_appendixF_importing_bugfixes.md)
+CMAQ用户指南 (c) 2020<br>
 <!-- END COMMENT -->

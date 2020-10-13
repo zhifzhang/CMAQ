@@ -1,99 +1,99 @@
 
 <!-- BEGIN COMMENT -->
 
-[Home](README.md) - [Next Chapter >>](CMAQ_UG_ch02_program_structure.md)
+[返回](README.md) - [下一章 >>](CMAQ_UG_ch02_program_structure.md)
 
 <!-- END COMMENT -->
 
-# 1. Overview
+# 1 概述
 
-## Disclaimer
+## 免责声明
 
-The information in this operational guidance document has been funded wholly or in part by the United States Environmental Protection Agency (EPA). The draft version of this document has not been subjected to the Agency’s peer and administrative review, nor has it been approved for publication as an EPA document. The draft document has been subjected to review by the Community Modeling and Analysis System Center only; this content has not yet been approved by the EPA. Mention of trade names or commercial products does not constitute endorsement or recommendation for use.
+本用户指南中的信息全部或部分由美国环境保护局（EPA）资助。本文档草案尚未经过EPA的同行评议和行政审核，也未获批准作为EPA文档发布。本文档草案仅由社区建模和分析系统中心（CMAS，Community Modeling and Analysis System Center）进行了审核，内容尚未被EPA批准。文档中提及的商品名称或商业产品并不构成认可或推荐使用。
 
-## 1.1 Introduction
+## 1.1 简介
 
-Under the authority of the Clean Air Act, the U.S. Environmental Protection Agency (EPA) has established National Ambient Air Quality Standards (NAAQS). These standards are designed to protect human health and the environment from high levels of criteria pollutants, such as ozone and particulate matter. Meeting the NAAQS often requires the use of controls on sources of air pollutants. The complex nature of air pollution scenarios requires control strategies to be effective for a variety of air pollutants, geographic regions, and scales. The design of these control strategies is guided by comprehensive air pollution modeling systems which are applied to assess the ability of various control strategies to improve air quality in a cost-effective manner.
+根据《清洁空气法（Clean Air Act）》的授权，美国环境保护局（EPA）已制定了国家环境空气质量标准（NAAQS，National Ambient Air Quality Standards）。这些标准旨在保护人类健康和环境免受污染物的侵害（例如臭氧和颗粒物）。要达到NAAQS的要求，通常需要对空气污染物的来源进行控制。而空气污染情景的复杂性，要求采取的控制措施应该对多种空气污染物、不同的地理区域和规模都有效。因此需要一个全面的空气污染模型来指导应该采取哪些控制措施，这种模型系统可用于评估各种控制措施在改善空气质量方面的投入-效益比。
 
-Because some emission sources contribute to the ambient levels of more than one pollutant and can affect an entire region on various time scales, an integrated modeling approach capable of handling multiple air pollutants and spatiotemporal scales is needed to identify cost-effective control strategies that improve overall air quality. The [EPA Community Multiscale Air Quality (CMAQ) modeling system](http://www.epa.gov/cmaq) was formulated and designed to facilitate extensions needed to examine emerging linked multi-pollutants air pollution issues. The source code for CMAQ is available through a publicly-accessible, version-controlled git repository on [GitHub](www.github.com/usepa/cmaq) where interested parties may obtain the open-source software and contribute to enhancements of the model. CMAQ is designed for applications ranging from regulatory and policy analysis to probing and understanding the complex interactions of atmospheric chemistry and physics. It is a three\-dimensional Eulerian (i.e., gridded) atmospheric chemistry and transport modeling system that simulates ozone, particulate matter (PM), toxic airborne pollutants, visibility, and acidic and nutrient pollutant species throughout the troposphere. Designed as a “one-atmosphere” model, CMAQ can address the complex couplings among several air quality issues simultaneously across spatial scales ranging from urban to hemispheric.
+由于某些排放源可以同时影响多种污染物的环境浓度，并且可以在不同的时间尺度上影响整个区域，因此需要一种能够处理多种空气污染物和时空尺度的集成建模方法，以找出可以改善总体环境空气质量且经济合理的控制措施。 [EPA社区多尺度空气质量模型（CMAQ，Community Multiscale Air Quality）]( http://www.epa.gov/cmaq ) 在制定和设计时考虑了易扩展性，旨在研究新出现的与多种污染物相关的空气污染问题。CMAQ的源代码可通过[GitHub]( http://www.github.com/usepa/cmaq )访问，感兴趣的各方可以在该存储库中获取本开源软件并为模型的增强做出贡献。CMAQ被设计用于从法规和政策分析，到探测和理解大气化学与物理之间复杂相互作用的各种应用。这是一个三维欧拉（即网格化）大气化学和传输模型系统，可模拟整个对流层中的臭氧、颗粒物（PM）、有毒污染物、能见度以及酸性和营养污染物质。CMAQ被设计为“一个大气”模型，可以同时解决从城市到半球的不同空间尺度上多个空气质量问题之间的复杂耦合。
 
-Air quality models integrate our understandings of the complex processes that affect the concentrations of pollutants in the atmosphere. Establishing the relationships among meteorology, emissions of chemical species, chemical transformations, and removal processes in the context of atmospheric pollutants is the fundamental goal of an air quality model (Seinfeld and Pandis, 1998). CMAQ uses detailed mathematical representations of coupled atmospheric dynamical, chemical, and physical processes to describe the fate of airborne pollutants. The model is formulated to conserve mass in the 3-D atmosphere within the modeled domain. The resultant partial differential governing equations are numerically solved over a 3-D grid discretizing the geographic domain of interest. A model grid is an *x\-y\-z* array that is fixed in space and covers a prescribed domain (i.e., a geographic area of interest). CMAQ therefore belongs to the Eulerian class of mathematical models that calculate a mass balance over each discrete grid volume by accounting for transport across the boundaries of the grid volume and relevant source and sink terms within the grid volume over a given time period. As a mathematical framework for simulating the interactions of multiple complex atmospheric processes, CMAQ thus requires two primary types of inputs: meteorological information, and rates of emissions from a variety of anthropogenic and natural sources of primary pollutant species of interest or those that serve as precursors for formation of other pollutants of interest.
+空气质量模型综合了我们对影响大气中污染物浓度的复杂过程的理解。建立大气污染物与气象学、化学物质排放、化学转化和清除过程之间的关系是空气质量模型的基本目标（Seinfeld和Pandis，1998）。CMAQ使用大气动力学、化学和物理过程耦合的详细数学方法来描述污染物在空气中的传输过程。本模型可以模拟区域3-D大气环境，并在模拟区域的离散化3-D网格上通过数值方法求解偏微分控制方程。模型网格是在空间中固定并覆盖指定范围（即模拟区域）的* x\-y\-z *数组。因此，CMAQ属于欧拉数学模型，该数学模型通过考虑给定时间段内跨网格边界的传输以及网格内相关源和去除量来计算每个离散网格内的质量平衡。因此，作为模拟多个复杂大气过程相互作用的数学框架，CMAQ需要两种主要输入类型：一种是气象信息，另一种是模拟的主要污染物的多种人为和自然来源排放速率、或者那些是其他污染物形成的前体物质的排放速率。
 
-With weather conditions contributing the primary physical driving forces in the atmosphere (such as the changes in temperature, winds, cloud formation, and precipitation rates), representative gridded meteorology forms the basis of all 3\-D air quality model simulations. The Weather Research and Forecasting (WRF) model \- Advanced Research WRF (WRF\-ARW) (Skamarock et al., 2005) is compatible with CMAQ in that both systems can be configured to use identical horizontal and vertical coordinate and grid structures and is commonly used to drive CMAQ. The meteorology inputs dictate the following CMAQ configuration parameters:
+由于天气条件是大气中主要的物理驱动力（例如温度、风、云的形成、以及降水量等变化），具有代表性的网格气象学构成了所有3D空气质量模型的基础。WRF（Weather Research and Forecastin model，天气研究和预报模型）\- Advanced Research WRF（WRF\-ARW）（Skamarock等，2005）与CMAQ兼容，这两个系统可以使用相同的水平和垂直坐标和网格结构，并且通常用于驱动CMAQ。从气象输入的信息确定了以下的CMAQ配置参数：
 
--   Horizontal grid coordinate system (e.g., latitude-longitude, Lambert Conformal)
--   Horizontal grid resolution (i.e., the size of the cells composing the grid)
--   Maximum spatial coverage (horizontal geographic extent, i.e., *the domain*) of the grid
--   Maximum vertical extends (model top) and vertical grid resolution
--   Temporal extent (the starting and ending dates and times, and the meteorology update frequency)
+- 水平网格坐标系（例如，纬度-经度，Lambert投影）
+- 水平网格分辨率（即网格的单元大小）
+- 网格的最大空间覆盖范围（水平地理范围，即*模拟区域*）
+- 最大垂直高度（模型顶部）和网格垂直分辨率
+- 时间范围（开始和结束的日期和时间，以及气象要素更新频率）
 
-To obtain inputs on emissions, CMAQ relies on an emissions processor to estimate the magnitude, location, and temporal variability of pollution sources. Open\-source processors such as the Sparse Matrix Operator Kernel Emissions ([SMOKE](https://www.cmascenter.org/smoke/)) processor (IE, 2008) are available for computing emissions inputs to CMAQ from emissions inventories. These emissions inputs must be specified on CMAQ's horizontal and vertical grid structure and cover at least the time period of the air quality model simulation. The emission inputs must also represent chemical species that conform with the gas and aerosol chemical mechanism employed in the CMAQ configuration; currently supported gas-phase mechanisms include recent versions of the Carbon Bond mechanism, the Statewide Air Pollution Research Center (SAPRC) mechanism, and the Regional Atmospheric Chemistry Mechanism (RACM). Additional details about the gas- and aerosol-phase chemistry in CMAQ are provided in [Chapter 6](CMAQ_UG_ch06_model_configuration_options.md).
+关于污染物排放输入，CMAQ依靠排放处理器来估算污染源的大小、位置和时间变化。诸如[SMOKE，Sparse Matrix Operator Kernel Emissions]( https://www.cmascenter.org/smoke/ )（IE，2008）之类的开源处理器可用于计算排放清单，作为CMAQ的输入文件。这些排放输入文件必须在CMAQ的水平和垂直网格结构上指定，并且至少涵盖模型模拟的时间段。排放输入文件中的化学物质还必须符合CMAQ设置中使用的气体和气溶胶化学机理，当前支持的气相机制（包括最新版本的碳键机制），全州空气污染研究中心（SAPRC，Statewide Air Pollution Research Center）机制和区域大气化学机制（RACM，Regional Atmospheric Chemistry Mechanism）。在[第6章](CMAQ_UG_ch06_model_configuration_options.md)中提供了有关CMAQ中气相和气溶胶化学的更多详细信息。
 
-## 1.2 Features
+## 1.2 功能
 
-From inception, CMAQ was designed to facilitate community modeling. “Community modeling” is the concept that air quality model development should be a collective effort by a broad community of developers, thereby leveraging the cross-disciplinary expertise needed to keep the physical, numerical, and computational components of the modeling system at the state-of-the-science. By adopting a standardized modeling architecture, the air quality modeling community can focus its efforts on creating software enhancements and new science modules. CMAQ is designed to meet the needs of the multiple groups contained within the air quality modeling community: research and regulatory modelers, algorithm and science module developers, air quality forecasters, and planners and policy makers. While each of these groups has distinct individual requirements for CMAQ, they also share a common need for an efficient, transparent, and scientifically credible tool to simulate the air pollution phenomena. To address these individual and common needs, CMAQ development and maintenance have the following goals:
+从一开始，CMAQ就旨在促进社区建模。 “社区建模”的概念是，空气质量模型通过广大开发人员的共同努力进行开发，从而利用跨学科的专业知识将模型的物理、数值和计算组件保持在最佳和科学状态。通过采用标准化的建模架构，空气质量建模社区可以将精力集中在开发软件的增强功能和新的科学模块上。CMAQ旨在满足空气质量建模社区中多个小组的需求，包括：研究和法规建模者、算法和科学模块​​开发人员、空气质量预报员以及规划人员和政策制定者。尽管每个小组对CMAQ有各自不同的要求，但他们对模拟空气污染现象的高效、透明和科学可信的工具有着共同的需求。为了满足这些单独的以及共同的需求，CMAQ的开发和维护具有以下目标：
 
-1.  *Scientific Integrity*. Ensure that the model remains state-of-the-science through subjecting it to [regular peer reviews](https://www.epa.gov/cmaq/cmaq-publications-and-peer-review)
-2.  *Community Development*. Utilize a design that encourages innovations and enhancements by all members of the air quality modeling community
-3.  *Multiscale Modeling*. Provide adequate technical formulations to address air quality issues on multiple spatial scales, from urban to hemispheric
-4.  *Multi-pollutant Design*. Provide robust and integrated science for modeling multiple, coupled air quality issues in a single simulation
-5.  *Modularity*. Maintain flexibility to add new, or select from existing, science modules to optimize model performance for specific applications
-6.  *Transparency*. Utilize programming practices that promote understanding of the model formulation at the source-code level
-7.  *Computational Efficiency*. Provide scientifically acceptable results without compromising the speed at which the results are generated
-8.  *Open-Source Design*. Enable no-cost distribution and application by the modeling community
+1. *科学诚信*。通过对模型进行[常规同行评议]( https://www.epa.gov/cmaq/cmaq-publications-and-peer-review )，确保模型的科学性
+2. *社区开发*。鼓励空气质量建模社区所有成员进行创新和增强设计
+3. *多尺度建模*。提供适当的技术公式，以解决从城市到半球的多个空间尺度上的空气质量问题
+4. *多污染物设计*。提供强大而综合的科学知识，可在一次模拟中对多个耦合的空气质量问题进行建模
+5. *模块化*。保持灵活性以添加新的科学模块或从现有科学模块中进行选择，以针对特定应用优化模型性能
+6. *透明度*。利用编程实践来促进在源代码级别上对模型的理解
+7. *计算效率*。提供可接受的计算速度，而不会影响结果的科学性
+8. *开源设计*。通过社区实现免费分发和应用
 
-Designed under a community-modeling paradigm, CMAQ is distributed as open-source software engineered with a modular code design to facilitate decentralized development. Built around a layered [I/O API](https://www.cmascenter.org/ioapi) and [netCDF](http://www.unidata.ucar.edu/software/netcdf) code framework, CMAQ provides a flexible platform for testing new science algorithms, chemistry representations, and optimization techniques. CMAQ provides the following features to scientists interested in developing new algorithms or adding science to the model:
+CMAQ是在社区建模范例下进行设计的，作为具有模块化代码设计的开源软件进行分发，以促进分散式开发。CMAQ围绕分层的[I/O API]( https://www.cmascenter.org/ioapi ) 和[netCDF]( http://www.unidata.ucar.edu/software/netcdf ) 代码框架构建，提供了一个用于测试新科学算法、化学表达和优化技术的灵活平台。CMAQ为有兴趣开发新算法或向模型添加科学模块的科学家提供以下功能：
 
--   All CMAQ source code is available through [GitHub](https://github.com/USEPA/CMAQ).
--   Developed and distributed following open-source software conventions, CMAQ source code is easily accessible and free to obtain.
--   Designed for modularity, CMAQ uses standardized input/output (I/O) routines to facilitate extensibility.
--   The diverse and continually growing community of CMAQ developers provides an excellent forum for discussing development-related topics of all kinds.
+- 所有CMAQ源代码均可通过[GitHub]( https://github.com/USEPA/CMAQ )获得。
+- 按照开源软件的约定开发和分发，CMAQ源代码易于访问且免费获得。
+- 采用模块化设计，CMAQ使用标准化的输入/输出（I/O）例行程序来促进可扩展性。
+- CMAQ开发人员的群体不断增长，为讨论各种与开发相关的主题提供了一个极好的论坛。
 
-The CMAQ modeling system is being developed and maintained under the leadership of the [EPA Office of Research and Development](https://www.epa.gov/aboutepa/about-office-research-and-development-ord) in Research Triangle Park, NC. CMAQ represents nearly three decades of research in atmospheric modeling and has been in active development since the early 1990s. The first public release of CMAQ was in 1998 to enable use by air quality scientists, policy makers, and stakeholder groups to address multiscale, multipollutant air quality concerns. Since then, through a series of phased development activities, new versions of the CMAQ modeling system are periodically released for use by the growing user community.
+CMAQ模型在[EPA研究与开发办公室]( https://www.epa.gov/aboutepa/about-office-research-and-development-ord )的领导下进行开发和维护。CMAQ代表了自1990年以来近三十年大气建模方面的研究成果和发展。CMAQ于1998年首次公开发布，以使空气质量科学家、政策制定者和利益相关者团体能够使用它来解决多尺度、多污染的空气质量问题。此后，通过一系列分阶段的开发活动，CMAQ模型定期发布新版本，以供不断增长的用户使用。
 
-## 1.3 Instrumented Models
-In addition to the air pollutant concentration and deposition fields output by CMAQ, the modeling system can also be instrumented to compute and output additional diagnostic information that can be used to probe the workings of the atmosphere as well as inform and guide policy inferences. These instrumented configurations include:
+## 1.3 检测模型（Instrumented Models）
+除了CMAQ输出的空气污染物浓度和沉积场外，模型还配置了可用于计算和输出其他诊断信息，这些信息可用于探测大气的运行以及提供信息和指导政策推断。这些检测的配置包括：
 
-1.  *[Integrated Source Apportionment Method (ISAM)](CMAQ_UG_ch11_ISAM.md)*: Estimates source attribution information for user specified ozone and particulate matter precursors modeled in CMAQ. Such apportionment information could be used to gain insight on, for example, how much of the ozone in an urban area was formed due to nitrogen oxides emitted from motor vehicles in a neighboring state?
-2.  *[Decoupled Direct Method in Three Dimensions (DDM-3D)](CMAQ_UG_ch10_HDDM-3D.md)*: A formal mathematical formulation that propagates sensitivity of CMAQ estimated concentrations and/or deposition to specified parameters (e.g., emissions) through the science modules in CMAQ. CMAQ-DDM-3D can be used for sensitivity to emission rates, boundary conditions, initial conditions, reaction rates, potential vorticity, or any combination of these parameters. Second order sensitivity calculations, or sensitivity of sensitivity, are also available.
-3.  *[Sulfur Tracking Method (STM)](CMAQ_UG_ch12_sulfur_tracking.md)*: Tracks sulfate production from gas- and aqueous-phase chemical reactions, as well as contributions from emissions and initial and boundary conditions. The additional diagnostic information enables users to better understand the relative contribution of various pathways for airborne sulfate, a dominant contributor to fine particulate matter.
-4.  *[Integrated Process Rates (IPR)](CMAQ_UG_ch09_process_analysis.md)*: CMAQ can be configured to output the process rates for each of the modeled processes impacting change in ambient concentrations of modeled species. This essentially provides a breakdown of the various terms contributing to the overall species mass-balance and thus helps with species mass-budget analysis.
-5.  *[Integrated Reaction Rates (IRR)](CMAQ_UG_ch09_process_analysis.md)*: This technique involves integrating the rates of individual chemical reactions represented in the gas-phase chemical mechanism employed by CMAQ. As an example, this information can then be used to infer the relative importance of various precursor species contributing to ozone production in a grid cell or region.
-
-
-## 1.4 New Features in CMAQv5.3
-Building on previous versions of the modeling system, numerous updates to the process science and model structure have been implemented in CMAQv5.3 including:
-
-1.	Advances in the science of modeling particulate matter composition, size distribution and optical properties. These updates are encapsulated in a new version of the CMAQ aerosol module named AERO7.
-2.	Improvements and updates to the representation of multi-phase chemistry in the CMAQ modeling system, including incorporation of new gas-phase chemical mechanisms, expansion of aqueous chemistry pathways, incorporation of improved data sets to estimate photolysis rates, and updates to numerical integration schemes to improve runtime efficiency.
-3.	Improvements in representation of land-atmosphere exchange processes, including consistent representation of deposition process for unidirectional and bidirectional species, explicit mapping of wet and dry deposited species to modeled chemical species and incorporation of land-use specific deposition output.
-4.	Improvements to coupling between meteorology and chemistry models, including updates to land surface fluxes using different land surface models in WRF (e.g., Noah), consistent coupling with new coordinate systems in WRF (e.g., hybrid vertical coordinate), incorporation of alternate output file formats.
-5.	Improvements to CMAQ model structural attributes, including a new interface for mapping and perturbing emission inputs, streamlining CMAQ output and log files to improve usability, improved documentation of chemical mechanism inputs and process analysis files.
-6.	Improvements in linkages of regional- and large-scale pollution through downscaling from global and hemispheric models and prototyping a variable resolution global chemistry-transport modeling system.
-
-Collectively, these updates improve model capabilities for addressing local nonattainment issues, quantifying natural contributions versus anthropogenic enhancements, enabling examination of regional air pollution in context of changing global emissions, and for cross-media applications. Additionally, changes to model structure in CMAQv5.3 are oriented towards improving transparency of model assumptions, improved diagnostic tools for model probing, and improvements in overall numerical and computational efficiency of the modeling system.
-
-## 1.5 System Recommendations
-CMAQ is a comprehensive air pollution modeling system whose source code is written in Fortran. CMAQ execution is typically performed on Linux based systems. The hardware configuration of such a system depends on the domain size, grid resolution and simulation duration. Since typical input and output data sets for CMAQ entail three dimensional descriptions of the dynamical and chemical state of the simulated atmosphere, these data sets could require upwards of several gigabytes of disk storage per simulation day.
-
-## 1.6 CMAQ Support Resources
-
-Extensive information on the model's scientific basis, applications, publications, peer-review, and instructions to download the CMAQ modeling system are available at https://www.epa.gov/cmaq. To support the CMAQ user community, EPA currently funds the University of North Carolina at Chapel Hill to host the [Community Modeling and Analysis System (CMAS) Center](http://www.cmascenter.org/), which maintains a user help desk, provides new user training, and promotes the dissemination and use of the modeling system through exploration of new technologies and platforms (e.g., cloud-based). The CMAS Center offers an e-mail help desk and an [online forum](https://forum.cmascenter.org/) to allow users to connect with model developers and other model users around the world.
+1. [综合源分配方法（ISAM，Integrated Source Apportionment Method）]( CMAQ_UG_ch11_ISAM.md ) ：估算CMAQ模型中用户指定的臭氧和颗粒物前驱体的源贡献信息。这种分配信息可用于了解例如邻近州机动车排放的氮氧化物对本市区的臭氧有多少贡献量？
+2. [三维解耦直接方法（DDM-3D，Decoupled Direct Method in 3D）]( CMAQ_UG_ch10_HDDM-3D.md )：一种正式的数学公式，可通过CMAQ中的科学模块，将CMAQ估计的浓度和/或沉积物的敏感性传播到指定参数（例如，排放物）。 CMAQ-DDM-3D可用于排放速率、边界条件、初始条件、反应速率、潜在涡度或这些参数任意组合的敏感性。也可以用来进行二次灵敏度计算或敏感度的敏感度分析。
+3. [硫跟踪方法（STM，Sulfur Tracking Method）]( CMAQ_UG_ch12_sulfur_tracking.md )：跟踪气相和水相化学反应产生的硫酸盐、以及排放源、初始和边界条件的贡献。附加的诊断信息使用户能够更好地了解通过空气传播的硫酸盐（细粒物质的主要贡献者）的各种途径的相对贡献。
+4. [综合过程速率（IPR，Integrated Process Rates ）]( CMAQ_UG_ch09_process_analysis.md )：可以配置CMAQ以输出过程速率，包含影响环境中被模拟物种浓度变化的每个被模拟的过程。这实质上是对总体物种质量平衡的各个环节进行分解，因此有助于进行物种质量预算分析。
+5. [综合反应速率（IRR，Integrated Reaction Rates ）]( CMAQ_UG_ch09_process_analysis.md )：该技术涉及对CMAQ所采用的气相化学机理中表示的各个化学反应的速率进行整合。例如，该信息可有助于推断各种前体物质对网格单元或区域中臭氧产生的相对重要性。
 
 
-___
+## 1.4 CMAQv5.3中的新功能
+在模型之前版本的基础上，CMAQv5.3对科学和模型结构进行了许多更新，其中包括：
 
-<!-- BEGIN COMMENT -->
+1. 在模拟颗粒物质组成、尺寸分布和光学特性方面的科学进展。这些更新封装在名为AERO7的CMAQ气溶胶模块中。
+2. 改进和更新CMAQ模型中多相化学的表示方法，包括加入新的气相化学机理、扩展水化学路径、加入改进的数据集以估计光解速率、以及更新数值积分方案以提高运行效率。
+3. 改进地面-大气交换过程的表示方法，包括单向和双向物质沉积过程的一致表示、将干湿沉降物种明确映射到模拟化学物种、以及加入与土地利用相关的沉积输出。
+4. 改进了气象和化学模型之间的耦合，包括使用WRF中不同的地表模型（例如Noah）更新地表通量、支持WRF中新的坐标系（例如混合垂直坐标）、加入逐次输出文件格式。
+5. 改进了CMAQ模型的结构属性，包括新的接口用于映射和扰动排放输入、简化CMAQ输出和日志文件以提高可用性、改进了化学机制输入和过程分析文档。
+6. 通过缩小全球和半球模型的规模，以及为可变分辨率的全球化学传输模型系统建立原型，改善区域尺度和大尺度污染之间的联系。
 
-[CMAQ User's Guide List of Tables and Figures](CMAQ_UG_tables_figures.md)
+总的来说，这些更新改进了模型能力，以解决当地的未达标问题、量化自然贡献与人为因素贡献、在全球排放量变化的背景下分析区域空气污染、以及跨媒介的应用。此外，CMAQv5.3中对模型结构的更改旨在提高模型假设的透明度，改进用于模型探测的诊断工具，以及改进建模系统的整体数值和计算效率。
 
-<!-- BEGIN COMMENT -->
+## 1.5 系统建议
+CMAQ是一个综合的空气污染建模系统，其源代码用Fortran编写。CMAQ在Linux系统上运行。系统的硬件配置取决于模拟区域的大小、网格分辨率和模拟时间周期。由于CMAQ的输入和输出数据需要对模拟大气的动力学和化学状态进行三维描述，因此这些数据在每个模拟日可能需要多达几GB的磁盘存储空间。
+
+## 1.6 CMAQ支持资源
+
+有关该模型的科学依据、应用、出版物，同行评审以及下载CMAQ建模系统的说明，请访问 https://www.epa.gov/cmaq 。为了支持CMAQ用户社区，EPA目前资助北卡罗来纳大学教堂山分校主持[社区建模和分析系统中心（CMAS）]( http://www.cmascenter.org/ )，开展用户服务、提供新用户培训、并通过探索新技术和平台（例如基于云平台）促进模型系统的传播和使用。CMAS中心提供了一个电子邮件和一个[在线论坛]( https://forum.cmascenter.org/ )，使用户可以与世界各地的模型开发人员和其他用户建立联系。
+
 
 ___
 
 <!-- BEGIN COMMENT -->
 
-[Home](README.md) - [Next Chapter >>](CMAQ_UG_ch02_program_structure.md)<br>
-CMAQ User's Guide (c) 2020<br>
+[《CMAQ用户指南》图表清单](CMAQ_UG_tables_figures.md)
+
+<!-- BEGIN COMMENT -->
+
+___
+
+<!-- BEGIN COMMENT -->
+
+[返回](README.md) - [下一章 >>](CMAQ_UG_ch02_program_structure.md)<br>
+CMAQ用户指南 (c) 2020<br>
 
 <!-- END COMMENT -->

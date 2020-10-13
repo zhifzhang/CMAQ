@@ -1,198 +1,194 @@
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Chapter](CMAQ_UG_ch08_analysis_tools.md) - [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch10_HDDM-3D.md)
+[<< 前一章](CMAQ_UG_ch08_analysis_tools.md) - [返回](README.md) - [下一章 >>](CMAQ_UG_ch10_HDDM-3D.md)
 
 <!-- END COMMENT -->
 
-# 9. Process Analysis
+# 9 过程分析
 
-## 9.1 Introduction
-Most applications of CMAQ, as well as other 3-D grid models, output concentration fields of chemical species of interest at selected time steps that reflect the cumulative effect of all processes (emissions, chemical reaction, transport, etc.) that act on the chemical species over the time period.  While concentrations are useful per se, knowing only the net result of all processes can limit the understanding of *why* the concentrations are the levels that are calculated.  For some applications, the user may want to unravel this net impact and examine the quantitative impact of the individual processes, to identify those which are most important or uncertain. Process Analysis (PA) is a technique for separating out and quantifying the contributions of individual physical and chemical processes to the changes in the predicted concentrations of a pollutant. PA does *not* have to be activated in a CMAQ simulation but including PA in a simulation during runtime provides additional information that can be useful in interpreting CMAQ results. PA has two components:  Integrated Process Rate (IPR) analysis, and Integrated Reaction Rate (IRR) analysis. IPR analysis quantifies the net change in species through physical processes of advection, diffusion, emissions, dry deposition, aerosol processes, and cloud processes, and the overall impact of chemical processes. IRR analysis allows the output of individual chemical reaction rates or user-specified combinations of chemical reactions and species cycling.
+## 9.1 简介
+CMAQ的大多数应用，以及其他的3D网格模型，在选定的时间步长内输出感兴趣的化学物种的浓度场，这些浓度场反映了在该时间段内所有对该化学物种起作用的过程（排放、化学反应、传输等）的总影响。尽管输出的浓度场结果本身是有用的，但仅了解所有过程的最终结果会限制对*为什么*浓度场是这种结果的理解。对于某些应用情景，用户可能希望进一步了解影响结果并检查各个过程的定量影响，以识别最重要的或不确定的过程。而过程分析（Process Analysis，PA）就是一种用于分离和量化各个物理和化学过程对预测污染物浓度变化的贡献的技术。PA并不一定要在CMAQ模拟时激活，但是在运行时将PA包含在模拟中可以提供其他信息，这些信息可用于解释CMAQ的计算结果。PA具有两个组件：集成过程速率（Integrated Process Rate，IPR）分析和集成反应速率（Integrated Reaction Rate，IRR）分析。集成过程速率（IPR）分析通过对流、扩散、排放、干沉降、气溶胶过程和云过程等物理过程以及化学过程的整体影响来量化物种的净变化。集成反应速率（IRR）分析允许输出单独的化学反应速率或用户指定的化学反应和物种循环的组合。
 
-As a tool for identifying the relative importance of individual chemical and physical processes, PA has many applications, including:
+作为确定单个化学过程和物理过程相对重要性的工具，PA具有许多应用程序，包括：
 
-- Quantifying major contributors to the concentration of a chemical species at a grid cell. PA can be used to split out the contributions of multiple, complex processes that control species concentrations. PA is useful for species that have both production and decay processes occurring in the same time step, including cases where the final concentration may show little change, but individual decay and production rates may be large.
+- 量化网格单元中化学物质浓度的主要贡献者。PA可用于拆分控制物种浓度的多个复杂过程的贡献。PA对同时发生生成和衰变过程的物种很有用，包括最终浓度变化不大但个体衰变和生成率可能很大的情况。
 
-- Characterizing the chemical state of a particular grid cell.  PA with IRR can be used to calculate quantities such as the production of odd oxygen, the production of new radicals, the ozone production efficiency and the termination of radicals. (For example, see Tonnesen and Dennis, 2000.)
+- 表征特定网格单元的化学状态。具有集成反应速率（IRR）的PA可用于计算数量，例如奇数氧的产生、新自由基的产生、臭氧的产生效率和自由基的终止。（示例请参见Tonnesen和Dennis，2000年。）
 
-- Aiding model development. PA can help predict and evaluate the effect of modifications made to a model or process module.
+- 帮助模型开发。PA可以帮助预测和评估对模型或过程模块进行修改的效果。
 
-- Identifying compensating or unresolved errors in the model or input data which may not be reflected in the total change in concentration. For example, if an error in the emissions input data causes the model to calculate negative concentration values in an intermediate step, this could be masked in the final predicted concentrations if compensated for by larger positive values resulting from the chemistry calculations.
+- 识别模型或输入数据中的补偿或未解决的错误，这些错误可能未反映在总浓度变化中。例如，如果排放输入数据中的错误导致模型在中间步骤中计算负浓度值，那么如果用化学计算得出的较大正值补偿了该误差，则可以将其掩盖在最终预测浓度中。
 
-PA variables are computed by saving the differential operators associated with each process or reaction, integrated over the model synchronization time step for the same variables that are used in solving the continuity equations within the model. For processes that are solved simultaneously in the same operator, PA uses mass balance to compute the contribution of each process.
+通过保存与每个过程或反应相关的微分算子来计算PA变量，并在模型同步时间步长上积分用于求解模型内连续性方程的相同变量。对于在同一操作中同时解决的过程，PA使用质量平衡来计算每个过程的贡献。
 
-A user activates PA during CMAQ runtime and includes a PA input file to specify whether IPR, IRR or both analyses are performed, and defining what variables are required for each analysis. The IRR parameters are highly customizable and can be easily modified but must be checked carefully before running the model to ensure that they correspond to the mechanism being used.  In CMAQ v5.2 and earlier versions, IRR could only be run when CMAQ was compiled with the Rosenbrock (ros3) or Sparse-Matrix-Vectorized Gear (smvgear) solvers. However, in CMAQv5.3, the code was updated to enable use of IRR with the ebi solver, and to implement enhanced output of aerosol processes. The derivation of PA and format of input files specific to CMAQ incorporation is detailed in Gipson et al., (1999), and a further description of the science behind PA is provided in Tonnesen (1994) and Jeffries and Tonnesen (1994).
+用户在CMAQ运行时激活PA，并包括一个PA输入文件，以指定是执行IPR分析、或IRR分析、还是两个分析同时执行，并定义每个分析所需的变量。IRR参数是高度可定制的，可以轻松修改，但是在运行模型之前必须仔细检查以确保它们与所使用的化学机制相对应。在CMAQ v5.2和更早版本中，仅当使用Rosenbrock（ros3）或稀疏矩阵矢量化齿轮（Sparse-Matrix-Vectorized Gear，smvgear）求解器编译CMAQ时，才能运行IRR。但是，在CMAQv5.3中，对代码进行了更新，以允许将IRR与ebi求解器一起使用，并实现增强的气溶胶过程输出。Gipson等人（1999年）详细介绍了PA的由来和用于CMAQ的输入文件格式，Tonnesen（1994年）以及Jeffries和Tonnesen（1994年）详细介绍了PA背后的科学原理。
 
-## 9.2 Use of Process Analysis
+## 9.2 过程分析的使用
 
-**Step 1: Activate Process Analysis and specify control files**
+**步骤1：激活过程分析并指定控制文件**
 
 - setenv CTM_PROCAN Y:N
 
-Set this variable to Y to indicate that you want process analysis to be activated. The default is N. If this is set to Y, then you must also specify the following two files:
+将此变量设置为Y表示要激活过程分析。默认值为N。如果将其设置为Y，则还必须指定以下两个文件：
 
  - setenv PACM_INFILE [filename]
  - setenv PACM_REPORT [filename]
 
-PACM_INFILE is the input file that specifies the desired output information (read by pa_read.F).  Gipson et al., (1999), details the types of equations and operators that can be used, with a brief summary here in Table 1.  PACM_REPORT is the output file that displays how CMAQ translates the variables listed in PACM_INFILE, and lists the reactions (including reactants, products and yields) that will be used in calculating the IPR and IRR values.  Users should check this file on the first iteration of a new PA simulation to ensure that CMAQ is interpreting the variables as the user intended.
+PACM_INFILE是指定输出信息所需的输入文件（由pa_read.F读取）。Gipson等人（1999年）详细描述了可以使用的方程式和运算符的类型，表1对此进行了简要总结。PACM_REPORT是输出文件，显示了CMAQ如何转换PACM_INFILE中列出的变量，并列出了反应（包括反应物、产物和产率）将用于计算IPR和IRR值。用户应在新的PA模拟的第一次迭代中检查此文件，以确保CMAQ按照用户的意图解释变量。
 
-The user can also specify an optional subdomain for the IPR/IRR output.  If these variables are not specified, the default domain is the entire CMAQ domain, however, the user may want to limit the portion of the domain where output is written because the files can get large. This is done using the variables:
+用户还可以为IPR/IRR输出指定可选的子区域。如果未指定这些变量，则默认区域是整个CMAQ模拟区域，但是，由于文件可能变大，用户可能希望限制写入在输出文件的部分区域。使用以下变量完成此操作：
 
 -   setenv PA_BCOL_ECOL "[start] [end]"
 -   setenv PA_BROW_EROW "[start] [end]"
 -   setenv PA_BLEV_ELEV "[start] [end]"
 
-where integers [start] and [end] are the starting and ending grid columns, rows, or vertical levels. These optional variables are used to specify the modeling grid domain column range, row range, and layer range for the process analysis calculations. Set to the two digits representing the start and end columns, rows and layer numbers bounding the process analysis domain. The user must be careful that the columns, rows, and levels are not outside of the current CMAQ domain.
+其中整数[start]和[end]是开始和结束的网格列、行或垂直层数。这些可选变量用于为过程分析计算指定建模区域网格的列、行和垂直层数范围。用户必须注意列、行和层数不能在当前CMAQ模拟区域之外。
 
-**Step 2: Ensure that output files are being written and that the output variables have been correctly specified**
+**步骤2：确保模型运行可以输出文件，并且已正确指定输出变量**
 
-A PACM_REPORT file, with the name specified in Step 1, is output for every day of simulation, along with daily IRR or IPR files, depending on whether IRR or IPR was specified.  If there is a formatting error in the PACM_INPUT file, CMAQ will not run and the CMAQ log files must be checked to determine where the error occurred. The PACM_REPORT file will list the reactions that are used to interpret each of the reactions/families/cycles/operators specified by the user in the PACM_INPUT file.  For complex operations (such as those including families or cycles), the user must ensure that the output conveys the appropriate quantities.
+在模拟的每一天，都会输出具有步骤1中指定名称的PACM_REPORT文件以及每日IRR或IPR文件，具体取决于是否指定了IRR或IPR。如果PACM_INPUT文件中存在格式错误，则CMAQ将不会运行，并且必须检查CMAQ日志文件以确定发生错误的位置。PACM_REPORT文件将列出用于解释用户在PACM_INPUT文件中指定的每个反应/族/循环/操作员的反应。对于复杂的操作（例如包括族或循环的操作），用户必须确保输出传达适当的数量。
 
-The output files are specified in the CMAQ runscript by:
+通过以下方式在CMAQ运行脚本中指定输出文件：
 
--    setenv CTM_IPR_1 [filename] (....similarly for CTM_IPR_2 and CTM_IPR_3)
+- setenv CTM_IPR_1 [filename] (....CTM_IPR_2和CTM_IPR_3与之类似)
 
--    setenv CTM_IRR_1 [filename] (....similarly for CTM_IRR_2 and CTM_IRR_3)
+- setenv CTM_IRR_1 [filename] (....CTM_IRR_2和CTM_IRR_3与之类似)
 
-IPR files are only created if IPR is turned on in the PACM_INFILE (IPR_OUTPUT specified), and IRR files are only created if IRR is specified (IRRTYPE = PARTIAL or FULL).  The number of output files created (whether 1,2 or 3) depends on the number of variables specified; for example, only one will be created for the sample input file delivered as part of the CMAQ release.
+仅当在PACM_INFILE中打开IPR时（指定了IPR_OUTPUT），才会创建IPR文件；同样，仅当指定了IRR（IRRTYPE=PARTIAL或FULL）时，才会创建IRR文件。创建的输出文件的数量（是1、2还是3）取决于指定的变量数量。例如，对于作为CMAQ发布版本的一部分提供的输入文件示例，将只创建一个输出文件。
 
-**Step 3: Post process output files**
+**步骤3：处理过程分析的输出文件**
 
-The output files are in the same units as the concentration files and can be post-processed using the same utilities used to post-process the CMAQ concentration files. In particular the following utilities may be helpful:
+PA的输出文件与浓度文件的单位相同，可以使用与CMAQ浓度文件后处理相同的实用程序进行后处理。特别是以下实用程序可能会有所帮助：
 
--   combine (to combine multiple days in one file, to match density or layer height with IPR or IRR variables)
--   m3tproc (to sum up throughput over multiple days)
--   vertot (to sum up throughput over several layers, such as the PBL)
--   verdi (to view spatial heterogeneity in process throughput)
+- combine（在一个文件中合并多天，以使密度或层高与IPR或IRR变量匹配）
+- m3tproc（合计多天的生成量）
+- vertot（合计多个层的生成量，例如PBL）
+- verdi（用于查看过程生成量中的空间异质性）
 
-## 9.3 Description of the PACM_INFILE
+## 9.3 PACM_INFILE文件说明
 
-The PA input file (PACM_INFILE) is the user-tailored file that controls the parameters that are calculated and output at each time step.  Depending on the specificity of the output, the file will need to be tailored to the chemical mechanism used in the simulation, because species names and reaction numbers vary among different mechanisms.  For example, components of oxidized nitrogen, such as organic nitrates, are represented by species NTR1 + NTR2 + INTR in CB6, but  by RNO3 in SAPRC07. In addition, if IRR outputs are specified by label, the user must ensure that the labels are appropriate for the mechanism being used.
+PA的输入文件（PACM_INFILE）是用户定制的文件，用于控制在每个时间步长计算和输出的参数。根据输出的要求，文件将需要针对模拟中使用的化学机制进行定制，因为物种名称和反应数在不同机制中会有所不同。例如，氮氧化物的成分，如有机硝酸盐，在CB6中表示为NTR1 + NTR2 + INTR，而在SAPRC07中表示为RNO3。另外，如果IRR输出由标签指定，则用户必须确保标签适合所使用的化学机制。
 
-The user can define families of similar pollutants, specify cycles, and reaction sums that can be used in subsequent IPR and IRR equations, which can simplify the specification of quantities.  DEFINE FAMILY is useful when the user wants to follow the sum of several different species, for example:
+用户可以定义类似污染物的族（family）、指定循环和反应合计，以在后续IPR和IRR方程中使用，从而简化数量说明。当用户想要跟踪几种不同种类的总和时，DEFINE FAMILY（族定义）非常有用，例如：
 
 - DEFINE FAMILY NOX = NO + NO2
 
-This will allow the user to specify operations of both NO and NO2 by using the user-specified family name NOX. Cycles are important because many species have reactions in which they decay and reform quickly.  In some cases, the production and loss terms may both be large and obscure the information that is desired.
+这将允许用户使用定义的族“NOX”来指定NO和NO2的操作。循环很重要，因为许多物种的反应都会使它们迅速衰减并重新形成。在某些情况下，生产和损失期可能都很大，并且掩盖了用户所需的信息。
 
 - DEFINE FAMILY PANcyc = PAN
 
-A user-specified name, PANcyc, can be used in place of PAN in further operations, to remove the effect of rapid reactions that recycle PAN rapidly.  Cycles (as well as other quantities) can also be defined with the RXNSUM statement:
+在以后的操作中，可以使用用户定义的名称PANcyc代替PAN，以消除PAN的快速循环反应的影响。周期（以及其他数量）也可以用RXNSUM语句定义：
 
 - DEFINE RXNSUM CLNO3cyc      = <CL28\> - <CL30\>
 
-This will store the net throughput of the reaction labeled CL28 minus reaction labeled CL30 (i.e. in CMAQ-CB6, the net production of species CLNO3) in a user-specified variable named CLNO3cyc.
+这将在标有CLNO3cyc的用户指定变量中存储标记为CL28的反应的净通量减去标记为CL30的反应的净通量（即在CMAQ-CB6中，物种CLNO3的净产量）。
 
 <a id=Table9-1></a>
 
-**Table 9-1. Parameters used in PACM_INFILE**
+**表9-1. PACM_INFILE中使用的参数**
 
 |**First string**| **Second string** |**Third string**|**Remainder of line**|
 |:-------------|:----------------------------|:-----|:-----------------------------|
-|DEFINE FAMILY|[descriptor]|=|list of chemicals separated by + |
-|DEFINE CYCLE|[descriptor]|=|chemical name|
-|DEFINE RXNSUM|[descriptor]|=|list of reactions separated by +|
-|IPR_OUTPUT|[chemical/family name]| = |physical process names and/or CHEM |
+|DEFINE FAMILY|[descriptor]|=|化学物质清单（list of chemicals），用“+"分隔|
+|DEFINE CYCLE|[descriptor]|=|化学物质名称（chemical name）|
+|DEFINE RXNSUM|[descriptor]|=|反应清单（list of reactions），用“+"分隔|
+|IPR_OUTPUT|[chemical/family name]| = |物理过程和/或化学过程名称（physical process names and/or CHEM）|
 |IRR_OUTPUT|  FULL:PARTIAL:NONE     |
-|IRR_OUTPUT|[descriptor]| = |reaction label, combination of species reactions, etc.|
+|IRR_OUTPUT|[descriptor]| = |反应标签、物种反应组合等（reaction label, combination of species reactions, etc）|
 
 
-## 9.4 Parameters for IPR
+## 9.4 IPR参数
 
-Each line for IPR output begins with IPR_OUTPUT, followed by the chemical species or the species family for which output is desired and the processes to be output.  If the processes are omitted, then the default is all processes.  The available processes are listed in Table 9-2.  In the sample file, for example:
+IPR_OUTPUT的每一行均以IPR_OUTPUT开头，后面是需要输出的化学物种或者物种族（family），再后面是输出的过程。如果省略了过程，则默认为所有过程。表9-2中列出了可用的过程。在示例文件中，例如：
 
 IPR_OUTPUT O3    =  CHEM+DDEP+CLDS+AERO+TRNM;
 
-specifies that the output includes the change in species O3 over the time step for the net sum of
-all chemistry processes, the net dry deposition, the net change in concentration due to clouds, aerosol
-processes, and total transport.  If the species is a family name instead of a species name, the outputs
-will be calculated for the sum of each species in the family.
+上面的“CHEM+DDEP+CLDS+AERO+TRNM”就是指定的输出的过程，包括随时间步长变化的物种O3所有化学过程的净合计、净干沉降、由于云、气溶胶引起的浓度净变化过程、和总传输。如果物种是族名称而不是物种名称，则输出将针对该族中每个物种的总和进行计算。
 
 <a id=Table9-2></a>
 
-**Table 9-2. Allowable parameters for process outputs**
+**表9-2. 过程输出的允许参数**
 
-|**LPROC**|**process**| **Description**|
+|**LPROC**|**过程**| **描述**|
 |:-------|:-----|:---------|
-|1|ZADV| vertical advection|
-|2|HADV| horizontal advection|
-|3|HDIF| horizontal diffusion|
-|4|VDIF| vertical diffusion|
-|5|EMIS| emissions contribution to concentration|
-|6|DDEP| dry deposition of species|
-|7|CLDS| change due to cloud processes; includes aqueous reaction and removal by clouds and rain|
-|8|CHEM| net sum of all chemical processes for species over output step|
-|9|COND| change in aerosol species due to condensation|
-|10|COAG| change in aerosol species due to coagulation|
-|11|NPF| change in aerosol species due to new particle formation|
-|12|GROW| change in aerosol species due to aerosol growth|
-|9+10+11+12|AERO| change due to aerosol processes|
-|1+2|MADV| Horizontal and vertical advection|
-|3+4|TDIF| Total diffusion of species|
-|1+2+3+4| TRNM|Total mass-conserving transport of species|
+|1|ZADV| 垂直对流，vertical advection|
+|2|HADV| 水平对流，horizontal advection|
+|3|HDIF| 水平扩散，horizontal diffusion|
+|4|VDIF| 垂直扩散，vertical diffusion|
+|5|EMIS| 排放对浓度的贡献，emissions contribution to concentration|
+|6|DDEP| 物种的干沉降，dry deposition of species|
+|7|CLDS| 云过程造成的变化，包括液相反应以及被云和雨水去除；change due to cloud processes; includes aqueous reaction and removal by clouds and rain|
+|8|CHEM| 在输出步骤中物种的所有化学过程的总和，net sum of all chemical processes for species over output step|
+|9|COND| 冷凝导致的气溶胶物种变化，change in aerosol species due to condensation|
+|10|COAG| 凝结导致的气溶胶物种变化，change in aerosol species due to coagulation|
+|11|NPF| 由于形成新的颗粒而导致的气溶胶物种变化，change in aerosol species due to new particle formation|
+|12|GROW| 气溶胶生长导致的气溶胶物种变化，change in aerosol species due to aerosol growth|
+|9+10+11+12|AERO| 在气溶胶过程发生的全部变化，change due to aerosol processes|
+|1+2|MADV| 水平和垂直对流，Horizontal and vertical advection|
+|3+4|TDIF| 水平和垂直扩散，Total diffusion of species|
+|1+2+3+4| TRNM|物种的总质量平衡传输过程，Total mass-conserving transport of species|
 
-## 9.5 Parameters for IRR
+## 9.5 IRR的参数
 
-The specification for parameters in IRR output begins with IRR_OUTPUT followed by a user-defined name for the quantity and an equation specifying how it is to be calculated. The operators used in constructing these equations are explained in more detail in Gipson et al. (1999), and a brief summary of the allowable operators is included in Table 9-3.  The equation could include a reaction label or an operator for a chemical species or family.  For example:
+IRR输出中的参数说明以IRR_OUTPUT开头，后面是用户定义的数量名称，再后面是如何计算该数量的公式。Gipson等人（1999年）更详细地解释了用于构造这些方程式的运算符。表9-3列出了允许的运算符的简要摘要。该方程式可以包括化学物种或族的反应标签或运算符。例如：
 
 IRR_OUTPUT NewClrad = 2.0*<CL1\> + <CL2\> + <CL8\> + <CL25\>
 
-would sum the throughput of reactions labeled CL2, CL8, and CL25 and 2 times the throughput of reaction labeled CL1. The sum for each time step and each grid would be in the variable NewCLrad defined by the user.
+将标记为CL2、CL8和CL25的反应的通量，以及标记为CL1的反应的通量的2倍相加。每个时间步长和每个网格的总和将在用户定义的变量NewCLrad中。
 
 <a id=Table9-3></a>
 
-**Table 9-3. Allowable operators for Integrated Reaction Rate outputs**
+**表9-3. 允许的综合反应速率（IRR）输出运算符**
 
-|**Operator**          | **Description**|
+|**运算符**          | **描述**|
 |:------|:----|
-|PROD[x] {FROM [y] {AND/OR [z]}} | sum of throughput from all reactions where species (or family) x is a product.  Optional qualifiers limit to reactions were species y or z are reactants|
-|NETP[x] {FROM [y] {AND/OR [z]}} | similar to PROD but only uses reactions where net production is greater than zero|
-|LOSS[x]  {AND/OR[y]}| All loss of species/family x; could be limited to only reactions where both x and y or x or y are lost|
-|NETL[x] {AND/OR [y]} | similar to LOSS but only uses reactions where net loss of x {and/or y} is greater than zero|
-|NET[x]| the net of the production and loss for all reactions in which x is a product or reactant|
-|cyclename[POSONLY:NEGONLY]| calculates the net impact of a cycle defined earlier.  Using optional qualifiers will output values only if the net is positive or negative.
+|PROD[x] {FROM [y] {AND/OR [z]}} | 物种（或族）x是所有反应的通量总和。对于种类y或z是反应物时，可选的限定词限制为反应|
+|NETP[x] {FROM [y] {AND/OR [z]}} | 类似于PROD，但仅使用净产量大于零的反应|
+|LOSS[x]  {AND/OR[y]}| 物种/族x的所有损失；可能仅限于同时丢失x和y或x或y的反应|
+|NETL[x] {AND/OR [y]} | 类似于LOSS，但仅使用x {和/或y}的净损失大于零的反应|
+|NET[x]| x是产物或反应物的所有反应的产量和损失净额|
+|cyclename[POSONLY:NEGONLY]| 计算先前定义的周期的净影响。仅当净影响为正数或负数时，使用可选的限定词才会输出值|
 
-## 9.6 Example IRR applications
+## 9.6 IRR应用示例
 
-IRR can be endlessly customized to examine many different processes and combinations of processes.  Below are two examples of how IRR can be used.
+可以无限地定制IRR，以检查许多不同的过程以及过程的组合。下面是两个有关如何使用IRR的示例。
 
-**Example 1: Examine fate of VOC reactions**.  In this example, we have defined a family "aVOC" to be the sum of all (mostly) anthropogenic VOCs used in CMAQ-CB6 (Luecken et al., 2019), and then quantified the loss of the family through reaction with the oxidants OH, O3 and NO3:
+**示例1：检查VOC反应的结局**
+在此示例中，我们将一个族"aVOC"定义为CMAQ-CB6中使用的所有（大部分）人为VOCs的总和（Luecken等，2019），然后通过与氧化剂OH，O3和NO3反应来量化该族的损失：
 
-- DEFINE FAMILY aVOC = FORM +ALD2 +ALDX +PAR +ETHA +PRPA +MEOH +ETOH +ETH +OLE
- +IOLE +ACET +TOL +XYLMN +GLYD +GLY +MGLY +KET +CRON +NTR1 +OPEN +CAT1 +CRES
- +XOPN +NAPH + TO2 + BZO2 + XLO2 + ROR + XPRP + ROOH;
+- DEFINE FAMILY aVOC = FORM +ALD2 +ALDX +PAR +ETHA +PRPA +MEOH +ETOH +ETH +OLE +IOLE +ACET +TOL +XYLMN +GLYD +GLY +MGLY +KET +CRON +NTR1 +OPEN +CAT1 +CRES +XOPN +NAPH + TO2 + BZO2 + XLO2 + ROR + XPRP + ROOH;
 - IRR_OUTPUT aVOCwithOH = LOSS[aVOC] AND [OH];
 - IRR_OUTPUT aVOCwithO3 = LOSS[aVOC] AND [O3];
 - IRR_OUTPUT aVOCwithNO3 = LOSS[aVOC] AND [NO3];
 
-We have summed the throughputs over 2 weeks (July 1-14, 2011), within the first level of the model, and compared these three output pathways at four locations throughout the U.S. Figure 9-1 shows the sum through each of these processes at 6 different grid areas, including 4 urban areas and 2 rural areas.  This figure also includes the corresponding fate for the largely biogenic VOCs, although note that some VOCs, such as formaldehyde and ethanol can be both anthropogenic and biogenic.
+我们将模型的第一层中2周（2011年7月1日至14日）的产生量进行了合计，并比较了美国境内四个位置的这三个输出路径。图9-1显示了6个不同的网格区域内每个过程的总和，包括4个城市区域和2个农村区域。该图件还包括了大部分生物源VOCs的相应结局，但请注意，某些VOCs（例如甲醛和乙醇）可能是人为源和生物源共同作用的。
 
 <a id=Figure9-1></a>
 
-![Figure 9-1: Relative contribution of oxidation pathways for VOCs](./images/Figure10-1.png)
+![图9-1. 使用过程分析（PA）对VOCs氧化途径的相对贡献分析结果](./images/Figure10-1.png)
 
-**Figure 9-1.  Relative contribution of oxidation pathways for VOCs using Process Analysis**
+**图9-1. 使用过程分析（PA）对VOCs氧化途径的相对贡献分析结果**
 
-**Example 2: Quantify the major contributors to the production of HNO3**.  In this example, we develop output variables to represent the total production of HNO3 in CMAQ-CB6 and the individual reactions which contribute to this total production:
+**示例2：量化HNO3生成的主要贡献者** 
+在此示例中，我们开发输出变量以表示CMAQ-CB6中HNO3的总产量以及对该总产量有贡献的各个反应：
 
 - IRR_OUTPUT HNO3prod = PROD[HNO3];
 - IRR_OUTPUT HNO3fromOHNO2 = <R45\>;
 - IRR_OUTPUT HNO3fromhetNTR = <HET_NTR2>;
-- IRR_OUTPUT HNO3fromN2O5 = <HET_N2O5IJ> +<HET_N2O5K> +<HET_H2NO3PIJA>
-      +<HET_H2NO3PKA>;
+- IRR_OUTPUT HNO3fromN2O5 = <HET_N2O5IJ> +<HET_N2O5K> +<HET_H2NO3PIJA>+<HET_H2NO3PKA>;
 - IRR_OUTPUT HNO3fromNO3 = PROD[HNO3] FROM [NO3];
 - IRR_OUTPUT HNO3frCLNO3= <HET_CLNO3_WAJ>;
 
-In this case, we have summed up all throughput over the first 15 levels of the model (approximating the PBL) and over the same 14-day time period.  Figure 9-2 shows the relative contribution of processes to the total HNO3 formation at three grids.  In this case, at the two more urban grids, the reaction of OH+NO2 dominates the formation of HNO3 in summer, while at the rural grid cell (Missouri), the heterogeneous hydrolysis of alkyl nitrates is predominant.
+在此示例中，我们将和前述相同的14天时间段内模型的前15层（近似于PBL）的所有产生量进行了合计。图9-2显示了过程对三个网格处总HNO3形成的相对贡献。在此示例中，在两个城市网格上，OH+NO2的反应主导了夏季HNO3的形成，而在农村网格单元（密苏里州），硝酸烷基酯的异质水解占主导地位。
 
 <a id=Figure9-2></a>
 
-![Figure 9-2: Relative contribution of HNO3 formation pathways at three grid locations](./images/Figure10-2.png)
+![图9-2. 三个网格位置上HNO3形成途径的相对贡献](./images/Figure10-2.png)
 
-**Figure 9-2. Relative contribution of HNO3 formation pathways at three grid locations**
+**图9-2. 三个网格位置上HNO3形成途径的相对贡献**
 
-## 9.7 References
+## 9.7 参考文献
 
 Gipson, G.L. (1999). Chapter 16: Process analysis. In science algorithms of the EPA models-3 Community Multiscale Air Quality (CMAQ) Modeling System. EPA/600/R-99/030.
 
@@ -205,7 +201,7 @@ Tonnesen, S., & Jeffries, H.E. (1994). Inhibition of odd oxygen production in th
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Chapter](CMAQ_UG_ch08_analysis_tools.md) - [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch10_HDDM-3D.md)<br>
-CMAQ User's Guide (c) 2020<br>
+[<< 前一章](CMAQ_UG_ch08_analysis_tools.md) - [返回](README.md) - [下一章 >>](CMAQ_UG_ch10_HDDM-3D.md)<br>
+CMAQ用户指南 (c) 2020<br>
 
 <!-- END COMMENT -->

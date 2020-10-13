@@ -1,27 +1,27 @@
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Chapter](CMAQ_UG_ch04_model_inputs.md) - [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch06_model_configuration_options.md)
+[<< 前一章](CMAQ_UG_ch04_model_inputs.md) - [返回](README.md) - [下一章 >>](CMAQ_UG_ch06_model_configuration_options.md)
 
 <!-- END COMMENT -->
 
-# 5. Running a CMAQ Simulation
+# 5. 运行CMAQ
 
-## 5.1 Introduction
+## 5.1 简介
 
-During this chapter the user will learn about how to obtain the CMAQ source codes and how to set-up their CMAQ environment to complete a CMAQ simulation. It should be noted that before you can configure your CMAQ Environment, consult the chapter "Preparing to run" to see you have the minimum requirement of hardware and software on your system.
+在本章中，用户将学习如何获取CMAQ源代码以及如何设置CMAQ环境以完成CMAQ运行。应该注意的是，在配置CMAQ环境之前，请参阅第三章[准备计算环境]( CMAQ_UG_ch03_preparing_compute_environment.md )，以了解对您系统上硬件和软件的最低要求。
 
-## 5.2 Getting the CMAQ Source Code
+## 5.2 获取CMAQ源代码
 
-CMAQ source code can be installed either using git or from tarballs downloaded from the git repository hosted by GitHub. Both options are described here.
+可以使用git或从GitHub托管的git存储库下载压缩包来安装CMAQ源代码。此处介绍了这两种方式。
 
-### 5.2.1 Git Installation
+### 5.2.1 Git安装
 
-In the directory where you would like to install CMAQ, issue the following command to clone the official EPA GitHub repository for CMAQv5.3:
+在您要安装CMAQ的目录中，发出以下命令来克隆CMAQv5.3的官方EPA GitHub存储库：
 
 `git clone -b master https://github.com/USEPA/CMAQ CMAQ_REPO`
 
-Using the git clone option, CMAQ will install into the following directories:
+使用git克隆选项，CMAQ将安装到以下目录：
 
 ```
 CMAQ_REPO/CCTM
@@ -31,17 +31,17 @@ CMAQ_REPO/UTIL
 CMAQ_REPO/DOCS
 ```
 
-### 5.2.2 Zip file Installation
+### 5.2.2 Zip文件安装
 
-Zip files of the CMAQ source code are available from the public GitHub repository. Click the button "Clone or download" from https://github.com/USEPA/CMAQ and select "Download ZIP" to download a Zip file of the CMAQv5.3 repository. Alternatively, you may download the Zip file from the [EPA CMAQ website](https://www.epa.gov/cmaq/access-cmaq-source-code).
+可从公共GitHub存储库中获取CMAQ源代码的Zip文件。从 https://github.com/USEPA/CMAQ 单击“Clone or download”按钮，然后选择“Download ZIP”以下载CMAQv5.3存储库的Zip文件。或者，您可以从[EPA CMAQ网站]( https://www.epa.gov/cmaq/access-cmaq-source-code )下载Zip文件。
 
-Reference input/output data for testing the installation of the software are available from the CMAS Center; *data are not available through GitHub*. You must register/login to access the source codes and data from the CMAS Center.
+可从CMAS中心获得用于测试软件安装的参考输入/输出数据。*注意该数据无法通过GitHub获得*。您必须注册/登录才能从CMAS中心访问源代码和数据。
 
-In the directory where you would like to install CMAQ, unzip the model distribution file:
+在您要安装CMAQ的目录中，解压缩模型压缩文件：
 
 `unzip CMAQ-master.zip`
 
-The following directories will be created:
+将创建以下目录：
 
 ```
 CMAQ-master/CCTM
@@ -51,96 +51,96 @@ CMAQ-master/UTIL
 CMAQ-master/DOCS
 ```
 
-The Git and Zip file installation options will produce slightly different subdirectories on your Linux system. The base installation directory using the git clone command will be `CMAQ_REPO`; the directory from the Zip file will be `CMAQ-master`. The subsequent instructions in this guide will be based on the git clone installation. For Zip file installations, replace `CMAQ_REPO` with `CMAQ-master` in the instructions that follow. The differences in the directory names highlights the difference in functionality between the two options. Cloning the repository gives the user access to the full repository and its history, while downloading the Zip file will only give access to version 5.3.
+Git和Zip文件安装选项将在Linux系统上产生稍微不同的子目录。使用git clone命令的安装目录是`CMAQ_REPO`，使用Zip文件的安装目录是`CMAQ-master`。本指南中的后续说明将基于git clone安装。对于Zip文件安装，请在随后的说明中将`CMAQ_REPO`替换为`CMAQ-master`。目录名称的差异突出显示了这两个选项之间的功能差异。克隆存储库使用户可以访问完整的存储库及其历史记录，而下载Zip文件将仅允许访问5.3版本。
 
-## 5.3 The CMAQ Repository Structure
+## 5.3 CMAQ存储库结构
 
-After downloading the source codes the user is encouraged to look through the repository to familiarize themselves with the structure. A summarized image of the repository is shown below:
+下载源代码后，用户可以浏览存储库以熟悉结构。存储库的摘要图像如下所示：
 
 <a id=Figure5-1></a>
 
 ![Figure 5-1](images/Figure5-1.png)
 
-**Figure 5‑1. CMAQ repository structure**
+**图5-1 CMAQ存储库结构**
 
-In this image it can be seen that there are four main sub folders within the CMAQ repository. The first folder, CCTM, houses all the source codes (i.e. fortran/C programs) and scripts that drive the CMAQ Chemistry Transport Model (CCTM). 
+在上图中，可以看出CMAQ存储库中有五个主要子文件夹。第一个文件夹CCTM包含驱动CMAQ化学传输模型（CCTM，CMAQ Chemistry Transport Model）的所有源代码（即fortran/C程序）和脚本。
 
-The second folder, DOCS, contains all relevant documentation pertaining to the CMAQ program suite including the User Manual, Release Notes and Known issues associated with the current release and a Developers Guide for a general description of CMAQ's open-source collaboration workflow and step-by-step instructions for how to make code contributions through GitHub.
+第二个文件夹DOCS包含与CMAQ程序套件有关的所有相关文档，包括用户指南、发行说明、与当前发行版本相关的已知问题、以及开发人员指南（用于全面描述CMAQ的开源协作工作流程，和有关如何通过GitHub贡献代码的操作步骤）。
 
-The third folder in the repository is the POST folder which contains several very useful tools for post-processing of the input/output data files. Each tool within the folder comes wth the source code, scripts and a README used to run the tool. A technical description of the tools within this folder can be found in [Chapter 8](CMAQ_UG_ch08_analysis_tools.md).
+存储库中的第三个文件夹是POST文件夹，其中包含几个非常有用的工具，用于对输入/输出数据文件进行后处理。文件夹中的每个工具都带有用于运行该工具的源代码、脚本和说明文件。可在[第8章]( CMAQ_UG_ch08_analysis_tools.md )中找到此文件夹中工具的技术说明。
 
-The fourth folder in the repository is the PREP folder which contains several pre-processing programs that can be run before the CCTM to prepare meteorology, initial conditions and boundary conditions inputs. Similar to the POST tools, documentation on compiling and running the programs is provided within each subfolder under PREP.
+存储库中的第四个文件夹是PREP文件夹，其中包含几个预处理程序，可以在CCTM之前运行这些程序以准备气象、初始条件和边界条件输入。与POST工具类似，在PREP下的每个子文件夹中都提供了有关编译和运行程序的文档。
 
-The last folder within the repository is the UTIL folder which contains useful utilities relating to the CMAQ program suite. An example is the bldmake utility which is used to compile the source code into executables when you use any of the build scripts in the CMAQ repository. Also included in this repository is a top-level README file with an overview of the contents of the release and two additional C-Shell scripts, `bldit_project.csh` and `config_cmaq.csh`.  `bldit_project.csh` allows the user to extract the build and run scripts and compile the model outside of the repository, while `config_cmaq.csh` helps enforce consistent environment setting for the CMAQ project. Both these scripts will be discussed in the following sections.
+存储库中的最后一个文件夹是UTIL文件夹，其中包含与CMAQ程序套件有关的实用程序。一个示例是bldmake实用程序，当您使用CMAQ存储库中的任何构建脚本时，该实用程序用于将源代码编译为可执行文件。此存储库中还包括一个README文件，概述了发行版的内容，并提供了两个附加的C-Shell脚本`bldit_project.csh`和`config_cmaq.csh`。`bldit_project.csh`允许用户提取构建和运行脚本并在存储库外部编译模型，而`config_cmaq.csh`则有助于为CMAQ项目实施一致的环境设置。以下各节将讨论这两个脚本。
 
-## 5.4 Building CMAQ Outside of the Repository in a User-Specified Directory
+## 5.4 在存储库外部用户指定的目录中构建CMAQ
 
-When cloning the repository or unpacking the tar file of the CMAQ distribution, the top-level directory is recognized by the default build and run scripts as `CMAQ_HOME` (formerly M3HOME prior to CMAQv5.2). This directory is an arbitrary base location of the CMAQ installation on your Linux system for a specific application. If the user will build and run CMAQ within the repository folder structure, then `CMAQ_HOME` does not need to be set explicitly in the `bldit_project.csh` script. If, on the other hand, the user wishes to extract the build and run scripts and compile the model outside of the repository, then `CMAQ_HOME` will need to be specified in `bldit_project.csh`. Executing `bldit_project.csh` will automatically perform this extraction and create a CMAQ folder structure under the location now specified by `CMAQ_HOME`. To perform this operation, modify the variable `CMAQ_HOME` in the `bldit_project.csh ` script to identify the folder that you would like to install the CMAQ package under. For example:
+克隆存储库或解压缩CMAQ发行版的tar文件时，默认的构建和运行脚本会将顶级目录识别为`CMAQ_HOME`（在CMAQv5.2之前是M3HOME）。对于特定应用程序，此目录是Linux系统上CMAQ安装的任意基本位置。如果用户在该存储库文件夹内构建并运行CMAQ，则无需在`bldit_project.csh`脚本中显式设置`CMAQ_HOME`。而如果用户希望提取构建和运行脚本并在存储库外部编译模型，则需要在`bldit_project.csh`中指定`CMAQ_HOME`。执行`bldit_project.csh`将自动执行此提取操作，并在指定的`CMAQ_HOME`位置下创建一个CMAQ文件夹结构。要执行此操作，请在脚本`bldit_project.csh`中修改变量`CMAQ_HOME`，以标识要在其下安装CMAQ软件包的文件夹。例如：
 
 ```
 set CMAQ_HOME = /home/username/CMAQ_v5.3
 ```
 
-Now execute the script:
+现在执行脚本：
 
 ```
 ./bldit_project.csh
 ```
 
-It should be noted that from now on, the other CMAQ directories are referenced relative to CMAQ_HOME and it is where your CMAQ project will be run from. While this directory structure is convenient for the benchmark case and most CMAQ applications, other configurations are possible.
+应该注意的是，从现在开始，其他CMAQ目录都会相对关联到CMAQ_HOME，这也是您的CMAQ项目将在其中运行的地方。尽管此目录结构对于基准测试案例和大多数CMAQ应用程序都很方便，但其他配置也是可以的。
 
-## 5.5 Initialization of CMAQ Environment
+## 5.5 CMAQ环境的初始化
 
-Consistency of configuration variables is critical for building CMAQ itself, not just its libraries. Accordingly CMAQ includes the configuration script `config_cmaq.csh` to help enforce consistent environment settings for CMAQ and its associated libraries [Appendix A](Appendix/CMAQ_UG_appendixA_model_options.md) lists the `config_cmaq.csh` variables defined for the build process and suggests values to which to set those variables.
+配置变量的一致性对于构建CMAQ本身（而不仅仅是它的库）至关重要。因此，CMAQ包括配置脚本`config_cmaq.csh`，以帮助对CMAQ及其关联的库强制实施一致的环境设置。[附录A]( Appendix/CMAQ_UG_appendixA_model_options.md )列出了为构建过程定义的`config_cmaq.csh`变量，并给出了这些变量的建议值。
 
-Note that for multiprocessor applications it is recommended that the Fortran MPI wrapper script mpifort (for Intel compiler and for GNU and PGI fortran compiler, use mpifort) be specified for the Fortran compiler (myFC). Using this script, instead of a direct call to the Fortran compiler, will ensure that the full suite of MPI components (libraries and include files) for the compiler are included in the parallel build without anything provided by the user explicitly.
+请注意，对于多处理器应用程序，建议为Fortran编译器（myFC）指定Fortran MPI wrapper script mpifort（对于Intel编译器及GNU和PGI fortran编译器，请使用mpifort）。使用此脚本，而不是直接调用Fortran编译器，将确保并行构建中包含编译器的完整MPI组件套件（库和包含文件），而不需要用户再提供其他信息。
 
-Use the following steps to initialize your CMAQ environment:
+使用以下步骤初始化CMAQ环境：
 
 ```
 source config_cmaq.csh [compiler]
 ```
 
-After running the above command, it should be noticed now under CMAQ_HOME, the data file directory has been created and serves as a container for the input and output data for the model, and the lib directory contains links to the compiled binary library files required to build the CMAQ executables. The CMAQ scripts use the following environment variables to alias the locations of these directories:
+运行上述命令后，现在应该注意到在CMAQ_HOME下已创建了data目录，用于储存模型的输入和输出数据。还创建了lib目录，包含指向以下文件所需的已编译二进制库文件的链接，用于构建CMAQ可执行文件。CMAQ脚本使用以下环境变量来表示这些目录的位置：
 
 
-`CMAQ_LIB   = $CMAQ_HOME/lib` (M3LIB before CMAQv5.2)<br>
-`CMAQ_DATA  = $CMAQ_HOME/data` (M3DATA before CMAQv5.2)
+`CMAQ_LIB   = $CMAQ_HOME/lib` (CMAQv5.2之前使用M3LIB)<br>
+`CMAQ_DATA  = $CMAQ_HOME/data` (CMAQv5.2之前使用M3DATA)
 
-If you encounter errors about libraries not being found, check the settings of the `config_cmaq.csh` script variables IOAPI, NETCDF, or MPI to ensure that they correctly point to the locations of these libraries on your Linux system.
+如果遇到关于找不到库的错误，请检查`config_cmaq.csh`脚本变量IOAPI、NETCDF或MPI的设置，以确保它们正确指向这些库在Linux系统上的位置。
 
-Sourcing the `config_cmaq.csh` script only needs to be invoked during a new installation of CMAQ to make sure the links to these libraries are working correctly. For every successive session, links to these libraries will automatically be created when you run any of the build or run scripts.
+仅在全新安装CMAQ时才需要调用`config_cmaq.csh`脚本，以确保指向这些库的链接正常工作。对于每个连续的会话，当您运行任何构建或运行脚本时，将自动创建到这些库的链接。
 
-## 5.6 Compiling CMAQ Chemistry-Transport Model (CCTM)
+## 5.6 编译CMAQ化学运输模型（CCTM，CMAQ Chemistry-Transport Model）
 
-After all required CMAQ inputs are generated using the preprocessors mentioned above the user is now ready to compile CCTM. CMAQ’s current coding structure is based on a modularity level that distinguishes from each other CCTM’s main driver, science modules, data estimation modules, and control/utility subroutines. Also distinguished from each other are the science models (including submodels for meteorology, emissions, chemistry-transport modeling) and the analysis and visualization subsystems.
+使用上述预处理器生成所有必需的CMAQ输入文件后，用户现在即可以编译CCTM。CMAQ当前的编码结构基于模块化级别，该模块化级别将CCTM的主要驱动程序、科学模块、数据估计模块和控制/实用程序子例程区分开来。科学模块（包括气象、排放、化学-运输模型的子模型）以及分析和可视化子系统也彼此区分。
 
-In CCTM, the process modules that affect the pollutant concentration fields are classified as listed below. Each bullet contains a description of the process followed by module name in parentheses. These modules are discussed further in [Chapter 6](CMAQ_UG_ch06_configuring_the_model.md).
+在CCTM中，影响污染物浓度场的处理模块分类如下。每个项目符号都包含对过程的描述，并在括号中带有模块名称。这些模块将在[第6章]( CMAQ_UG_ch06_configuring_the_model.md )中进一步讨论。
 
-Science Modules:
+科学模块：
 
--  Horizontal advection (hadv)
--  Vertical advection (vadv)
--  Horizontal diffusion (hdiff)
--  Vertical diffusion (vdiff)
--  Emissions (emis) 
--  In-line BEIS3 biogenic emissions (biog)
--  In-line plume rise (plrise)
--  Gas-phase chemical reaction solver (gas)
--  Aqueous-phase reactions and cloud mixing (cloud)
--  Aerosol dynamics and size distributions (aero)
--  Potential vorticity scaling for stratosphere/troposphere exchange (pv_o3)
+- 水平对流（hdv）
+- 垂直对流（VADV）
+- 水平扩散（hdiff）
+- 垂直扩散（vdiff）
+- 排放（emis）
+- 在线BEIS3生物源排放（biog）
+- 在线烟羽抬升（plrise）
+- 气相化学反应求解器（gas）
+- 水相反应和云混合（cloud）
+- 气溶胶动力学和尺寸分布（aero）
+- 平流层/对流层交换的潜在涡度尺度（pv_o3）
 
-The user has the ability to configure the model in a multitude of ways by selecting from different options for each scientific process. Model configuration is split into build time options and run time options. To modify any science options during build time, edit the `bldit_cctm.csh` script. The `bldit_cctm.csh` script also contains other information, such as the option to run in single or multiprocessor mode as well as debug mode. To modify any run time options, such as turn on in-line biogenic emission calculation or use in-line windblown dust emission, edit the run script, `run_cctm.csh`, and set the corresponding environment variable. To read more about build and run time configurations for specific scientific processes, see the next chapter [(Chapter 6)](CMAQ_UG_ch06_model_configuration_options.md).  To see a complete list configuration options reference [Appendix A](Appendix/CMAQ_UG_appendixA_model_options.md).
+用户可以选择每个科学模块处理过程的不同选项，从而以多种方式配置模型。模型配置被分为构建时选项和运行时选项。要在构建期间修改任何科学选项，请编辑`bldit_cctm.csh`脚本。`bldit_cctm.csh`脚本还包含其他信息，例如以单处理器或多处理器模式以及调试模式运行的选项。要修改任何运行时选项，例如打开在线生物源排放计算或使用在线风吹起尘排放，请编辑运行脚本`run_cctm.csh`并设置相应的环境变量。要了解有关特定科学过程的构建和运行时配置的更多信息，请参见下一章[第6章]( CMAQ_UG_ch06_configuring_the_model.md )。要查看完整的配置选项列表，请参考[附录A]( Appendix/CMAQ_UG_appendixA_model_options.md )。
 
-Once the `bldit_cctm.csh` script is configured to the user's preference, the user is ready to run the script to build the CCTM executable. To do this run the following commands:
+一旦根据用户的需要配置了`bldit_cctm.csh`脚本，用户就可以运行该脚本来构建CCTM可执行文件了。为此，请运行以下命令：
 
 ```
 cd $CMAQ_HOME/CCTM/scripts
 source bldit_cctm.csh [compiler] [version] |& tee build_cctm.log
 ```
 
-The bldit script invokes the CMAQ utility program [bldmake](../../UTIL/bldmake/README.md), which extracts source code from your CMAQ GIT repository, constructs a Makefile based on your selected options, and compiles the executable automatically.  Following normal termination of the script with the default configuration, the user will notice a BLD directory created. This is the location of the CCTM executable along with the relevant source codes and the Makefile needed to build the model. In this directory a few useful commands can be used to update the executable if any changes are made to the fortran source codes via the MakeFile. For example, if the user wants to recompile the source codes in debug mode instead of re-running the `bldit_cctm.csh` script the user can use the following commands:
+bldit脚本调用CMAQ实用程序[bldmake]( ../../UTIL/bldmake/README.md )，该程序从您的CMAQ Git存储库中提取源代码，根据您选择的选项构建Makefile，并自动编译可执行文件。在使用默认配置正常终止脚本之后，用户将注意到已创建一个BLD目录。这是CCTM可执行文件、以及相关的源代码和构建模型所需的Makefile的位置。如果通过MakeFile对fortran源代码进行了任何更改，则可以在此目录中使用一些命令来更新可执行文件。例如，如果用户想以调试模式重新编译源代码而不是重新运行`bldit_cctm.csh`脚本，则用户可以使用以下命令：
 
 ```
 cd BLD_CCTM_v53_[compiler][version]
@@ -148,18 +148,18 @@ make clean
 make DEBUG=TRUE
 ```
 
-In another example, if the user has made any changes to the source codes in the BLD directory and wanted to update the CCTM executable to reflect these changes the user can use the following commands:
+在另一个示例中，如果用户对BLD目录中的源代码进行了任何更改，并且想要更新CCTM可执行文件以反映这些更改，则用户可以使用以下命令：
 
 ```
 cd BLD_CCTM_v53_[compiler][version]
 make
 ```
 
-The Make utility is smart enough to compile only the modified files and all associated file which are defined by the dependency of each source file in the Makefile.
+Make实用程序足够智能，可以仅编译由Makefile中每个源文件的依赖关系定义的修改文件和所有关联文件。
 
-## 5.7 Running CCTM
+## 5.7 运行CCTM
 
-After setting up the CCTM executable the model is ready to be run. Much like the `bldit_cctm.csh` script, to modify any run time options edit the `run_cctm.csh` script referencing [Appendix A](Appendix/CMAQ_UG_appendixA_model_options.md) for a complete list of optional settings. After these settings have been configured use the following commands to run the script:
+编译CCTM可执行文件后，就可以运行模型了。与`bldit_cctm.csh`脚本非常相似，要修改任何运行时选项，请参考[附录A]( Appendix/CMAQ_UG_appendixA_model_options.md )编辑`run_cctm.csh`脚本，以获取可选设置的完整列表。配置这些设置后，使用以下命令运行脚本：
 
 
 ```
@@ -167,14 +167,14 @@ cd $CMAQ_HOME/CCTM/scripts
 run_cctm.csh |& tee run_cctm.log
 ```
 
-### 5.7.1 CCTM Logfiles
+### 5.7.1 CCTM日志文件
 
-The CCTM simulation will write two types of logfile, a master logfile (e.g. run_cctm.log) and processor-specific logfiles that have the name convention:  
+CCTM模拟将生成两种类型的日志文件，即主日志文件（例如run_cctm.log）和具有特定名称约定的处理器特定的日志文件：
 ```
 CTM_LOG_[ProcessorID].v53_[compiler]_[data_name]/_[RUNDATE].log
 ```
 
-The master logfile contains extensive metadata and useful information about the details of your simulation. The following examples describe some of this information:  
+主日志文件中包含了大量的元数据和有关模拟详细信息的有用信息。以下示例描述了其中的一些信息：
 ```
 Start Model Run At  Tue Apr 9 08:18:06 EDT 2019
 Compiler is set to intel
@@ -195,9 +195,9 @@ Existing Logs and Output Files for Day YYYY-MM-DD Will Be Deleted
 
 CMAQ Processing of Day 20140620 Began at Tue Apr  9 08:18:07 EDT 2019
 ```
-This section documents the folder structure, username, and run date for the simulation, and is meant to aid in maintaining transparency of simulation results after runs have been completed. This section is followed by the CMAQ and I/O API headers, and a record of all environment variables and their values for this simulation.
+本部分记录了模拟的文件夹结构、用户名和运行日期，旨在帮助在运行完成后保持模拟结果的透明性。本节后面是CMAQ和I/O API标头，以及所有环境变量及其在本次模拟中取值的记录。
 
-Next, the program outputs a table describing the domain decomposition breakdown for the run.  
+接下来，程序输出一个表，描述运行时对模拟区域的分解。
 ```
           -=-  MPP Processor-to-Subdomain Map  -=-
                  Number of Processors = 128
@@ -336,9 +336,9 @@ Next, the program outputs a table describing the domain decomposition breakdown 
     |127       11    177: 187         23    165: 187   |
     |__________________________________________________|
 ```
-With this output, users will be able to trace issues that occur on specific processors to geographic regions of the model domain.
+使用此输出，用户将能够跟踪在特定处理器上发生的问题到模型区域的地理区域。
 
-Then, as the time-dependent portion of the model begins, output is provided for every timestep with the following form:
+然后，随着模型的时间相关部分开始，将以以下形式为每个时间步长提供输出：
 ```
      Processing Day/Time [YYYYDDD:HHMMSS]: 2015274:000000
        Which is Equivalent to (UTC): 0:00:00  Thursday,  Oct. 1, 2015
@@ -356,7 +356,7 @@ Then, as the time-dependent portion of the model begins, output is provided for 
             Master Time Step
             Processing completed...    8.0 seconds
 ```
-This section documents the date and time the model is currently processing along with the time spent calculating every major sub-process. At the end of each simulation hour, the calculation time is also printed for the output process.
+本节记录了模型当前正在处理的日期和时间，以及计算每个主要子流程所花费的时间。在每个模拟小时的末尾，还会计算输出总花费时间。
 ```
     Processing Day/Time [YYYYDDD:HHMMSS]: 2015274:005500
        Which is Equivalent to (UTC): 0:55:00  Thursday,  Oct. 1, 2015
@@ -376,7 +376,7 @@ This section documents the date and time the model is currently processing along
  
       =--> Data Output completed...    0.3 seconds
 ```
-This procedure repeats for every hour of the output day until completion of that day.
+在输出日的每个小时重复此过程，直到该日结束。
 ```
      ==============================================
      |>---   PROGRAM COMPLETED SUCCESSFULLY   ---<|
@@ -394,7 +394,7 @@ CMAQ Processing of Day 20151001 Finished at Fri Apr  5 11:21:20 EDT 2019
 \\\\\=====\\\\\=====\\\\\=====\\\\\=====/////=====/////=====/////=====/////
 ```
 
-After the final day has been completed, summary information is printed for the computation time of every executed day.
+最后一天结束后，将打印每个执行日的计算时间的摘要信息。
 ```
 ==================================
   ***** CMAQ TIMING REPORT *****
@@ -427,42 +427,42 @@ Num  Day        Wall Time
       Avg. Time = 709.90 
 ``` 
 
-The processor-specific logfiles provide detailed information on the operation of hundreds of model tasks from mapping variables to opening and reading input files. Warnings that may be important for users to be aware of are printed to these files. To confirm that the model ran to completion view the run.[data].log file. For MPI runs, you may check any of the CTM_LOG_[ProcessorID]*.log files. A successful run will contain the following line at the bottom of the log(s):
+特定于处理器的日志文件提供了从映射变量到打开和读取输入文件的数百种模型任务的操作的详细信息。对用户而言可能很重要的警告信息也会打印到这些文件中。要确认模型已完成运行，请查看run.[data].log文件。对于MPI（多处理器）运行，您可以检查任何CTM_LOG_[ProcessorID]* .log文件。成功运行后将在日志底部包含以下行：
 
 ```
 >>----> Program completed successfully <----<<
 ```
 
-Note: The log file for each processor is also moved from the $CMAQ_HOME/CCTM/scripts directory to the data output directory:
+注意：每个处理器的日志文件也会从$CMAQ_HOME/CCTM/scripts目录移动到数据输出目录：
 
 ```
 $CMAQ_DATA/output_CCTM_v53_[compiler]/[data_name]
 ```
 
-### 5.7.2 CCTM Output files
+### 5.7.2 CCTM输出文件
 
-The output results will have been placed in the directory:
+输出结果将放置在以下目录中：
 
 ```
 $CMAQ_DATA/output_CCTM_v53_[compiler]_[data_name]
 ```
 
-and can include the following netCDF-type files: ACONC, APMDIAG, B3GTS_S, CGRID, CONC, DEPV, DRYDEP, DUSTEMIS, LTNGDIAG1, LTNGDIAG2, MEDIA_CONC, PMDIAG, PT3D_DIAG, RJ_1, RJ_2, RJ_3, SOILOUT, SSEMIS, VDIFF, VSED, WETDEP1, WETDEP2 and VEXT_1. The in-depth description about each of these files is described in [Chapter 7](CMAQ_UG_ch07_model_outputs.md).
+并可以包含以下netCDF类型的文件：ACONC, APMDIAG, B3GTS_S, CGRID, CONC, DEPV, DRYDEP, DUSTEMIS, LTNGDIAG1, LTNGDIAG2, MEDIA_CONC, PMDIAG, PT3D_DIAG, RJ_1, RJ_2, RJ_3, SOILOUT, SSEMIS, VDIFF, VSED, WETDEP1, WETDEP2和VEXT_1。有关这些文件中每个文件的深入描述，请参见[第7章]( CMAQ_UG_ch07_model_outputs.md )。
 
 
-### 5.7.3 Common errors causing the CCTM simulation to crash
+### 5.7.3 导致CCTM模拟崩溃的常见错误
 
-Common errors in a CCTM simulation include the following:
+CCTM模拟中的常见错误包括以下内容：
 
--  Incorrect paths to input files. Look in the CCTM screen output (captured in your log file) for an Error message about an input file   not being found.
--  Incorrect MPI implementation. A series of MPI errors at the end of the log file often indicate that the MPI job was not submitted correctly.
+- 输入文件的路径不正确。可在CCTM屏幕输出（捕获在日志文件中）中查找有关找不到输入文件的错误消息。
+- 错误的MPI处理。在日志文件末尾的一系列MPI错误通常表明MPI工作未正确提交。
 
-Check the last few lines of the CCTM output log for messages to help diagnose why the simulation did not complete.
+检查CCTM输出日志的最后几行是否有消息，可以帮助诊断为什么模拟未能完成。
 
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Chapter](CMAQ_UG_ch04_model_inputs.md) - [Home](README.md) - [Next Chapter >>](CMAQ_UG_ch06_model_configuration_options.md)<br>
-CMAQ User's Guide (c) 2020<br>
+[<< 前一章](CMAQ_UG_ch04_model_inputs.md) - [返回](README.md) - [下一章 >>](CMAQ_UG_ch06_model_configuration_options.md)<br>
+CMAQ用户指南 (c) 2020<br>
 
 <!-- END COMMENT -->
