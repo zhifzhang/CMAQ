@@ -1,41 +1,41 @@
-## CMAQ Tutorial ##
-### Add Chemically Inert Tracer Species to CMAQ ###
-Purpose: This tutorial will step you through the process of adding chemically inert tracers to the CMAQ model. Additional details are provided in the CMAQ Operational [Guidance Document (OGD)](https://github.com/USEPA/CMAQ/blob/5.3/DOCS/User_Guide).
+## CMAQ教程（注意由于没有理解一些术语，本文件没有翻译完成）
+### 将化学惰性示踪剂物种添加到CMAQ
+目的：本教程将引导您逐步完成将化学惰性示踪剂添加到CMAQ模型的过程。其他详细信息可参见[CMAQ用户指南]( ../README.md )。
 
 
 ------------
 
 
-### STEP 1: Create tracer namelist</strong>
+### 步骤1：创建示踪剂物质清单
 
-Create namelist according to Table 3.4 in the [CMAQ OGD](CMAQ_UG_ch04_model_inputs.md#Table3-4). Include one line for each tracer species with the following format (refer to the table below for more information on the abbreviations):
+根据[CMAQ OGD]( ../CMAQ_UG_ch04_model_inputs.md#Table3-4 )中的表3.4创建清单。每种示踪剂物质一行，格式如下（有关缩写的更多信息，请参见下表）：
 
 <a id=Table3-4></a>
 
-<center> **Amended from Table 3-4. in CMAQ UG** </center>
+<center> **从CMAQ UG表3-4修订** </center>
 
-| **Line**| **Column** |**Name** | **Type**| **Description** |**Options for Syntax**:|
+| **行**| **列** |**名称** | **类型**| **说明** |**语法选项**:|
 |-----|-----|----------------------|----------|--------------------------------------------|----------------------------|
-| 1 || File Type |String|String to delineate Gas Phase (GC), Aerosol (AE), Non-reactive (NR) and Tracer (TR) species namelist|{TR_nml}|
-| 3 || Header ID | String |String to define data structure relating to namelist|{TR_SPECIES_DATA = }|
-| 5 |1| SPECIES | String |CMAQ Species name, i.e. NO, HNO<sub>3</sub>, PAR; dependent on chemical mechanism|-|
-||2| MOLWT| Integer |Species Molecular Weight|-|
-|  |3| IC | String |IC/ surrogate species name for the CMAQ Species|{'Species name', ' '}|
-|  |4| FAC | Integer |Scaling factor for the IC/BC concentration|{Any integer: default = -1 if IC is not specified}|
-|  |5| BC | String |surrogate species name for the CMAQ Species|{'Species name', ' '}|
-|  |6| FAC | Integer |Scaling factor for the IC/BC concentration|{Any integer: default = -1 if BC is not specified}|
-| |7| DRYDEP SURR | String |Deposition velocity variable name for the CMAQ Species|-|
-| |8| FAC | Integer |Scaling factor for the deposition velocity|{Any integer: default = -1 if SURR is not specified}|
-| |9| WET-SCAV SURR | String |Wet Deposition Scavenging surrogate species|-|
-| | 10 | FAC | Integer |Scaling factor for Scavenging|{Any integer: default = -1 if SURR is not specified}|
-|| 11 | TR2AE SURR | String |Gas-to-aerosol transformation species|-|
-|| 12 | TR2AQ SURR | String |Gas-to-aqueous transformation species|-|
-|| 13 | TRNS | String |Transport Switch. *NOTE: Instead of using one column labeled "TRNS" to turn/off both advection and diffusion for a pollutant, two separate columns labeled "ADV" and "DIFF" can be used to switch on/off advection and diffusion separately.|{YES/NO}|
-|| 14 | DDEP | String |Dry deposition output file switch|{YES/NO}|
-|| 15 | WDEP | Real |Wet deposition output file switch|{YES/NO}|
-|| 16 | CONC | String |Concentration output file switch|{YES/NO}|
+| 1 || File Type |字符串|用于描述气相（GC）、气溶胶（AE）、非反应性（NR）和示踪剂（TR）清单的字符串|{TR_nml}|
+| 3 || Header ID | 字符串 |用于定义与清单有关的数据结构的字符串|{TR_SPECIES_DATA = }|
+| 5 |1| SPECIES | 字符串 |CMAQ 物质名称,例如NO, HNO<sub>3</sub>, PAR; 取决于采用的化学反应机理|-|
+||2| MOLWT| 整数 |该物质的分子量|-|
+|  |3| IC | 字符串 |用于CMAQ物质的IC/替代物质名称（IC=initial condition，初始条件）|{'物质名称', ' '}|
+|  |4| FAC | 整数 |IC/BC浓度的比例因子|{任意整数: 如果未指定IC，默认取-1}|
+|  |5| BC | 字符串 |用于CMAQ物质的替代物质名称（BC=boundary condition，边界条件）|{'物质名称', ' '}|
+|  |6| FAC | 整数 |IC/BC浓度的比例因子|{任意整数: 如果未指定BC，默认取-1}|
+| |7| DRYDEP SURR | 字符串 |CMAQ物质的沉降速率变量名称|-|
+| |8| FAC | 整数 |沉降速率的比例因子|{任意整数: 如果未指定SURR，默认取-1}|
+| |9| WET-SCAV SURR | 字符串 |湿沉降清除替代物质|-|
+| | 10 | FAC | 整数 |清除的比例因子|{任意整数: 如果未指定SURR，默认取-1}|
+|| 11 | TR2AE SURR | 字符串 |气溶胶转化物种|-|
+|| 12 | TR2AQ SURR | 字符串 |气-水转化物种|-|
+|| 13 | TRNS | 字符串 |传输开关。 * 注意: 对于一种污染物，可以使用标记为"TRNS"的一列来同时打开/关闭污染物的对流和扩散开关，也可以使用标记为"ADV"（advection，对流）和"DIFF"（diffusion，扩散）的单独的两列来分别打开/关闭对流和扩散的开关。 *|{YES/NO}|
+|| 14 | DDEP | 字符串 |是否输出干沉降文件|{YES/NO}|
+|| 15 | WDEP | Real |是否输出湿沉降文件|{YES/NO}|
+|| 16 | CONC | 字符串 |是否输出浓度文件|{YES/NO}|
 
-The example namelist file shown below defines six tracer species.
+下面的示例清单文件定义了六个示踪物质种类。
 
 
 ```
@@ -54,75 +54,75 @@ TR_SPECIES_DATA =
 
 ```
 
-**The first tracer species O3_BC**
-  * is defined to have the same molecular weight as ozone
-  * is not mapped to any emissions species
-  * uses the ozone dry deposition velocity (VD_O3) scaled with a factor of 1 as its surrogate for dry deposition
-  * uses ozone as its scavenging surrogate scaled with a factor of 1
-  * will try to obtain its boundary conditions from a CMAQ species named 'O3' in the boundary condition files with a scaling factor of 1 
-  * is not mapped to any initial condition, therefore uses default scaling factor of -1
-  * does not participate in gas-to-aerosol or gas-to-aqueous transformations
-  * will undergo advection and diffusion
-  * will be written to the DDEP, WDEP, and CONC output files
-  
-**The second tracer species CO_BC**
-  * is defined to have the same molecular weight as CO
-  * is not mapped to any emissions species
-  * uses the CO dry deposition velocity (VD_CO) scaled with a factor of 1 as its surrogate for dry deposition
-  * uses CO as its scavenging surrogate scaled with a factor of 1
-  * will try to obtain its boundary conditions from a species named 'CO' in the boundary condition files with a scaling factor of 1
-  * is not mapped to any initial condition, therefore uses default scaling factor of -1
-  * does not participate in gas-to-aerosol or gas-to-aqueous transformations
-  * will undergo advection and diffusion
-  * will be written to the DDEP, WDEP, and CONC output files 
-  
-  **The third tracer species O3_IC**
-  * is defined to have the same molecular weight as ozone
-  * is not mapped to any emissions species
-  * uses the ozone dry deposition velocity (VD_O3) scaled with a factor of 1 as its surrogate for dry deposition
-  * uses ozone as its scavenging surrogate scaled with a factor of 1
-  * will try to obtain its initial conditions from a species named 'O3' in the initial condition files with scaling factor of -1
-  * has no boundary condition specified, therefore uses default scaling factor of -1
-  * does not participate in gas-to-aerosol or gas-to-aqueous transformations
-  * will undergo advection and diffusion
-  * will be written to the DDEP, WDEP, and CONC output files  
-  
-**The fourth tracer species O3_BC_50PC**
-  * is defined to have the same molecular weight as ozone
-  * is not mapped to any emissions species
-  * uses the ozone dry deposition velocity (VD_O3) scaled with a factor of 1 as its surrogate for dry deposition
-  * uses ozone as its scavenging surrogate scaled with a factor of 1
-  * will try to obtain its  boundary conditions from a species named 'O3' in the boundary condition files with a scaling factor of 0.5
-  * is not mapped to any boundary condition, therefore uses default scaling factor of -1
-  * does not participate in gas-to-aerosol or gas-to-aqueous transformations
-  * will undergo advection and diffusion
-  * will be written to the DDEP, WDEP, and CONC output files
-  
-**The fifth tracer species CO_EMIS**
-  * is defined to have the same molecular weight as CO
-  * uses CO emissions scaled with a factor of 1 as its emission surrogate
-  * uses the CO dry deposition velocity (VD_CO) scaled with a factor of 1 as its surrogate for dry deposition
-  * uses CO as its scavenging surrogate scaled with a factor of 1
-  * is not mapped to any initial/boundary condition surrogate, therefore uses default scaling factor of -1
-  * does not participate in gas-to-aerosol or gas-to-aqueous transformations
-  * will undergo advection and diffusion
-  * will be written to the DDEP, WDEP, and CONC output files  
-  
-**The last tracer species ICT_50PPB**
-  * is defined to have a molecular weight of 1 g/mole
-  * is not mapped to any emissions species
-  * is not mapped to any dry deposition velocity surrogate, i.e. does not undergo dry deposition, therefore uses default scaling factor of -1
-  * is not mapped to any scavenging surrogate, i.e. does not undergo scavenging , therfore uses default scaling factor of -1
-  * will try to obtain its initial from a species named ICT_50PPB in the initial condition files
-  * is not mapped to any boundary condition therefore uses default scaling factor of -1
-  * does not participate in gas-to-aerosol or gas-to-aqueous transformations
-  * will undergo advection and diffusion
-  * will not be written to the DDEP and WDEP output files
-  * will be written to the CONC output file  
+** 第一个示踪物种 O3_BC
+  * 定义为与臭氧分子量相同
+  * 未映射到任何排放物种
+  * 使用缩放系数为1的臭氧干沉降速率（VD_O3）作为干沉积的替代
+  * 使用臭氧作为其清除替代，缩放比例为1
+  * 会尝试从边界条件文件中名为'O3'的物种获取其边界条件，比例因子为1
+  * 未映射到任何初始条件，因此使用默认缩放因子-1
+  * 不参与气-气溶胶转换或气-水转换
+  * 将进行对流和扩散
+  * 将被写入DDEP（干沉降），WDEP（湿沉降）和CONC（浓度）输出文件
+  
+**第二种示踪物种 CO_BC
+  * 定义为与CO分子量相同
+  * 未映射到任何排放物种
+  * 使用缩放系数为1的CO干沉积速度（VD_CO）作为干沉积的替代
+  * 使用CO作为其清除替代，其缩放比例为1
+  * 会尝试从边界条件文件中名为'CO'的物种获取其边界条件，比例因子为1
+  * 未映射到任何初始条件，因此使用默认缩放因子-1
+  * 不参与气-气溶胶转换或气-水转换
+  * 将进行对流和扩散
+  * 将被写入DDEP（干沉降），WDEP（湿沉降）和CONC（浓度）输出文件
 
-### STEP 2: Add tracers to initial condition, boundary condition, and/or emission files
+** 第三种示踪物 O3_IC
+  * 定义为与臭氧分子量相同
+  * 未映射到任何排放物种
+  * 使用缩放系数为1的臭氧干沉降速率（VD_O3）作为干沉积的替代
+  * 使用臭氧作为其清除替代，缩放比例为1
+  * 将尝试从初始条件文件中名为'O3'的物种获取其初始条件，比例因子为-1
+  * 未指定边界条件，因此使用默认缩放因子-1
+  * 不参与气-气溶胶转换或气-水转换
+  * 将进行对流和扩散
+  * 将被写入DDEP（干沉降），WDEP（湿沉降）和CONC（浓度）输出文件
+  
+** 第四种示踪物 O3_BC_50PC
+  * 定义为与臭氧分子量相同
+  * 未映射到任何排放物种类
+  * 使用以1换算的臭氧干沉积速度（VD_O3）作为干沉积的替代物
+  * 使用臭氧作为其清除代用品，缩放比例为1
+  * 将尝试从边界条件文件中名为'O3'的物种获取其边界条件，比例因子为0.5
+  * 未映射到任何边界条件，因此使用默认缩放因子-1
+  * 不参与气-气溶胶转换或气-水转换
+  * 将进行对流和扩散
+  * 将被写入DDEP（干沉降），WDEP（湿沉降）和CONC（浓度）输出文件
+  
+** 第五种示踪物 CO_EMIS
+  * 定义为具有与CO相同的分子量
+  * 使用比例因子为1的一氧化碳排放作为其替代排放量
+  * 使用缩放系数为1的CO干沉积速度（VD_CO）作为干沉积的替代
+  * 使用CO作为其清除代理，其缩放比例为1
+  * 未映射到任何初始/边界条件替代，因此使用默认缩放因子-1
+  * 不参与气-气溶胶转换或气-水转换
+  * 将进行对流和扩散
+  * 将被写入DDEP（干沉降），WDEP（湿沉降）和CONC（浓度）输出文件
+  
+** 最后一种示踪物种 ICT_50PPB
+  * 定义为具有1 g/mol的分子量
+  * 未映射到任何排放物种
+  * 未映射到任何干沉积速度替代物，即未进行干沉积，因此使用默认缩放因子-1
+  * 未映射到任何清除代理，即不进行清除，因此使用默认缩放因子-1
+  * 将尝试从初始条件文件中名为ICT_50PPB的物种中获取其初始名称
+  * 未映射到任何边界条件，因此使用默认缩放因子-1
+  * 不参与气-气溶胶转换或气-水转换
+  * 将进行对流和扩散
+  * 不会写入DDEP（干沉降）和WDEP（湿沉降）输出文件
+  * 将被写入CONC（浓度）输出文件
 
-Depending on the desired application, the emission surrogate and IC/BC surrogate defined in the tracer namelist for each tracer need to be added to the corresponding CMAQ input files, i.e. the emissions, initial condition, and/or boundary condition files.
+### 步骤2：将示踪剂添加到初始条件（IC）、边界条件（BC）、排放文件中
+
+根据所需的应用，需要将在跟踪器名称列表中为每个跟踪器定义的排放替代和IC/BC替代添加到相应的CMAQ输入文件，即排放、初始条件、边界条件文件。
 
 The CO_EMIS tracer defined in STEP1 has an emission surrogate that needs to be mapped in a standard emission file (the first four tracers do not have any emission surrogate while the fifth tracer uses CO as its emission surrogate). The first four tracers have a IC/BC surrogates that are contained in standard initial or boundary condition files, while the last tracer, ICT_50PPB, does not have an IC that is contained in a standard IC file. This section provides the necessary steps to add an emissions surrogate to the emissions file and a sample scripts that add the necessary species to an existing initial condition file.
 

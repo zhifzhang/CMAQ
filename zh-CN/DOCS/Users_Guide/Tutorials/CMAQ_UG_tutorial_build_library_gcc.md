@@ -1,139 +1,139 @@
-## Install netCDF-C
+## 安装netCDF-C
 
-1. If your compute server uses modules use the following command to see what packages are available
+1. 如果您的计算服务器使用模块，请使用以下命令查看可用的软件包
 
 ```
 module avail
 ```
-2. Load module environment for a compiler (Intel|GCC|PGI) and mpi package corresponding to that compiler (e.g. openmpi).
+2. 加载编译器(Intel|GCC|PGI)的模块环境，以及与该编译器相对应的mpi包（例如openmpi）。
 
 ```
 module load gcc9.1.0
 module load openmpi_4.0.1/gcc_9.1.0
 ```
 
-3. Create a LIBRARY directory where you would like to install the libraries required for CMAQ
+3. 创建一个LIBRARY目录，您要在其中安装CMAQ所需的库
 
 ```
 /[your_install_path]/LIBRARIES
 
 ```
 
-4. Change directories to the new LIBRARIES Directory
-
+4. 将目录更改为新的LIBRARIES目录
+```
 cd /[your_install_path]/LIBRARIES
-
-5. Download netCDF-C from the following website https://www.unidata.ucar.edu/downloads/netcdf/index.jsp
+```
+5. 从以下网站下载netCDF-C： https://www.unidata.ucar.edu/downloads/netcdf/index.jsp
 
 ```
 wget ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-c-4.7.0.tar.gz
 ```
 
-6. Untar the netCDF-C tar.gz file
+6. 解压缩netCDF-C tar.gz文件
 
 ```
 tar -xzvf netcdf-c-4.7.0.tar.gz
 ```
 
-7. Change directories into the extracted directory
+7. 进入解压缩文件后得到的文件夹
 ```
 cd netcdf-c-4.7.0
 ```
 
-8. Review the installation instructions for netcdf-c-4.7.0 for building Classic netCDF
+8. 查看用于构建经典netCDF的netcdf-c-4.7.0的安装说明。
 
 ```
 more INSTALL.md
 ```
 
-9. Create a target installation directory that includes the loaded module environment name
+9. 创建一个安装目标文件夹，其中包含已加载的模块环境名称
 
 ```
 mkdir ../netcdf-c-4.7.0-gcc9.1.0
 ```
 
 
-10. Run the configure --help command to see what settings can be used for the build.
+10. 运行configure --help命令以查看可用于编译的设置。
 ```
 ./configure --help
 ```
 
-11. Set the Compiler environment variables
+11. 设置编译器环境变量
 
-Make sure these compilers can be found.
+确保这些编译器可以找到。
 ```
 which gfortran
 which gcc
 which g++
 ```
-If they are found, proceed to set the environment variables.
-The paths will be dependent on your compute environment
-If they are not found, reload your module (see above), or ask your system administrator for the paths to a compiler
-```
+如果可以找到它们（即有输出位置结果），则可以继续设置环境变量。
+输出的路径将取决于您的计算环境。
+如果找不到路径，请重新加载模块（请参见上文），或向系统管理员询问编译器的路径。 
 
+```
 setenv FC gfortran
 setenv CC gcc
 setenv CXX g++
 ```
 
-12. Run the configure command
+12. 运行configure命令
 
 ```
 ./configure --prefix=$cwd/../netcdf-c-4.7.0-gcc9.1.0 --disable-netcdf-4 --disable-dap
 ```
 
-13. Check that the configure command worked correctly, then run the install command
+13. 检查configure命令是否正常工作，然后运行install命令
 
 ```
 make check install
 ```
 
-14. Verify that the following message is obtained
+14. 验证是否获得以下消息
 
 ```
 | Congratulations! You have successfully installed netCDF!    |
 ```
 
-15. Change directories to one level up from your current directory
+15. 转到上层文件夹
 ```
 cd ..
 ```
 
-## Install netCDF-Fortran
+## 安装netCDF-Fortran
 
-1. Download netCDF-Fortran from the following website https://www.unidata.ucar.edu/downloads/netcdf/index.jsp
+1. 从以下网站下载netCDF-Fortran： https://www.unidata.ucar.edu/downloads/netcdf/index.jsp
 
 ```
 wget ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.5.tar.gz 
 ```
 
-2. Untar the tar.gz file
+2. 解压缩tar.gz文件
 
 ```
 tar -xzvf netcdf-fortran-4.4.5.tar.gz
 ```
 
-3. Change directories to netcdf-fortran-4.4.5
+3. 进入netcdf-fortran-4.4.5目录
 
 ```
 cd netcdf-fortran-4.4.5
 ```
 
-4. Make an install directory that matches the name of your loaded module environment
+4. 创建一个与您加载的模块环境名称匹配的安装目录
 
 ```
 mkdir ../netcdf-fortran-4.4.5-gcc9.1.0
 ```
 
-5. Review the installation document http://www.unidata.ucar.edu/software/netcdf/docs/building_netcdf_fortran.html
+5. 查看安装文档 http://www.unidata.ucar.edu/software/netcdf/docs/building_netcdf_fortran.html
 
-6. Set the environment variable NCDIR to specify the install directory
+6. 设置环境变量NCDIR以指定安装目录
 
 ```
 setenv NCDIR $cwd/../netcdf-c-4.7.0-gcc9.1.0
 ```
 
-7. Set the CC environment variable to use the gcc and gfortran compilers
+7. 设置CC环境变量以使用gcc和gfortran编译器
 
 ```
 which gfortran
@@ -145,20 +145,20 @@ setenv CC gcc
 setenv CXX g++
 ```
 
-8. Set your LD_LIBRARY_PATH to include the netcdf-C library path for netCDF build
+8. 设置LD_LIBRARY_PATH以包括用于netCDF构建的netcdf-C库路径
 
 ```
 setenv NCDIR $cwd/../netcdf-c-4.7.0-gcc9.1.0
 setenv LD_LIBRARY_PATH ${NCDIR}/lib:${LD_LIBRARY_PATH}
 ```
 
-9. Check your LD_LIBRARY_PATH
+9. 检查您的LD_LIBRARY_PATH
 
 ```
 echo $LD_LIBRARY_PATH
 ```
 
-10. Set the install directory for netCDF fortran
+10. 设置netCDF fortran的安装目录
 
 ```
 setenv NFDIR $cwd/../netcdf-fortran-4.4.5-gcc9.1.0
@@ -167,19 +167,19 @@ setenv CPPFLAGS -I${NCDIR}/include
 setenv LDFLAGS -L${NCDIR}/lib
 ```
 
-11. Run the configure command
+11. 运行configure命令
 
 ```
 ./configure --prefix=${NFDIR}
 ```
 
-12. Run the make check command
+12. 运行make check命令
 
 ```
 make check
 ```
 
-Output if successful:
+如果成功，则会输出：
 
 ```
 Testsuite summary for netCDF-Fortran 4.4.5
@@ -188,22 +188,19 @@ Testsuite summary for netCDF-Fortran 4.4.5
 # PASS:  6
 ```
 
-13. Run the make install command
+13. 运行make install命令
 
 ```
 make install
 ```
 
-Output successful if you see Libraries have been installed in the install directory
+如果看到库已安装在安装目录中，则输出成功
 
 ```
 ls $cwd/../netcdf-fortran-4.4.5-gcc9.1.0
 ```
 
-If you ever happen to want to link against installed libraries
-in a given directory, LIBDIR, you must either use libtool, and
-specify the full pathname of the library, or use the '-LLIBDIR'
-flag during linking and do at least one of the following:
+如果您碰巧要链接到给定目录LIBDIR中已安装的库，则必须使用libtool，并指定库的完整路径名，或者在链接期间使用'-LLIBDIR'标志，并至少执行以下一项操作：
    - add LIBDIR to the 'LD_LIBRARY_PATH' environment variable
      during execution
    - add LIBDIR to the 'LD_RUN_PATH' environment variable
@@ -212,119 +209,122 @@ flag during linking and do at least one of the following:
    - have your system administrator add LIBDIR to '/etc/ld.so.conf'
 
 
-14. set your LD_LIBRARY_PATH to include the netcdf-Fortran library path for netCDF build
+
+
+
+14.  设置您的LD_LIBRARY_PATH以包括用于netCDF构建的netcdf-Fortran库路径
 
 ```
 setenv NFDIR $cwd/../netcdf-fortran-4.4.5-gcc9.1.0
 setenv LD_LIBRARY_PATH ${NFDIR}/lib:${LD_LIBRARY_PATH}
 ```
-(may need to add the NCDIR and NFDIR to .cshrc)
+（可能需要将NCDIR和NFDIR添加到.cshrc中）
 
-## Install I/O API
-Note
-The complete I/O API installation guide can be found at either of the following:
+## 安装 I/O API
+注意
+完整的 I/O API安装指南可在以下两个网址之一获得：
 
 https://www.cmascenter.org/ioapi/documentation/all_versions/html/AVAIL.html
 
-or
+或者
 
 https://cjcoats.github.io/ioapi/AVAIL.html
 
-1. Change directories to one level up from your current location
+1. 将目录从当前位置上移到上一级
 ```
 cd ../
 ```
 
-2. Download I/O API
+2. 下载 I/O API
 
 ```
 git clone https://github.com/cjcoats/ioapi-3.2
 ```
 
-3. change directories to the ioapi-3.2 directory
+3. 将目录更改为ioapi-3.2目录
 ```
 cd ioapi-3.2
 ```
 
-2. Change branches to 20200828 for a tagged stable version
+4. 将分支更改为20200828以获取标记的稳定版本
 
 ```
 git checkout -b 20200828
 ```
 
-3. Change directories to the ioapi directory
+5. 将目录更改为ioapi目录
 
 ```
 cd ioapi
 ```
 
-4. copy the Makefile.nocpl file to create a Makefile
+6. 复制Makefile.nocpl文件以创建一个Makefile
 
 ```
 cp Makefile.nocpl Makefile
 ```
 
-5. Set the BIN environment variable to include the loaded module name
+7. 设置BIN环境变量以包含已加载的模块名称
 
 ```
 setenv BIN Linux2_x86_64gfort_openmpi_4.0.1_gcc_9.1.0
 ```
 
-6. Copy an existing Makeinclude file to have this BIN name at the end
+8. 复制现有的Makeinclude文件，在文件名结尾加上BIN名称
 
 ```
 cp Makeinclude.Linux2_x86_64gfort Makeinclude.Linux2_x86_64gfort_openmpi_4.0.1_gcc_9.1.0
 ```
 
-7. Create a BIN directory where the library and m3tools executables will be installed
+9. 创建一个BIN目录，其中将安装库和m3tools可执行文件
 
 ```
 mkdir ../$BIN
 ```
 
-5. Set the HOME directory to be your LIBRARY install directory
+10. 将HOME目录设置为您的LIBRARY安装目录
 ```
 setenv HOME [your_install_path]/LIBRARIES
 ```
 
-6. Run the make command to compile and link the ioapi library
+11. 运行make命令以编译并链接ioapi库
 
 ```
 make |& tee make.log
 ```
 
-7. Change directories to the $BIN dir and verify that both the libioapi.a library was successfully built
+12. 将目录更改为$BIN目录，并验证libioapi.a库已成功构建
 
 ```
 cd ../$BIN
 ls -lrt libioapi.a
 ```
 
-8. Change directories to the m3tools directory
+13. 将目录更改为m3tools目录
 ```
 cd ../m3tools
 ```
 
-9. Copy the Makefile.nocpl to create a Makefile
+14. 复制Makefile.nocpl以创建一个Makefile
 ```
 cp Makefile.nocpl Makefile
 ```
 
-10. Edit line 65 of the Makefile to use the NCDIR and NFDIR environment variables that you have set in the above steps to locate the netcdf C and netcdf Fortran libraries
+15. 编辑Makefile文件的第65行，以使用在上述步骤中设置的NCDIR和NFDIR环境变量来定位netcdf C和netcdf Fortran库
 
 ```
  LIBS = -L${OBJDIR} -lioapi -L${NFDIR}/lib -lnetcdff -L${NCDIR}/lib -lnetcdf $(OMPLIBS) $(ARCHLIB) $(ARCHLIBS)
- ```
+```
 
-11. Run make to compile the m3tools
+16. 运行make来编译m3tools
 ```
 make |& tee make.log
 ```
-12. Check to see that the m3tools have been installed successfully
+17. 检查以确保已成功安装m3tools
 ```
 cd ../$BIN
 ls -rlt m3xtract
 ```
 
-13. After successfull completion of this tutorial, the user is now ready to proceed to the [CMAQ Installation & Benchmarking Tutorial](./CMAQ_UG_tutorial_benchmark.md)
+18. 成功完成本教程后，用户现在可以继续进行[CMAQ安装和基准测试教程](./CMAQ_UG_tutorial_benchmark.md)
 

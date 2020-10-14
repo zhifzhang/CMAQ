@@ -1,101 +1,89 @@
-# CMAQ Debugging Tips
+# CMAQ调试技巧（Debugging Tips）
 
-Purpose: This guide describes how to examine log files and debug issues encountered when installing and running the CMAQ test case.
-This guide helps you to find and report errors to the CMAS Center Forum and follows the [best practices for posting new issues to the forum](https://forum.cmascenter.org/t/please-read-before-posting/1321).
+目的：本指南介绍如何检查日志文件以及调试在安装和运行CMAQ测试案例时遇到的问题。本指南可帮助您查找错误并在遵循[向论坛发布新问题的最佳做法]( https://forum.cmascenter.org/t/please-read-before-posting/1321 )的基础上向CMAS中心的用户论坛报告错误。
 
+## 编译CMAQ
 
-## Building CMAQ
-### Prerequisite: Build Libraries and CMAQ using gcc and intel compilers
-Follow the CMAQ Build Tutorials for the appropriate compiler: 
-* [Building CMAQ for GNU](CMAQ_UG_tutorial_build_library_gcc.md)
-* [Building CMAQ for Intel](CMAQ_UG_tutorial_build_library_intel.md)
+### 先决条件：使用gcc和intel编译器构建库和CMAQ
 
+按照CMAQ安装教程进行适当的编译：
+* [用GNU构建CMAQ](CMAQ_UG_tutorial_build_library_gcc.md)
+* [用intel构建CMAQ](CMAQ_UG_tutorial_build_library_intel.md)
 
-### Verify that an executable was created
+### 确认已创建可执行文件
+
 ```
 cd $CMAQ_HOME/CCTM/scripts
 ls */*.exe
 ```
 
-### Inspecting CMAQ Build log files:
+### 检查CMAQ编译日志文件
+
 ```
 grep -i error  bldit_cctm.log
 tail bldit_cctm.log
 ```
 
-### If you encounter an error building CMAQ
-* [Search the CMAS Forum](https://forum.cmascenter.org/search?expanded=true) for an error similar to the one that you are seeing in your bldit_cctm.log file.
-* [Review the CMAQ FAQ](https://www.epa.gov/cmaq/frequent-cmaq-questions)
+### 如果您在编译CMAQ时遇到错误
+* [在CMAS论坛搜索](https://forum.cmascenter.org/search?expanded=true)类似于您在bldit_cctm.log文件中看到的错误。
+* [查阅CMAQ常见问题](https://www.epa.gov/cmaq/frequent-cmaq-questions)
 
-If you don’t find an answer that solves the issue that you are having, create a new topic on the CMAS Center Forum.
-Submit a new topic issue, even if you are having an issue similar to another user.
+如果找不到解决您所遇到问题的答案，请在CMAS中心用户论坛上创建一个新主题，并提交新的问题，即使您遇到的问题与另一个用户相似。
 
+**请参阅本教程底部的说明，以在CMAS用户论坛上创建新主题。**
 
-**See the instructions at the bottom of this tutorial for creating a new topic on the CMAS User Forum.**
-
-## Running CMAQ:
-### Prerequisite: Run the CMAQ Benchmark case
-
-[Follow Benchmark Tutorial instructions](https://github.com/USEPA/CMAQ/blob/master/DOCS/Users_Guide/Tutorials/CMAQ_UG_tutorial_benchmark.md) 
-(does not require running ICON/BCON as inputs are provided in the Benchmark Input Data):
+## 运行CMAQ
+### 先决条件：运行CMAQ基准测试案例
+[按照基准测试案例教程运行](CMAQ_UG_tutorial_benchmark.md) (不需要运行ICON/BCON，因为基准测试案例中提供了输入数据)。
 
 
-### Inspect the CMAQ  run log files:
+### 检查CMAQ运行日志文件
 
-
-Check the output log file in the run directory to see if it has completed successfully. 
+检查运行目录中输出的日志文件，查看是否已成功完成模拟。
 
 ```
 cd $CMAQ_HOME/CCTM/scripts
 ```
 
-
-**The type of output log file that is created depends on how you submit the job.** If you use slurm, with the sbatch command to submit the job, the standard error and output is logged to a slurm-\*.out file.
- 
-Use grep to verify how many processors were used to run cmaq.  
+**输出的日志文件的类型取决于您提交作业的方式。** 如果您使用slurm（集群管理和作业调度系统），使用sbatch命令提交作业，则标准错误和输出将记录到slurm-\*.out文件。使用grep命令验证用于运行cmaq的处理器数量。
 
 ```
 grep -i ‘Number of Processors’ slurm-*.out
 ```
 
-Use grep to determine if CMAQ completed successfully.  
-
+使用grep命令确定CMAQ是否成功完成。
 
 ```
 grep -i 'PROGRAM COMPLETED SUCCESSFULLY' slurm-*.out
 ```
 
-
-Use grep to check for any errors in the slurm log files.  
+使用grep命令检查slurm日志文件中是否有任何错误。
 
 ```
 grep -i 'error' slurm-*.out
 ```
 
-### If your run error contains the following message:  
-
+### 如果您的运行错误中包含以下消息
 
 ```
 error while loading shared libraries  …  cannot open shared object file …
 ```
 
+在您的.cshrc中设置$LD_LIBRARY_PATH，以包括netCDF和netCDFF库共享对象文件的位置。注意：.cshrc文件应位于您的主目录中。
 
-Set the $LD_LIBRARY_PATH in your .cshrc to include the location of your netCDF and netCDFF library shared object files.   
-Note: your .cshrc file should be located in your home directory.  
+进入您的主目录：
 
-Change directories to your home directory.  
 ```
 cd ~
 ```
-View the contents of your .cshrc.  
+
+查看您.cshrc文件的内容：
 
 ```
 more .cshrc
 ```
 
-
-Edit your .cshrc to set the LD_LIBRARY_PATH to include the location of the netcdf libraries.  
-Note this path is dependent on what compiler you used, replace intel with gcc if you used gnu rather than the intel compiler.  
+编辑您的.cshrc文件以将LD_LIBRARY_PATH设置为包括netcdf库的位置。请注意，此路径取决于您使用的编译器，如果使用的是gnu而不是intel编译器，则将intel替换为gcc。
 
 ```
 setenv NCDIR ${CMAQ_HOME}/lib/x86_64/intel/netcdf
@@ -103,12 +91,12 @@ setenv NCFDIR ${CMAQ_HOME}/lib/x86_64/intel/netcdff
 setenv LD_LIBRARY_PATH ${NCDIR}/lib:$NCFDIR/lib:${LD_LIBRARY_PATH}
 ```
 
-### If the program did not completed successfully for another reason
-If the program did not completed successfully for another reason, you will need to check the per processor log files which begin with the name: CTM_LOG_\*.
-* These files may either be located in the run directory, if the run script was aborted.
-* Or they may have been moved by the run script to a LOGS directory under the output directory. 
+### 如果程序由于其他原因未能成功完成
+如果程序由于其他原因未能成功完成，则需要检查以“CTM_LOG_\*”名称开头的每个处理器的日志文件。
+* 如果运行脚本被中止，则这些文件可能位于运行目录中。
+* 或者它们可能已被运行脚本移动到输出目录下的LOGS文件夹中。
 
-Look in the following locations for the CTM_LOG* log files:  
+在以下位置查找CTM_LOG*日志文件：
 
 ```
 cd $CMAQ_HOME/CCTM/scripts
@@ -118,81 +106,77 @@ or
 cd $CMAQ_HOME/data/LOGS
 ```
 
-Determine the number of log files that exist using the ls command and word count command.  
+使用ls命令和word count命令确定日志文件数量。
 
 ```
 ls CTM_LOG* | wc
 ```
 
-There should be 1 log command for each processor used to run CMAQ for each day.  
+运行CMAQ的每个处理器在每个模拟天都应该有1条日志文件。
 
-Use the grep command to determine if the message “PROGRAM COMPLETED SUCCESSFULLY” is at the bottom of all of the log files.  
+使用grep命令确定“PROGRAM COMPLETED SUCCESSFULLY”的消息是否在所有日志文件的底部。
 
 ```
 grep -i 'PROGRAM COMPLETED SUCCESSFULLY' CTM_LOG* | wc
 ```
 
-* If you ran the program on 16 processors, you should see a word count of 16 files that contain this message for each day that you run the model.
-* If there were fewer findings of the successful run command message than the number of processors that were used to run CMAQ:
-Use the grep command to find an error in any of the files
+* 如果在16个处理器上并行运行程序，则在每个模拟日，您应该看到包含此​​消息的16个文件的字数统计。
+* 如果发现成功运行命令消息的数量少于用于运行CMAQ的处理器数量，则使用grep命令在任何日志文件中查找错误：
+
 ```
 grep -i error CTM_LOG*
 ```
 
-
-## If you encounter an error running CMAQ.
-
-* [Search the CMAS Forum](https://forum.cmascenter.org/search?expanded=true) for an error similar to the one that you are seeing in your CTM_LOG file.
-* [Review the CMAQ FAQ](https://www.epa.gov/cmaq/frequent-cmaq-questions)
-
-* If you don’t see a similar error reported in an issue or in a FAQ that provides enough information for you to troubleshoot and solve the issue then submit a new topic.
+## 如果您在运行CMAQ时遇到错误
+* [在CMAS论坛搜索](https://forum.cmascenter.org/search?expanded=true)类似于您在CTM_LOG文件中看到的错误。
+* [查阅CMAQ常见问题](https://www.epa.gov/cmaq/frequent-cmaq-questions)
 
 
-## Submit a new topic issue on the CMAS User Forum
+* 如果您在论坛问题或FAQ中未看到类似的错误报告，或没有为您提供了足够的信息来解决问题，请提交新主题。
 
+## 在CMAS用户论坛上提交新的主题问题
 
-* [Visit the category](https://forum.cmascenter.org/categories) that best describes your issue.
+* [访问目录](https://forum.cmascenter.org/categories)查找最符合您的问题的类型。
 
-* For example, if you are having an issue running CMAQ [choose the category cmaq runtime issues](https://forum.cmascenter.org/c/cmaq/run-time-errors-and-issues/14)
+* 例如，如果您在运行CMAQ时遇到问题，应选择[CMAQ运行类别](https://forum.cmascenter.org/c/cmaq/run-time-errors-and-issues/14)。
 
-* Or choose the [parent CMAQ category](https://forum.cmascenter.org/c/cmaq/7) 
+* 或者选择[CMAQ总类别](https://forum.cmascenter.org/c/cmaq/7) 
 
-* Click on + New Topic in the upper right corner
-The Category will be pre-selected if you start a new topic request from within a category, if the category is “Uncategorized”, then use the pull-down menu to select the category for your topic.
+* 点击右上角的+新主题
+如果您从某个类别内启动新的主题请求，则该类别将被预先选择，如果类别为“未分类”，则使用下拉菜单为您的主题选择类别。
 
-
-### Selecting a category for your issue
-Selecting a category is important, as the CMAS Center and EPA staff are only monitoring topics submitted within a category that matches their expertise.
-
+### 为您的问题选择一个类别
+选择类别非常重要，因为CMAS中心和EPA工作人员仅监视与他们的专业知识相匹配的类别中提交的主题。
  
-* Type in a title for your topic that describes your CMAQ compiler environment
-Example Title: 
+* 输入描述您的CMAQ编译器环境的主题标题，例如：
+
 ```
 CMAQv5.3.2 segmentation fault using gcc and openmpi
 ```
 
-### Template for what to include in your new issue.
-**Please include the following information when creating a new issue.**  This will make it much faster and easier for others to understand your issue and respond with an appropriate suggestion.
+### 提出新问题时应包含的内容模板
+**创建新的问题时，请提供以下信息：**  这将使其他人更快，更轻松地理解您的问题并提出适当的建议。
 
-1. Report the **compiler and version used to run CMAQ**
+1. 报告**用于运行CMAQ的编译器和版本**
 ```
 mpif90 --version
 ```
-2. Report the **version of CMAQ** that you are using.
+2. 报告您使用的**CMAQ版本**。
 ```
 ls */*.exe
 ```
-3. Report the name of the run script if it is a benchmark case, or **report the Domain and resolution**
-4. Report a limited amount of the **error message contents** in the body of the issue with output obtained by using the following commands:
+3. 如果是基准测试案例错误，请报告运行脚本的名称，或者**报告模拟区域和分辨率**。
+
+4. 在问题的正文中报告有限数量的**错误消息内容**，可以使用以下命令查找输出文件中的错误消息内容：
 ```
 cd $CMAQ_HOME/data/{YOUR_OUTPUT_DIR}/LOGS/
 ```
-* The following grep command -B NUM, prints NUM lines before the error statement is found.  
+* 采用grep -B NUM命令，在找到的错误语句之前打印NUM行。
 ```
 grep -B
 ```
 
-#### Example of information to include in a new issue post:
+#### 新问题中的信息示例：
 
 | | |
 |:--------:|:----------------:|
@@ -200,21 +184,20 @@ grep -B
 |CMAQ Version | BLD_CCTM_v532_intel/CCTM_v532.exe |
 | Run Script | run_cctm_Bench_2016_12SE1.csh|
 
-Error message encountered: 
+遇到错误消息：
 ```
 error while loading shared libraries  …  cannot open shared object file …
-
 ```
 
-### Upload additional files by clicking on the up arrow icon in the menu underneath the Create New Topic Title including:
-* your run script
-* standard out log file
-* per-processor log file that contains the error message.
-* Note You will need to rename any files to match one of the following extensions (jpg, jpeg, png, gif, csh, txt, csv), for instance, copy cmaq.log to cmaq.log.txt
+### 通过单击创建新主题标题下方菜单中的向上箭头图标来上传其他文件，包括：
+* 您的运行脚本
+* 标准输出日志文件
+* 包含错误消息的每个处理器的日志文件
+* 注意，您需要将文件重命名以匹配以下扩展名之一：jpg，jpeg，png，gif，csh，txt，csv，例如，将cmaq.log复制为cmaq.log.txt：
 
 ```
 cp CTM_LOG_000.v532_intel_Bench_2016_12SE1_20160701 CTM_LOG_000.v532_intel_Bench_2016_12SE1_20160701.txt
 ```
 
-* When someone replies to your topic, you will receive an e-mail notification. 
-* Please click on the “VISIT TOPIC” button in your e-mail to return to your CMAS Center Forum Issue and reply to any follow-up questions or suggestions. 
+* 当有人回复您的主题时，您将收到一封电子邮件通知。
+* 请单击电子邮件中的“访问主题”按钮以返回到CMAS中心论坛问题，并回答任何后续问题或建议。
