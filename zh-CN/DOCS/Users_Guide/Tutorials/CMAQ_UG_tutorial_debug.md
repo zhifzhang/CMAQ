@@ -2,23 +2,20 @@
 
 目的：本指南介绍如何检查日志文件以及调试在安装和运行CMAQ测试案例时遇到的问题。本指南可帮助您查找错误并在遵循[向论坛发布新问题的最佳做法]( https://forum.cmascenter.org/t/please-read-before-posting/1321 )的基础上向CMAS中心的用户论坛报告错误。
 
+
 ## 编译CMAQ
-
 ### 先决条件：使用gcc和intel编译器构建库和CMAQ
-
 按照CMAQ安装教程进行适当的编译：
 * [用GNU构建CMAQ](CMAQ_UG_tutorial_build_library_gcc.md)
 * [用intel构建CMAQ](CMAQ_UG_tutorial_build_library_intel.md)
 
 ### 确认已创建可执行文件
-
 ```
 cd $CMAQ_HOME/CCTM/scripts
 ls */*.exe
 ```
 
 ### 检查CMAQ编译日志文件
-
 ```
 grep -i error  bldit_cctm.log
 tail bldit_cctm.log
@@ -30,6 +27,7 @@ tail bldit_cctm.log
 
 如果找不到解决您所遇到问题的答案，请在CMAS中心用户论坛上创建一个新主题，并提交新的问题，即使您遇到的问题与另一个用户相似。
 
+
 **请参阅本教程底部的说明，以在CMAS用户论坛上创建新主题。**
 
 ## 运行CMAQ
@@ -37,16 +35,17 @@ tail bldit_cctm.log
 [按照基准测试案例教程运行](CMAQ_UG_tutorial_benchmark.md) (不需要运行ICON/BCON，因为基准测试案例中提供了输入数据)。
 
 
+
 ### 检查CMAQ运行日志文件
 
 检查运行目录中输出的日志文件，查看是否已成功完成模拟。
-
 ```
 cd $CMAQ_HOME/CCTM/scripts
 ```
 
-**输出的日志文件的类型取决于您提交作业的方式。** 如果您使用slurm（集群管理和作业调度系统），使用sbatch命令提交作业，则标准错误和输出将记录到slurm-\*.out文件。使用grep命令验证用于运行cmaq的处理器数量。
+**输出的日志文件的类型取决于您提交作业的方式。** 如果您使用slurm（集群管理和作业调度系统），使用sbatch命令提交作业，则标准错误和输出将记录到slurm-\*.out文件。
 
+使用grep命令验证用于运行cmaq的处理器数量。
 ```
 grep -i ‘Number of Processors’ slurm-*.out
 ```
@@ -58,7 +57,6 @@ grep -i 'PROGRAM COMPLETED SUCCESSFULLY' slurm-*.out
 ```
 
 使用grep命令检查slurm日志文件中是否有任何错误。
-
 ```
 grep -i 'error' slurm-*.out
 ```
@@ -72,13 +70,11 @@ error while loading shared libraries  …  cannot open shared object file …
 在您的.cshrc中设置$LD_LIBRARY_PATH，以包括netCDF和netCDFF库共享对象文件的位置。注意：.cshrc文件应位于您的主目录中。
 
 进入您的主目录：
-
 ```
 cd ~
 ```
 
 查看您.cshrc文件的内容：
-
 ```
 more .cshrc
 ```
@@ -97,7 +93,6 @@ setenv LD_LIBRARY_PATH ${NCDIR}/lib:$NCFDIR/lib:${LD_LIBRARY_PATH}
 * 或者它们可能已被运行脚本移动到输出目录下的LOGS文件夹中。
 
 在以下位置查找CTM_LOG*日志文件：
-
 ```
 cd $CMAQ_HOME/CCTM/scripts
 ```
@@ -107,7 +102,6 @@ cd $CMAQ_HOME/data/LOGS
 ```
 
 使用ls命令和word count命令确定日志文件数量。
-
 ```
 ls CTM_LOG* | wc
 ```
@@ -115,7 +109,6 @@ ls CTM_LOG* | wc
 运行CMAQ的每个处理器在每个模拟天都应该有1条日志文件。
 
 使用grep命令确定“PROGRAM COMPLETED SUCCESSFULLY”的消息是否在所有日志文件的底部。
-
 ```
 grep -i 'PROGRAM COMPLETED SUCCESSFULLY' CTM_LOG* | wc
 ```
@@ -131,8 +124,38 @@ grep -i error CTM_LOG*
 * [在CMAS论坛搜索](https://forum.cmascenter.org/search?expanded=true)类似于您在CTM_LOG文件中看到的错误。
 * [查阅CMAQ常见问题](https://www.epa.gov/cmaq/frequent-cmaq-questions)
 
-
 * 如果您在论坛问题或FAQ中未看到类似的错误报告，或没有为您提供了足够的信息来解决问题，请提交新主题。
+
+## 如果程序崩溃
+* 如果程序崩溃（而不是中止并显示错误消息），您可能会看到类似于以下内容的堆栈跟踪信息：
+```
+forrtl: severe (174): SIGSEGV, segmentation fault occurred
+Image              PC                Routine            Line        Source
+CCTM_s07tic_noche  00000000009AF90D  Unknown               Unknown  Unknown
+libpthread-2.18.s  00002AF0F5B4B6D0  Unknown               Unknown  Unknown
+CCTM_s07tic_noche  00000000006F3A8A  Unknown               Unknown  Unknown
+CCTM_s07tic_noche  0000000000605EF2  Unknown               Unknown  Unknown
+CCTM_s07tic_noche  00000000005FEC8C  Unknown               Unknown  Unknown
+CCTM_s07tic_noche  00000000005FD619  Unknown               Unknown  Unknown
+CCTM_s07tic_noche  0000000000406D9E  Unknown               Unknown  Unknown
+libc-2.18.so       00002AF0F6464D65  __libc_start_main     Unknown  Unknown
+CCTM_s07tic_noche  0000000000406CA9  Unknown               Unknown  Unknown
+```
+请不要将无法读取的堆栈跟踪信息发布到用户论坛！而是以调试模式重新编译模型（取消注释bldit_cctm.csh中的“set Debug_CCTM”）并重新运行。模型将运行得慢得多，但是当发生崩溃时，堆栈跟踪将提供有助于调试的信息。例如：
+```
+forrtl: severe (174): SIGSEGV, segmentation fault occurred
+Image              PC                Routine            Line        Source
+CCTM_s07tic_noche  0000000001A61C1D  Unknown               Unknown  Unknown
+libpthread-2.18.s  00002B8D9E0FC6D0  Unknown               Unknown  Unknown
+CCTM_s07tic_noche  0000000001551229  aero_                     503  aero_driver.F
+CCTM_s07tic_noche  0000000000E617C1  sciproc_                  298  sciproc.F
+CCTM_s07tic_noche  0000000000E48385  cmaq_driver_              679  driver.F
+CCTM_s07tic_noche  0000000000E40B84  MAIN__                     96  cmaq_main.F
+CCTM_s07tic_noche  0000000000406D9E  Unknown               Unknown  Unknown
+libc-2.18.so       00002B8D9EA15D65  __libc_start_main     Unknown  Unknown
+CCTM_s07tic_noche  0000000000406CA9  Unknown               Unknown  Unknown
+```
+此堆栈跟踪表明该错误发生在文件aero_driver.F的第503行上。
 
 ## 在CMAS用户论坛上提交新的主题问题
 
