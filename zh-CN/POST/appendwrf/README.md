@@ -1,9 +1,9 @@
 appendwrf
 ========
 
-This Fortran program concatenates variables from multiple WRF input or output files into a single file along the “Time” (unlimited) dimension. This can be useful in cases where a user may have WRF input or output files that were generated for shorter time periods and wants to combine them into files with longer (e.g. monthly) duration.
+该Fortran程序将多个WRF输入或输出文件中的变量沿“时间”（无限制）维连接到单个文件中。可以使用户将生成的较短时间段内的WRF输入或输出文件合并为更长（例如每月）持续时间的文件。
 
-## Run Time Environment variables used:
+## 使用的运行环境变量
 
 ```
  INFILE_1      input file number 1, (max of 15).
@@ -11,20 +11,19 @@ This Fortran program concatenates variables from multiple WRF input or output fi
  OUTFILE       output file name
 ```
 
-## Compile appendwrf source code
+## 编译appendwrf源代码
 
-Execute the build script to compile appendwrf:
+执行构建脚本来编译appendwrf：
 
 ```
 cd $CMAQ_HOME/POST/appendwrf/scripts
 ./bldit_appendwrf.csh [compiler] [version] |& tee build_appendwrf.log
 ```
 
-## Run appendwrf:
-Edit the sample run script (run.appenwrf), then run: 
+## 运行appendwrf
+编辑运行脚本示例（run.appenwrf），然后运行：
 ```
  ./run.appendwrf |& tee appendwrf.log
 ```
 
-Check the log file to ensure complete and correct execution without errors.
-
+检查日志文件以确保完整、正确的执行且没有错误。

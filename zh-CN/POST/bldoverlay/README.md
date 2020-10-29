@@ -1,46 +1,41 @@
 bldoverlay
 ========
 
-This Fortran program creates an observation overlay file that can be imported into either PAVE or VERDI. It requires, as input, a file containing observed data in a specific format, and then creates a PAVE/VERDI compatible overlay file.
+该Fortran程序创建一个观测覆盖文件，可以将其导入PAVE或VERDI。它需要一个包含特定格式的观测数据作为输入文件，然后创建一个PAVE/VERDI兼容的覆盖文件。
 
-## Environment Run Time Variables used:
-
-```
- IOAPI_ISPH    projection sphere type (use type #20 to match WRF/CMAQ)
-               (the default for this program is 20, overriding the ioapi default of 8) 
- SDATE         start date in the format: YYYYDDD
- EDATE         end date in the format: YYYYDDD
- FILETYPE      Type of input file to be used (see information below).  Choices are: OBS, SITES (default is OBS)
- OLAYTYPE      Type of data for the overlay output file.  If input data is daily this should be set to DAILY.
-               If input data is hourly choices are: HOURLY, 1HRMAX, 8HRMAX
- SPECIES       list of names of the species in the input file (e.g. setenv SPECIES 'O3,NO,CO')
- UNITS         list of units of the species in the input file (e.g. setenv UNITS 'ppb,ppb,ppb')
- INFILE        file containing input observed data
- TZFILE        location of time zone data file, tz.csv (this is a required input file)
- HOURS_8HRMAX  Number of 8hr values to use when computing daily maximum 8hr ozone.
-               Allowed values are 24 (use all 8-hr averages with starting hours 
-               from 0 - 23 hr local time) and 17 (use only the 17 8-hr averages
-               with starting hours from 7 - 23 hr local time) (default is 24)
- MISS_CHECK    set days with incomplete data coverage to missing when computing daily maximum 8-hr averages (TRUE/FALSE)
- OUTFILE       name of overlay file to create
-```
-
-## Input file types and format:
-
-Bldoverlay accepts "OBS" and "SITES" formats (FILETYPE) for the input file. For hourly output data (OLAYTYPE HOURLY) the program assumes that observations are in local standard time (LST) and applies a simple timezone shift to GMT using timezones every 15 degrees longitude.  For daily output data (OLAYTYPE DAILY, 1HRMAX or 8HRMAX) no time shifting is done so the output data remains in LST.  In this case the user can use the [HR2DAY utility](../hr2day) to time shift and average hourly model data to create daily model fields in LST.
+## 使用的运行环境变量
 
 ```
- OBS format:     The OBS format consists of comma separated values in the format 
-                 YYYDDD, HH, Site_ID, Longitude, Latitude, Value1[, Value2, Value3,...]. 
-                 Note that if the input data is daily that an hour column (HH) is still required 
-                 in the input data file.  In this case HH is ignored so the user could set this 
-                 value to 0 for all records.
- SITES format:   Set to create a static site file using the value set by VALUE (default is 1). 
-                 The format is a tab delimited file with the structure Site_ID Longitude Latitude.
+ IOAPI_ISPH    投影球类型（使用类型#20以匹配WRF/CMAQ）
+               （此程序的默认值为20，覆盖了ioapi的默认值8）
+ SDATE         开始日期，格式为：YYYYDDD
+ EDATE         结束日期，格式为：YYYYDDD
+ FILETYPE      要使用的输入文件的类型（请参阅下面的信息），选项包括：OBS、SITES（默认为OBS）
+ OLAYTYPE      输出的覆盖文件的数据类型。如果输入数据是每日的，则应将其设置为“DAILY”。
+               如果输入数据是每小时的，则可以选择：HOURLY、1HRMAX、8HRMAX
+ SPECIES       输入文件中的物种名称列表（例如，setenv SPECIES 'O3,NO,CO'）
+ UNITS         输入文件中的物种单位列表（例如，setenv UNITS 'ppb,ppb,ppb'）
+ INFILE        包含观测数据的输入文件
+ TZFILE        时区数据文件tz.csv的位置（这是必需的输入文件）
+ HOURS_8HRMAX  计算每日最大8小时臭氧量时要使用的时间数。
+               允许值为24（使用所有本地时间从0-23小时开始的8小时平均值）和17（仅使用17个本地时间从7-23小时开始的8小时平均值）（默认值为24）
+ MISS_CHECK    在计算日最大8小时平均值时，是否将数据覆盖范围不完整的日期设置为丢失（TRUE/FALSE）
+ OUTFILE       要创建的覆盖文件的名称
 ```
-## Compile bldoverlay source code
 
-Execute the build script to compile bldoverlay:
+## 输入文件类型和格式
+
+Bldoverlay接受“OBS”和“SITES”格式的输入文件。对于每小时的输出数据（OLAYTYPE HOURLY），程序假定观测时间为当地标准时间（LST），并使用每15度经度的时区进行简单的时区偏移为GMT。对于每日的输出数据（OLAYTYPE DAILY、1HRMAX或8HRMAX），不进行任何时间偏移，因此输出数据也采用LST。在这种情况下，用户可以使用[HR2DAY实用程序]( ../hr2day )进行时间偏移，并将每小时的模型数据进行平均以创建每日的模型字段值（采用LST）。
+
+```
+ OBS format:     OBS格式由逗号分隔的值组成，格式为YYYDDD、HH、Site_ID、经度、纬度、Value1[，Value2，Value3，...]。
+				 请注意，如果输入文件是每日数据，则输入文件中仍需要一个小时列（HH）。在这种情况下，HH被忽略，因此用户可以将所有记录的此值设置为0。
+ SITES format:   使用VALUE设置的值进行设置以创建静态站点文件（默认值为1）。
+                 该文件采用制表符（tab）分隔的格式，其结构为Site_ID 经度 纬度。
+```
+## 编译bldoverlay源代码
+
+运行构建脚本以编译bldoverlay：
 
 ```
 cd $CMAQ_HOME/POST/bldoverlay/scripts
@@ -48,13 +43,13 @@ cd $CMAQ_HOME/POST/bldoverlay/scripts
 ```
 
 
-## Run bldoverlay:
+## 运行bldoverlay：
 ```
  ./run.bldoverlay |& tee bldoverlay.log
 ```
 
-Check the log file to ensure complete and correct execution without errors.
+检查日志文件以确保完整、正确的执行而没有错误。
 
-*Note about overlays in VERDI:
-VERDI has the capability of directly reading in a .csv or tab-delimited observational dataset. Hourly observed data needs to be in UTC.  See the [documentation for VERDI](https://github.com/CEMPD/VERDI/releases) for further details.*
+*关于VERDI中的叠加层的注意事项：
+VERDI具有直接读取.csv或制表符（tab）分隔的观测数据的功能。每小时的观测数据必须使用UTC。有关更多详细信息，请参见[VERDI文档]( https://github.com/CEMPD/VERDI/releases )。*
 
