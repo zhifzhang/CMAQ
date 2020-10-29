@@ -1,39 +1,39 @@
-## CMAQ-ISAM Benchmark Tutorial ## 
+## CMAQ-ISAM基本测试案例教程 ## 
 
-### Procedure to build and run the CMAQ-ISAM model using gnu compiler: ###
+### 使用GNU编译器构建和运行CMAQ-ISAM模型的过程：###
 
-### Step 1: Download and run the CMAQv5.3.2 benchmark case (without ISAM) to confirm that your model run is consistent with the provided benchmark output.
-- [CMAQ Benchmark Tutorial](CMAQ_UG_tutorial_benchmark.md)
+### 步骤1：下载并运行CMAQv5.3.2基准测试案例（不带ISAM），以确认您的模型运行与提供的基准测试输出一致。
+- [CMAQ基本测试案例教程](CMAQ_UG_tutorial_benchmark.md)
 
-If you encounter any errors, try running the model in debug mode and refer to the CMAS User Forum to determine if any issues have been reported.
+如果遇到任何错误，请尝试在调试模式下运行模型，并参考CMAS用户论坛以确定是否已有报告的已知问题。
 
 https://forum.cmascenter.org/
 
-### Step 2: Read the User Guide Chapter on Integrated Source Apportionment Method.
-- [CMAQ User's Guide Chapter on ISAM](../CMAQ_UG_ch11_ISAM.md)
+### 步骤2：阅读《用户指南》中有关集成源分配方法（ISAM）的章节。
+- [CMAQ用户指南中有关ISAM的章节](../CMAQ_UG_ch11_ISAM.md)
 
-Note: This benchmark is intended to demonstrate how to build and run CMAQ-ISAM with the provided input files:
+注意：此基准测试案例旨在演示如何使用提供的输入文件来构建和运行CMAQ-ISAM：
 
-The following isam control file is provided in the CCTM/scripts directory when you obtain the CMAQv5.3.2 code from github (step 5 below):
+当您从Github获取CMAQv5.3.2代码时（以下步骤5），CCTM/scripts目录中提供了以下ISAM控制文件：
 
 ```
 isam_control.txt
 ```
 
-The following gridmask file is provided with the benchmark inputs in the CMAQv5.3.2_Benchmark_2Day_Input/2016_12SE1 directory (see step 10 below)
+以下网格掩码文件随CMAQv5.3.2_Benchmark_2Day_Input/2016_12SE1目录中的基准输入一起提供（请参阅下面的步骤10）。
 
 ```
 GRIDMASK_STATES_12SE1.nc
 ```
 
-The instructions require the user to edit the emissions control namelist file in the BLD directory (see step 9 below).
+这些说明要求用户在BLD目录中编辑排放控制名称列表（namelist）文件（请参阅下面的步骤9）。
 
 ```
 EmissCtrl_cb6r3_ae7_aq.nml
 ```
 
 
-### Step 3 (optional): choose your compiler, and load it using the module command if it is available on your system
+### 步骤3（可选）：选择编译器并请使用module命令加载（如果系统上可用）
 
 ```
 module avail
@@ -43,80 +43,80 @@ module avail
 module load openmpi_4.0.1/gcc_9.1.0 
 ```
 
-### Step 4 (optional): Install I/O API (note, this assumes you have already installed netCDF C and Fortran Libraries)
+### 步骤4（可选）：安装I/O API（注意，这里假定您已经安装了netCDF C和Fortran库）
 
-I/O APIv3.2 supports up to MXFILE3=64 open files, each with up to MXVARS3=2048. ISAM applications configured to calculate source attribution of a large number of sources may exceed this upper limit of model variables, leading to a model crash. To avoid this issue, users may use I/O API version 3.2 "large" that increases MXFILE3 to 512 and MXVARS3 to 16384. Instructions to build this version are found in Chapter 3. Note, using this ioapi-large version is <b>NOT REQUIRED</b> for the CMAQ-ISAM Benchmark Case. If a user needs to use these larger setting for MXFILE3 and MXVAR3 to support their application, the memory requirements will be increased. If needed, this version is available as a zip file from the following address:
+I/O API v3.2最多支持MXFILE3=64个打开文件，每个文件最多MXVARS3=2048。由于ISAM应用程序用于计算大量污染源的源属性，因此可能会超过模型变量的上限，从而导致模型崩溃。为避免此问题，用户可以使用I/O API v3.2 "large"，该版本将MXFILE3增加到512，将MXVARS3增加到16384。有关构建此版本的说明，请参阅第3章。注意，CMAQ-ISAM基准测试案例<b>不需要</b>使用ioapi-large版本。同时，如果用户需要使用大的MXFILE3和MXVAR3设置来支持其应用程序，则模型的内存需求将会增加。如果需要，可以从以下地址以zip文件的形式获取此版本：
 
 https://www.cmascenter.org/ioapi/download/ioapi-3.2-large-20200828.tar.gz
 
-Otherwise, use the I/O API version available here:
+否则，请使用此处提供的普通I/O API版本：
 https://www.cmascenter.org/ioapi/download/ioapi-3.2-20200828.tar.gz
 
-### Step 5: Install CMAQ with ISAM
+### 步骤5：安装CMAQ-ISAM
 
 ```
 git clone -b master https://github.com/USEPA/CMAQ.git CMAQ_REPO
 ```
 
-Build and run in a user-specified directory outside of the repository
+在存储库外部的用户指定目录中构建并运行。
 
-In the top level of CMAQ_REPO, the bldit_project.csh script will automatically replicate the CMAQ folder structure and copy every build and run script out of the repository so that you may modify them freely without version control.
+在CMAQ_REPO的顶级目录中，bldit_project.csh脚本将自动复制CMAQ文件夹结构，并将每个构建和运行脚本复制到资源库之外，以便您可以自由地对其进行修改而无需版本控制。
 
-Edit bldit_project.csh, to modify the variable $CMAQ_HOME to identify the folder that you would like to install the CMAQ package under. For example:
+编辑bldit_project.csh，修改变量$CMAQ_HOME，以标识要在其下安装CMAQ软件包的文件夹。例如：
 
 ```
 set CMAQ_HOME = /work/your_username/CMAQ_v5.3.2
 ```
 
-Now execute the script.
+执行脚本。
 
 ```
 ./bldit_project.csh
 ```
 
-Change directories to the CMAQ_HOME directory
+将目录更改为CMAQ_HOME目录
 
 ```
 cd /work/your_username/CMAQ_v5.3.2
 ```
 
 
-### Step 6. Edit the config_cmaq.csh to specify the paths of the ioapi and netCDF libraries
+### 步骤6：编辑config_cmaq.csh以指定ioapi和netCDF库的路径
 
-### Step 7: Modify the bldit_cctm.csh 
+### 步骤7：修改bldit_cctm.csh
 
-Change directory to CCTM/scripts
+将目录更改为CCTM/scripts
 
 ```
 cd CCTM/scripts
 ```
 
-Comment out the following option to compile CCTM with ISAM:
+注释掉以下选项以使用ISAM编译CCTM：
 
 ```
 #> Integrated Source Apportionment Method (ISAM)
 set ISAM_CCTM                         #> uncomment to compile CCTM with ISAM activated
 ```
 
-### Step 8: Run the bldit_cctm.csh script
+### 步骤8：运行bldit_cctm.csh脚本
 ```
 ./bldit_cctm.csh gcc |& tee bldit_cctm_isam.log
 ```
 
-### Step 9: Edit the Emission Control Namelist to recognize the CMAQ_REGIONS file 
+### 步骤9：编辑排放控制名称列表以识别CMAQ_REGIONS文件
 
-Change directories to the build directory
+将目录更改为构建目录
 ```
 cd BLD_CCTM_v532_ISAM_gcc
 ```
 
-edit the emissions namelist file
+编辑排放名称列表文件
 
 ```
 gedit EmissCtrl_cb6r3_ae7_aq.nml 
 ```
 
-Uncomment the line that contains ISAM_REGIONS as the File Label
+取消注释文件标签中包含ISAM_REGIONS的行
 
 ```
 &RegionsRegistry
@@ -128,14 +128,14 @@ Uncomment the line that contains ISAM_REGIONS as the File Label
                'ALL'         ,'ISAM_REGIONS','ALL',
 ```
   
-### Step 10: Download the benchmark input data
+### 步骤10：下载基准测试案例输入数据
 
-[Link to CMAQv5.3.2_Benchmark_2Day_Input.tar.gz input data on the following Google Drive Folder](https://drive.google.com/drive/u/1/folders/1jAKw1EeEzxLSsmalMplNwYtUv08pwUYk)
+链接到[Google Drive]( https://drive.google.com/drive/u/1/folders/1jAKw1EeEzxLSsmalMplNwYtUv08pwUYk )的CMAQv5.3.2_Benchmark_2Day_Input.tar.gz输入数据
 
-  - You can see a list of the files in the Benchmark dataset: by clicking on CMAQv5.3.2_Benchmark_2Day_Input.tar.gz.list
-  - Use the gdrive command to download the dataset.
-  - If this is the first time that you are using gdrive, or if you have an issue with your token, please read the following instructions
-  - [Tips to download data from CMAS Data Warehouse](https://docs.google.com/document/d/1e7B94zFkbKygVWfrhGwEZL51jF4fGXGXZbvi6KzXYQ4)
+  - 您可以在Benchmark数据集中单击CMAQv5.3.2_Benchmark_2Day_Input.tar.gz.list以查看文件列表
+  - 使用gdrive命令下载数据集
+  - 如果这是您第一次使用gdrive，或者您的秘钥有问题，请阅读以下说明
+  - [从CMAS数据仓库下载数据的说明]( https://docs.google.com/document/d/1e7B94zFkbKygVWfrhGwEZL51jF4fGXGXZbvi6KzXYQ4 )
   
   
   ```
@@ -143,57 +143,56 @@ Uncomment the line that contains ISAM_REGIONS as the File Label
   ```
   
     
-### Step 11: Edit the CMAQ-ISAM runscript
+### 步骤11：编辑CMAQ-ISAM运行脚本
 
 ```
 gedit run_cctm_Bench_2016_12SE1.csh
 ```
 
-Set General Parameters for Configuring the Simulation
+设置用于配置模拟的常规参数
 
 ```
 set VRSN = v532_ISAM
 ```
 
 
-Turn on ISAM and uncomment ISAM regions file
+打开ISAM并取消注释ISAM区域文件
 
 ```
 setenv CTM_ISAM Y
 setenv ISAM_REGIONS $INPDIR/GRIDMASK_STATES_12SE1.nc
 ```
    
-Run or Submit the script to the batch queueing system
+运行或将脚本提交到批处理排队系统
 
 ```
 ./run_cctm_Bench_2016_12SE1.csh
 ```
 
-OR (If using SLRUM)
+或（如果使用SLURM）
 
 ```
 sbatch run_cctm_Bench_2016_12SE1.csh
 ```
 
-### Step 12: Verify that the run was successful
-   - look for the output directory
+### 步骤12：验证运行是否成功
+   - 查看输出目录
    
    ```
    cd ../../data/output_CCTM_v532_ISAM_gcc_Bench_2016_12SE1
    ```
-   If the run was successful you will see the following output
+   如果运行成功，您将看到以下输出内容
    
    ```
    tail ./LOGS/CTM_LOG_000.v532_ISAM_gcc_Bench_2016_12SE1_20160701
    ```
    |>---   PROGRAM COMPLETED SUCCESSFULLY   ---<|
 
-### Step 13: Compare output with the 2 day benchmark outputs provided on the google drive
-
+### 第13步：将输出结果与Google云端硬盘上提供的2天基准测试结果进行比较
 
     https://drive.google.com/drive/u/1/folders/1jAKw1EeEzxLSsmalMplNwYtUv08pwUYk
 
-    Note, the following ISAM output files are generated in addition to the standard CMAQ output files.
+    请注意，除标准CMAQ输出文件外，还会生成以下ISAM输出文件。
 
 ```
     CCTM_SA_CONC_v532_ISAM_gcc_Bench_2016_12SE1_20160701.nc
