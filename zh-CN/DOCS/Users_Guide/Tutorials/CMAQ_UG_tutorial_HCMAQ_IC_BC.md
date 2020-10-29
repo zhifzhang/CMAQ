@@ -1,52 +1,57 @@
-## CMAQ Tutorial ##
-### Create Initial and Boundary Conditions from Seasonal Average Hemispheric CMAQ Output ###
-Purpose: This tutorial will step the user through the process of creating initial and boundary conditions from a seasonal average hemispheric CMAQ output file distributed through the CMAS data warehouse. It assumes that the user already generated MCIP files for their target modeling domain.
+## CMAQ 教程 ##
+### 从季均半球CMAQ输出文件中创建初始条件和边界条件 ###
+目的：本教程将引导用户逐步从通过CMAS数据仓库分发的季均半球CMAQ输出文件创建初始条件和边界条件（假设用户已经为目标建模区域生成了MCIP文件）。
 
-Download H-CMAQ output: https://drive.google.com/file/d/15Vt6f5WuyN8RiLRjTlKeQUHjYbZ6QCrA/view?usp=sharing
+下载季均半球CMAQ输出文件：https://drive.google.com/file/d/15Vt6f5WuyN8RiLRjTlKeQUHjYbZ6QCrA/view?usp=sharing
 
 
 ------------
 
 
-### STEP 1: Obtain the seasonal average hemispheric CMAQ output file from the CMAS data warehouse</strong>
+### 步骤1：从CMAS数据仓库获取季均半球CMAQ输出文件 </strong>
 
-EPA distributes a file containing seasonal average 3D species concentrations from a hemispheric CMAQ simulation performed for 2016 over the northern hemisphere. These simulations were performed with a pre-release version of CMAQv5.3 using the following configuration:  
+EPA发布的季均半球CMAQ输出文件中包含了2016年在北半球进行的半球CMAQ模拟得出的季均3D物种浓度，该模拟采用CMAQv5.3的预发行版，使用以下配置进行：
 
-- Model version: CMAQv5.3 beta2 (February 2018), including full halogen and DMS chemistry  
-- Grid spacing: 108 x 108 km on a polar stereographic grid covering the northern hemisphere  
-- Vertical layers: 44  
-- Meteorological fields: WRF3.8  
-- Chemical mechanism: CB6R3M_AE7_KMTBR  
-- Dry Deposition: M3DRY  
+- 模型版本：CMAQv5.3 beta2（2018年2月），包括完整的卤素和DMS化学成分
+- 网格间距：覆盖北半球，采用极地立体网格，间距为108×108km
+- 垂直层数：44
+- 气象场：WRF3.8  
+- 化学机理：CB6R3M_AE7_KMTBR  
+- 干沉积：M3DRY  
 
-This file is named CCTM_CONC_v53beta2_intel17.0_HEMIS_cb6r3m_ae7_kmtbr_m3dry_2016_quarterly_av.nc and can be downloaded here
+该文件名为CCTM_CONC_v53beta2_intel17.0_HEMIS_cb6r3m_ae7_kmtbr_m3dry_2016_quarterly_av.nc，可以在此处下载
 
 https://drive.google.com/file/d/15Vt6f5WuyN8RiLRjTlKeQUHjYbZ6QCrA/view?usp=sharing
 
-### STEP 2 (optional): Time shift the downloaded seasonal average hemispheric CMAQ output file </strong>
+### 步骤2（可选）：改变已下载的季均半球CMAQ输出文件中的时间 </strong>
 
-If the time period for which initial and boundary conditions are to be generated does not fall between October 16, 2015 12:00 GMT and January 16, 2017 0:00 GMT, the time stamps in the downloaded file need to be adjusted to encompass the desired time period. This can be accomplished using a tool like  `m3tshift` that is part of the `m3tools` utilities released with [I/O API](https://www.cmascenter.org/ioapi/). 
+如果要生成初始条件和边界条件的时间段不在2015年10月16日12:00 GMT和2017年1月16日0:00 GMT之间，则需要调整下载文件中的时间戳以包含所需的时间段。这可以通过使用与[I/O API]( https://www.cmascenter.org/ioapi/ )一起发布的`m3tools`实用工具中的`m3tshift`这样的工具来完成。
 
-The seasonal average concentration file obtained in Step 1 contains six-time stamps (10/16/2015 12:00, 1/16/2016 0:00, 4/16/2016 12:00, 7/17/2016 0:00, 10/16/2016 12:00, and 1/16/2017 0:00) that represent fall, winter, spring, summer, fall, and winter seasonal average values, respectively. Fall was defined as September 1 - November 30, 2016, winter was defined as January 1 - February 29 and December 1 - December 31, 2016, spring was defined as March 1 - May 31, 2016, and summer was defined as June 1- August 31, 2016. Note that the concentration values associated with the first-time stamp are identical to those associated with the fifth time stamp since both represent fall, and the concentration values associated with the second time stamp are identical to those associated with the sixth time stamp since both represent winter.
+从步骤1中下载的季均浓度文件包含六次时间戳（10/16/2015 12:00、1/16/2016 0:00、4/16/2016 12:00、7/17/2016 0:00、10/16/2016 12:00、以及1/16/2017 0:00），分别代表秋季、冬季、春季、夏季、秋季和冬季的季均值。秋季被定义为2016年9月1日至11月30日，冬季被定义为2016年1月1日至2月29日以及12月1日至12月31日，春季被定义为2016年3月1日至5月31日，夏季被定义为2016年6月1日至8月31日。请注意，与第一时间戳关联的浓度值与与第五时间戳关联的浓度值相同，因为两者均表示秋季。同样，与第二时间戳关联的浓度值与与第六时间戳关联的浓度值相同，因为它们都代表冬季。
 
-A sample script using `m3tshift` to shift all of the six-time stamps back by two years to support the generation of initial and boundary conditions with ICON and BCON for a modeling period between October 16, 2013 12:00 GMT and January 17, 2015 0:00 GMT is shown below.
+一个脚本示例如下所示，其采用`m3tshift`工具将所有六个时间戳转换成两年，以支持在2013年10月16日12:00 GMT至2015年1月17日0:00 GMT之间的建模期间使用ICON和BCON生成初始条件和边界条件。
 
 ```
 #!/bin/csh -f
 
 set EXEC = /path/to/m3tshift
+#> 设置m3tshift所在路径
 
 #> Year to be entirely encompassed by the time stamps in the time-shifted output file
+#> 设置改变时间后的输出文件中的时间戳将完全包含的年份
 set TARGET_YEAR = 2014
 
 #> Path to the seasonal average H-CMAQ file downloaded from the CMAS data warehouse
 #> This path will also be used to store the time-shifted output file
+#> 从CMAS数据仓库下载的季均H-CMAQ文件的路径，此路径还将用于存储改变时间后的输出文件
 set DATADIR = /path/to/downloaded_data
 
 #> Name of the seasonal average H-CMAQ file downloaded from the CMAS data warehouse
+#> 从CMAS数据仓库下载的季均H-CMAQ文件的文件名
 set AV_CONC_INFILE = CCTM_CONC_v53beta2_intel17.0_HEMIS_cb6r3m_ae7_kmtbr_m3dry_2016_quarterly_av.nc
 
 #> Name of the time-shifted seasonal average H-CMAQ file 
+#> 输出的改变时间后的季均H-CMAQ文件的文件名
 set AV_CONC_OUTFILE = CCTM_CONC_v53beta2_intel17.0_HEMIS_cb6r3m_ae7_kmtbr_m3dry_${TARGET_YEAR}_quarterly_av.nc
 
 setenv INFILE ${DATADIR}/${AV_CONC_INFILE}
@@ -54,6 +59,7 @@ setenv OUTFILE ${DATADIR}/${AV_CONC_OUTFILE}
 
 #> Invoke m3shift to shift the time stamps to the target year
 #> Note that the first time stamp represents the fall of the previous year
+#> 调用m3shift将时间戳转换为目标年份。请注意，第一个时间戳代表上一年的秋天
 
 @ TARGET_YEAR = ${TARGET_YEAR} - 1
 
@@ -69,13 +75,13 @@ OUTFILE
 EOF
 ```
 
-### STEP 3: (optional): Map to a different chemical mechanism </strong>
+### 步骤3（可选）：映射到其他化学机理 </strong>
 
-If a chemical mechanism other than cb6r3_ae7_aq, cb6r3_ae7_aqkmt2, or cb6r3m_ae7_kmtbr will be used for the regional-scale CMAQ simulations, the species in the downloaded file need to be mapped to that other chemical mechanism. An example script for using the `combine` program to map from cb6r3m_ae7_kmtbr to racm_ae6_aq, saprc07tc_ae6_aq, or saprc07tic_ae7i_aq is provided in a directory alongside the BCON and ICON [source code](../../../PREP/bcon/map2mech). Species definition files used for the mechanism mapping are also provided in that directory.
+如果将cb6r3_ae7_aq，cb6r3_ae7_aqkmt2或cb6r3m_ae7_kmtbr以外的化学机理用于区域尺度的CMAQ模拟，则下载文件中的物种需要映射到该其他化学机理。在BCON和ICON源代码旁的[目录]( ../../../PREP/bcon/map2mech )中提供了一个示例脚本，该脚本用于使用`combine`程序从cb6r3m_ae7_kmtbr映射到racm_ae6_aq、saprc07tc_ae6_aq或saprc07tic_ae7i_aq。该目录中还提供了用于机理映射的物种定义文件。
 
-### STEP 4: Compile the ICON and BCON executables</strong>
+### 步骤4：编译ICON和BCON可执行文件 </strong>
 
-To compile the ICON and BCON executables, run the following commands from the CMAQ home directory: 
+要编译ICON和BCON可执行文件，请从CMAQ主目录运行以下命令：
 
 ```
 cd $CMAQ_HOME/PREP/icon/scripts
@@ -87,9 +93,9 @@ cd $CMAQ_HOME/PREP/bcon/scripts
 ./bldit_bcon.csh [compiler] [version] |& tee build_bcon.log
 ```
 
-### STEP 5: Run ICON to create initial conditions</strong>
+### 步骤5：运行ICON以创建初始条件 </strong>
 
-The run script below uses the [`ICON`](../../../PREP/icon) program to create initial conditions for the user's target domain based on the seasonal average hemispheric CMAQ output obtained in Step 1, optionally time-shifted in Step 2, and optionally mapped to a different mechanism in Step 3. By setting ICTYPE to regrid, the run script invokes ICON in _regrid_ mode because initial conditions are derived from a CONC file. In the example below, the settings for APPL, GRID_NAME, GRIDDESC, MET_CRO_3D_FIN, and DATE reflect the CMAQ Southeast benchmark case and will need to be modified by the user to point to the corresponding files for their domain and reflect the intended simulation start date. The environment variables CTM_CONC_1 and MET_CRO_3D_CRS should both point to the full path of the file downloaded in Step 1 and optionally time-shifted in Step 2 and/or species-mapped in Step 3.
+下面的运行脚本使用[`ICON`]( ../../../PREP/icon )程序，根据在步骤1/步骤2（可选）/步骤3（可选）中获得的季均半球CMAQ输出文件，为用户的目标区域创建初始条件。通过将ICTYPE设置为regrid，运行脚本将以_regrid_模式调用ICON，因为初始条件是从CONC文件派生的。在下面的示例中，APPL、GRID_NAME、GRIDDESC、MET_CRO_3D_FIN和DATE的设置反映的是CMAQ东南部区域基准测试案例的情况，需要用户进行修改以指向其模拟区域的相应文件并反映预期的模拟开始日期。环境变量CTM_CONC_1和MET_CRO_3D_CRS都应指向在步骤1/步骤2（可选）/步骤3（可选）中下载的文件的完整路径。
 
 ```
 #!/bin/csh -f
@@ -209,9 +215,9 @@ The run script below uses the [`ICON`](../../../PREP/icon) program to create ini
  exit() 
  ```
  
-### STEP 6: Run BCON to create boundary conditions</strong>
+### 步骤6：运行BCON以创建边界条件 </strong>
 
-The run script below uses the [`BCON`](../../../PREP/bcon) program to create boundary conditions for the user's target domain based on the seasonal average hemispheric CMAQ output obtained in Step 1, optionally time-shifted in Step 2, and optionally mapped to a different mechanism in Step 3. By setting BCTYPE to regrid, the run script invokes BCON in _regrid_ mode because boundary conditions are derived from a CONC file. In the example below, the settings for APPL, GRID_NAME, GRIDDESC, MET_CRO_3D_FIN, and DATE reflect the CMAQ Southeast benchmark case and will need to be modified by the user to point to the corresponding files for their domain and reflect the intended simulation start date. The environment variables CTM_CONC_1 and MET_CRO_3D_CRS should both point to the full path of the file downloaded in Step 1 and optionally time-shifted in Step 2 and/or species-mapped in Step 3.
+下面的运行脚本使用[`BCON`]( ../../../PREP/bcon )程序，根据在步骤1/步骤2（可选）/步骤3（可选）中获得的季均半球CMAQ输出文件，为用户的目标区域创建边界条件。通过将BCTYPE设置为regrid，运行脚本将以_regrid_模式调用BCON，因为边界条件是从CONC文件派生的。在下面的示例中，APPL、GRID_NAME、GRIDDESC、MET_CRO_3D_FIN和DATE的设置反映的是CMAQ东南部区域基准测试案例的情况，需要用户进行修改以指向其模拟区域的相应文件并反映预期的模拟开始日期。环境变量CTM_CONC_1和MET_CRO_3D_CRS都应指向在步骤1/步骤2（可选）/步骤3（可选）中下载的文件的完整路径。
 
 ```
 #!/bin/csh -f
