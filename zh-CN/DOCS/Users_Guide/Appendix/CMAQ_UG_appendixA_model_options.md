@@ -181,7 +181,7 @@
     -   `grid/cartesian`
 
 -   `ModAdv: [default: wrf_cons]`<a id=ModHadv></a>  
-	3-D水平模块。有关更多信息请参见[第6章](../CMAQ_UG_ch06_model_configuration_options.md#65-advection)。
+	3-D对流方案。有关更多信息请参见[第6章](../CMAQ_UG_ch06_model_configuration_options.md#65-advection)。
     -   `wrf_cons`  
     使用WRF垂直积分柱质量计算垂直对流
     -   `local_cons`  
@@ -267,10 +267,10 @@
 -   `ModUtil: [default: util]`<a id=ModUtil></a>  
     CMAQ实用程序模块。请勿更改此模块设置。
     -  `util/util`
--
-`ModPa: [default: procan/pa]`<a id=ModPa></a>
+	
+-   `ModPa: [default: procan/pa]`<a id=ModPa></a>
     在CCTM运行脚本中控制的过程分析。请勿更改此模块设置。
-     - `procan/pa`
+    - `procan/pa`
 
 -   `ModPvO3: [default: pv_o3]`<a id=ModPvO3></a>
 	臭氧自由对流层交换的潜在涡度参数化。使用CCTM构建脚本中的potvorO3变量配置此选项。请勿更改此模块设置。有关更多信息，请参见[第6章](../CMAQ_UG_ch06_model_configuration_options.md#613-potential-vorticity-scaling)。
@@ -645,7 +645,7 @@
 	使用霜冻日期开关文件来确定是使用冬季还是夏季的生物源排放。有关更多信息，请参见[第6章](../CMAQ_UG_ch06_model_configuration_options.md#biogenics)。
 
 -   `BIOSEASON [default: False]`<a id=BIOSEASON></a>  
-    etCDF格式霜冻日期开关输入文件的文件名。有关更多信息，请参见[第6章](../CMAQ_UG_ch06_model_configuration_options.md#biogenics)。
+    NetCDF格式霜冻日期开关输入文件的文件名。有关更多信息，请参见[第6章](../CMAQ_UG_ch06_model_configuration_options.md#biogenics)。
 
 -   `SUMMER_YN [default: False]`<a id=SUMMER_YN></a>  
 	切换夏季的归一化生物源排放。如果BIOSW_YN设置为Y，则忽略此选项设置。注释掉或设置为Y以选择夏季生物源排放因子；设置为N关闭。有关更多信息，请参见[第6章](../CMAQ_UG_ch06_model_configuration_options.md#biogenics)。
