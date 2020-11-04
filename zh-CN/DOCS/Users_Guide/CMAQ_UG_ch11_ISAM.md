@@ -40,7 +40,7 @@ set ISAM_CCTM
 
 **用于ISAM应用程序的I/O API安装说明**
 
-I/O API v3.2最多支持MXFILE3=64个打开文件，每个文件最多MXVARS3=2048。ISAM应用程序在配置计算大量污染物来源属性时可能会超出模型该变量的上限，从而导致模型崩溃。为避免此问题，用户可以使用I/O API v5.3-large，它将MXFILE3增加到512，将MXVARS3增加到16384。有关编译此版本的说明，请参见[第3章]( CMAQ_UG_ch03_preparing_compute_environment.md#333-io-api-library )。
+I/O API v3.2最多支持MXFILE3=256个打开文件，每个文件最多MXVARS3=2048。ISAM应用程序在配置计算大量污染物来源属性时可能会超出模型该变量的上限，从而导致模型崩溃。为避免此问题，用户可以使用I/O API v5.3-large，它将MXFILE3增加到512，将MXVARS3增加到16384。有关编译此版本的说明，请参见[第3章]( CMAQ_UG_ch03_preparing_compute_environment.md#333-io-api-library )。
 请注意，对于CMAQ-ISAM基准测试案例，不需要使用此ioapi-large版本。
 如果用户需要使用更大的MXFILE3和MXVAR3设置来支持其应用程序，请注意内存需求将增加。
 该版本可以从以下地址以zip文件形式提供：

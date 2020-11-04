@@ -110,7 +110,7 @@ make
 
 其他I/O API库配置选项可用，用户可以在I/O API文档中看到这些选项的列表。例如，可以配置I/O API，打开“mpi” I/O API库，可以使CMAQ模型采用并行I/O（PIO）功能（Wong等人，2015）。有关如何在CMAQ中启用PIO的更多信息，请参见[附录D.3]( Appendix/CMAQ_UG_appendixD_parallel_implementation.md#d3-parallel-io )。
 
-还有一个I/O API v3.2-large，该版本设计用来专为处理具有大量模型输出文件的应用程序（例如，处理所有CMAQv5.3可选诊断输出文件）和/或大量模型变量（例如CMAQ-HDDM或CMAQ-ISAM应用程序）。I/O API v3.2-large将MXFILE3变量从64增加到512，并将MXVARS3变量从2048增加到16384，这两个变量都可在PARAMS3.EXT文件中找到，如[I/O API文档]( https://www.cmascenter.org/ioapi/documentation/all_versions/html/AVAIL.html#build )所示。用户可以使用[以下方法]( https://www.cmascenter.org/ioapi/documentation/all_versions/html/AVAIL.html#build )编译large版本：
+还有一个I/O API v3.2-large，该版本设计用来专为处理具有大量模型输出文件的应用程序（例如，处理所有CMAQv5.3可选诊断输出文件）和/或大量模型变量（例如CMAQ-HDDM或CMAQ-ISAM应用程序）。I/O API v3.2-large将MXFILE3变量从256增加到512，并将MXVARS3变量从2048增加到16384，这两个变量都可在PARAMS3.EXT文件中找到，如[I/O API文档]( https://www.cmascenter.org/ioapi/documentation/all_versions/html/AVAIL.html#build )所示。用户可以使用[以下方法]( https://www.cmascenter.org/ioapi/documentation/all_versions/html/AVAIL.html#build )编译large版本：
 
 ```
 cp -r ioapi-3.2-20200828 ioapi-3.2-20200828_large

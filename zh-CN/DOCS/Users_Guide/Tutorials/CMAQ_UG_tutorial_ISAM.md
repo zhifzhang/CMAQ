@@ -45,7 +45,7 @@ module load openmpi_4.0.1/gcc_9.1.0
 
 ### 步骤4（可选）：安装I/O API（注意，这里假定您已经安装了netCDF C和Fortran库）
 
-I/O API v3.2最多支持MXFILE3=64个打开文件，每个文件最多MXVARS3=2048。由于ISAM应用程序用于计算大量污染源的源属性，因此可能会超过模型变量的上限，从而导致模型崩溃。为避免此问题，用户可以使用I/O API v3.2 "large"，该版本将MXFILE3增加到512，将MXVARS3增加到16384。有关构建此版本的说明，请参阅第3章。注意，CMAQ-ISAM基准测试案例<b>不需要</b>使用ioapi-large版本。同时，如果用户需要使用大的MXFILE3和MXVAR3设置来支持其应用程序，则模型的内存需求将会增加。如果需要，可以从以下地址以zip文件的形式获取此版本：
+I/O API v3.2最多支持MXFILE3=256个打开文件，每个文件最多MXVARS3=2048。由于ISAM应用程序用于计算大量污染源的源属性，因此可能会超过模型变量的上限，从而导致模型崩溃。为避免此问题，用户可以使用I/O API v3.2 "large"，该版本将MXFILE3增加到512，将MXVARS3增加到16384。有关构建此版本的说明，请参阅第3章。注意，CMAQ-ISAM基准测试案例<b>不需要</b>使用ioapi-large版本。同时，如果用户需要使用大的MXFILE3和MXVAR3设置来支持其应用程序，则模型的内存需求将会增加。如果需要，可以从以下地址以zip文件的形式获取此版本：
 
 https://www.cmascenter.org/ioapi/download/ioapi-3.2-large-20200828.tar.gz
 
