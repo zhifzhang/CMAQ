@@ -3,7 +3,7 @@ CMAQv5.3.2发行说明
 
 [CMAQv5.3.2用户指南](../Users_Guide/README.md)
 
-[CMAQ安装和运行教程](DOCS/Users_Guide/Tutorials/README.md) **- 有关运行CMAQ测试案例的教程以及有关WRF-CMAQ、ISAM和修改化学机制的新教程**  
+[CMAQ安装和运行教程](../Users_Guide/Tutorials/README.md) **- 有关运行CMAQ测试案例的教程以及有关WRF-CMAQ、ISAM和修改化学机制的新教程**  
 
 [升级到CMAQ最新版本的常见问题](CMAQ_FAQ.md) **-v5.3.2发布中的新问题**
 
