@@ -1,13 +1,13 @@
-## CMAQ Tutorial ##
+## CMAQ教程 ##
 
-Author: Elyse Pennington (epenning@caltech.edu)
+作者: Elyse Pennington (epenning@caltech.edu)
 
-### Modifying a Chemical Mechanism in CMAQ ###
+### 修改CMAQ化学机理 ###
 
 
-Goal: Modify the gas- and aerosol-phase chemical mechanisms in CMAQ, create a new solver, and reflect all the changes in Github. This tutorial includes examples impacting SOA precursors and products, and does not include impacts on ozone or other radical chemistry. Caution: If significant modifications are made to the gas-phase mechanism that alter the radical balance, the ebi implementation of the modified mechanism should be checked against an alternative solver such as ros3 or smvgear. This example does not include extensive modifications.
+目标：修改CMAQ中的气相和气溶胶化学机理，创建新的求解器，并在Github中提交修改。本教程包括影响SOA前体和产物的示例，但不包括对臭氧或其他自由基化学的影响。注意：如果对气相机理进行了重大修改以改变了自由基平衡，则应对照替代求解器（如ros3或smvgear）来检查修改机理的ebi实现。本示例不包括这种重大修改。
 
-### Files to edit ##
+### 要编辑的文件 ##
 1. mech_*.def
 2. AE namelist
 3. GC namelist
@@ -20,38 +20,38 @@ Goal: Modify the gas- and aerosol-phase chemical mechanisms in CMAQ, create a ne
 10. SpecDef_Dep_*.txt
 
 
-### Utilities to use
-1. chemmech (see [documentation](../../../UTIL/chemmech/README.md))
-2. create_ebi (see [documentation](../../../UTIL/create_ebi/README.md))
+### 要使用的工具
+1. chemmech (详见[说明文档](../../../UTIL/chemmech/README.md))
+2. create_ebi (详见[说明文档](../../../UTIL/create_ebi/README.md))
 
 
 <a id=modifychem></a>
-## Modifying the chemical mechanism ##
-### 1. See the [git instructions](#github) below if you'd like to reflect the chemical mechanism changes in your Github repository.
+## 修改化学机理 ##
+### 1. 如果您想在Github代码库中提交化学机制的变化，请查阅下述的[git说明](#github)。
 
 
 <a id=mech_def></a>
-### 2. Edit mech.def.
-The mech.def file lists all of CMAQ's chemical reactions and is located at $CMAQ_REPO/CCTM/src/MECHS/${mechanism}/mech_${mechanism}.def. The [chemmech documentation](../../../UTIL/chemmech/README.md) describes formats for reaction rate constants dependent on temperature, atmospheric number density, water vapor, sunlight, model species and constants such as oxygen and methane mixing ratios. The documentation also gives a more detailed explanation of the mech.def (mechanism definitions) sections and formatting rules.
-- All reactions must begin with a name in < > brackets.
-- All reactions must end with # followed by a reaction rate constant with units of cm<sup>3</sup>/(molecules s)
-- In this tutorial, all reactions regenerate the oxidant.
+### 2. 修改mech.def.
+位于$CMAQ_REPO/CCTM/src/MECHS/${mechanism}/mech_${mechanism}.def中的mech.def文件列出了CMAQ中的所有化学反应。[chemmech文档]( ../../../UTIL/chemmech/README.md )中描述了反应速率常数的格式，这些常数取决于温度、大气密度、水蒸气、阳光、模型物种以及诸如氧气和甲烷混合比等相关常数。该文档还提供了有关mech.def（化学机理定义）部分和格式设置规则的更详细说明。
+- 所有化学反应的开头必须设置名称，并把名称放在< >括号中。
+- 所有化学反应的结尾必须输入#符号，#符号后是反应速率常数，单位是cm<sup>3</sup>/(molecules s)
+- 在本教程中，所有的化学反应都会重新生成氧化物。
 
-In this example, we add an Odum 2-product model by reacting a gas-phase precursor (TPROD) with OH to form two semivolatile gas-phase species (SVTPROD1, SVTPROD2) with alpha values of 0.15 and 0.8 by mole and a rate constant of 4.5 x 10^<sup>-11</sup> cm<sup>3</sup>/(molecules s):
+在本示例中，我们通过使气相前体物TPROD与OH反应生成两种半挥发性气相物质SVTPROD1、SVTPROD2，以添加Odum两种产物模型，其α值为0.15和0.8（摩尔），反应速率常数为4.5×10^<sup>-11</sup> cm<sup>3</sup>/(molecules s):
 ```
 <TWOPROD> TPROD + OH = OH + 0.15 * SVTPROD1 + 0.80 * SVTPROD2 #4.50E-11;
 ```
-To form a nonvolatile, accumulation mode SOA species (ANONVJ) from a gas-phase IVOC species (NONVG) with an SOA yield of 5% by mole and a rate constant of 2 x 10<sup>-11</sup> cm<sup>3</sup>/(molecules s):
+从气相IVOC物种（NONVG）反应生成持久性的、积累模式的SOA物种（ANONVJ），SOA产率为5％摩尔，反应速率常数为2×10<sup>-11</sup> cm<sup>3</sup>/(molecules s):
 ```
 <NONV> NONVG + OH = OH + 0.05 * ANONVJ #2.00E-11;
 ```
 
 
 <a id=GCnml></a>
-### 3. Edit GC namelist.
-The GC namelist defines gas-phase species and their physical and chemical properties. It's located at $CMAQ_REPO/CCTM/src/MECHS/${mechanism}/GC_${mechanism}.nml.
-You must add a new row for every gas-phase species that was added to [mech.def](#mech_def). See [Chapter 4](../CMAQ_UG_ch04_model_inputs.md) for more information.
-TPROD, SVTPROD1, SVTPROD2, and NONVG from the examples above must be added to the GC namelist because they're gas-phase species. Column descriptions can be found in [Chapter 4](../CMAQ_UG_ch04_model_inputs.md). In this example, TPROD does not participate in dry deposition - similar to many other VOCs in CMAQ - so 'DRYDEP SURR' and 'DDEP' are empty and FAC is -1. NONVG (an IVOC as defined above), SVTPROD1, and SVTPROD2 do participate in dry deposition because of their low volatilities. This tutorial does not explain the process of creating new dry deposition surrogates, but it is possible to do so and replace 'VD_GEN_ALD'. The WET-SCAV SURR are described in the [hlconst.F](#hlconst) section below. 'GC2AE SURR' lists the species that partition between gas and aerosol phases in [SOA_DEFN.F](#SOA_DEFN).
+### 3. 编辑GC名称列表文件
+位于$CMAQ_REPO/CCTM/src/MECHS/${mechanism}/GC_${mechanism}.nml中的GC名称列表文件定义了气相物质及其物理和化学性质。
+您必须在GC名称列表文件中为添加到[mech.def]( #mech_def )中的每种气相物质添加一个新的行。有关更多信息，请参见[第4章]( ../CMAQ_UG_ch04_model_inputs.md )。
+必须将上述示例中的TPROD、SVTPROD1、SVTPROD2和NONVG物种添加到GC名称列表文件中，因为它们是气相物质。每列的描述可以在[第4章]( ../CMAQ_UG_ch04_model_inputs.md )中找到。在此示例中，与CMAQ中的许多其他VOCs物种类似，TPROD不参与干沉积，因此'DRYDEP SURR'和'DDEP'为空，FAC为-1。而NONVG（如上述定义的IVOC物种）、SVTPROD1和SVTPROD2由于挥发性低，参与了干沉积。本教程没有说明创建新的干沉积替代物的过程，但在实际中是可以这样做的，并替换'VD_GEN_ALD'。下面的[hlconst.F]( #hlconst )部分介绍了WET-SCAV SURR。'GC2AE SURR'列出了在[SOA_DEFN.F]( #SOA_DEFN )中气相和气溶胶相之间分配的物种。
 ```
 !SPECIES        ,MOLWT   ,IC     ,IC_FAC ,BC     ,BC_FAC ,DRYDEP SURR       ,FAC  ,WET-SCAV SURR     ,FAC ,GC2AE SURR     ,GC2AQ SURR,TRNS  ,DDEP  ,WDEP  ,CONC
 'SVTPROD1'      ,216.66  ,''     ,-1     ,''     ,-1     ,'VD_GEN_ALD'      , 1   ,'SVTPROD1'        , 1  ,'SVTPROD1'     ,''        ,'Yes' ,'Yes' ,'Yes' ,'Yes',
@@ -63,10 +63,10 @@ TPROD, SVTPROD1, SVTPROD2, and NONVG from the examples above must be added to th
 
 
 <a id=AEnml></a>
-### 4. Edit AE namelist.
-The AE namelist defines all aerosol-phase species and their physical and chemical properties and is located at $CMAQ_REPO/CCTM/src/MECHS/${mechanism}/AE_${mechanism}.nml
-You must add a new row for every aerosol-phase species added to [AERO_DATA.F](#AERO_DATA). See [Chapter 4](../CMAQ_UG_ch04_model_inputs.md) for more information.
-ANONVJ and the aerosol products from the Odum 2-product model must be added to the AE namelist. The semivolatile Odum 2-product species (SVTPROD1 and SVTPROD2) partition between the gas and accumulation mode aerosol phase with ATPROD1J and ATPROD2J. Column descriptions can be found in [Chapter 4](../CMAQ_UG_ch04_model_inputs.md). 
+### 4. 编辑AE名称列表文件
+位于$CMAQ_REPO/CCTM/src/MECHS/${mechanism}/AE_${mechanism}.nml的AE名称列表文件定义了所有气溶胶相物种及其物理和化学性质。
+您必须为添加到[AERO_DATA.F]( #AERO_DATA )的每个气溶胶相物种添加一个新行。有关更多信息，请参见[第4章]( ../CMAQ_UG_ch04_model_inputs.md )。
+必须将ANONVJ和Odum两种产物模型中的气溶胶产物加到AE名称列表文件中。半挥发性的Odum两种产物SVTPROD1和SVTPROD2通过ATPROD1J和ATPROD2J在气体和累积模式气溶胶相之间分配。列描述可以在[第4章]( ../CMAQ_UG_ch04_model_inputs.md )中找到。
 ```
 !SPECIES   ,MOLWT   ,IC     ,IC_FAC ,BC     ,BC_FAC ,DRYDEP SURR ,FAC ,WET-SCAV SURR  ,FAC ,AE2AQ SURR     ,TRNS    ,DDEP    ,WDEP    ,CONC
 'ATPROD1J' ,216.66  ,''     ,-1     ,''     ,-1     ,'VMASSJ'    , 1  ,'ORG_ACCUM'    , 1  ,'SOA_ACCUM'    ,'Yes'   ,'Yes'   ,'Yes'   ,'Yes',
@@ -77,31 +77,31 @@ ANONVJ and the aerosol products from the Odum 2-product model must be added to t
 
 
 <a id=NRnml></a>
-### 5. Edit NR namelist.
-The NR namelist defines gas-phase species that are not in the mech.def file, and their physical and chemical properties. Species in this file are typically the semivolatile gases that partition between the gas- and aerosol-phases. It's located at $CMAQ_REPO/CCTM/src/MECHS/${mechanism}/NR_${mechanism}.nml.
-You must add a new row for every nonreactive species, if any, added to the chemical mechanism that is not explicitly modeled in [mech.def](#mech_def). See [Chapter 4](../CMAQ_UG_ch04_model_inputs.md) for descriptions of the information in each column.
-The examples used in this tutorial do not include species that need to be added to the NR namelist. Follow the sesquiterpene SOA formation mechanism as an example of NR species (e.g. follow SESQRXN, SVSQT, and ASQTJ in $CMAQ_REPO/CCTM/src/MECHS/${mechanism}/ and $CMAQ_REPO/CCTM/src/aero/aero6/).
+### 5. 编辑NR名称列表文件
+位于$CMAQ_REPO/CCTM/src/MECHS/${mechanism}/NR_${mechanism}.nml中的NR名称列表文件定义了不在mech.def文件中的气相物种及其理化特性。该文件中的物质通常是在气相和气溶胶相之间分配的半挥发性气体。
+您必须为每个非反应性物种（如果有的话）添加一个新行，以添加到未在[mech.def](#mech_def)中明确建模的化学机理中。有关每一列中信息的描述，请参见[第4章]( ../CMAQ_UG_ch04_model_inputs.md )。
+本教程中使用的示例不包括需要添加到NR名称列表中的物种。请参阅倍半萜SOA反应机理作为NR物种的示例（例如，参阅$CMAQ_REPO/CCTM/src/MECHS/${mechanism}/和$CMAQ_REPO/CCTM/src/aero/aero6/中的SESQRXN、SVSQT和ASQTJ）。
 
 
 
 <a id=EmissCtrl></a>
-### 6. Edit Emissions Control file.
-The Emissions Control file describes how to input emissions and is located at $CMAQ_REPO/CCTM/src/MECHS/${mechanism}/EmissCtrl_${mechanism}.nml. Any new species included in the mech.def or GC, AE, and NR namelists that is directly emitted should be included in this file. Examples of adding new species are given in the !> CUSTOM MAPPING EXAMPLES <! section and further description can be found in the [DESID tutorial](CMAQ_UG_tutorial_emissions.md).
+### 6. 编辑排放控制文件
+位于$CMAQ_REPO/CCTM/src/MECHS/${mechanism}/EmissCtrl_${mechanism}.nml中的排放控制文件描述了如何输入排放。mech.def或GC、AE和NR名称列表中包含的直接排放的任何新物种都应包含在此文件中。如何添加新物种的示例可以详见!> CUSTOM MAPPING EXAMPLES <!一节，更多说明可以参见[DESID教程]( CMAQ_UG_tutorial_emissions.md )。
 
 
 
 <a id=SpecDef></a>
-### 7. Edit SpecDef file.
-The SpecDef file is used to aggregate CMAQ output species (e.g. into PM<sub>2.5</sub>) and convert units. It is used to run the post-processing tool [combine](../../../POST/combine/README.md) and is located at $CMAQ_REPO/CCTM/src/MECHS/${mechanism}/SpecDef_{mechanism}.txt.
-To convert the units of a gas-phase species to ppb, add the following line:
+### 7. 编辑SpecDef文件
+位于$CMAQ_REPO/CCTM/src/MECHS/${mechanism}/SpecDef_{mechanism}.txt中的SpecDef文件用于汇总CMAQ的输出物种（例如，转换为PM<sub>2.5</sub>）以及转换单位。它用于运行后处理工具[combine]( ../../../POST/combine/README.md )。
+要将气相物种的单位转换为ppb，请添加以下行：
 ```
 NEWGAS          ,ppbV      ,1000.*NEWGAS[1]
 ```
-To add a new species to OA mass, add it to the appropriate POA or SOA variables. For example, to add a new SOA accumulation-mode aerosol species ANEWJ, include '+ANEWJ[1]' in ASOMJ. This change will be reflected in subsequent variable definitions that use ASOMJ.
+要将新物种添加到OA质量中，请将其添加到适当的POA或SOA变量中。例如，要添加新的SOA累积模式气溶胶物种ANEWJ、请在ASOMJ中添加'+ANEWJ[1]'。此更改将反映在使用ASOMJ的后续变量定义中。
 
-If your simulation domain is an urban area, move AGLYJ from AORGB (biogenic VOC-derived aerosol) to AORGA (anthropogenic VOC-derived SOA).
+如果您的模拟区域是城市地区，则将AGLYJ从AORGB（生物源VOC生成的气溶胶）转移到AORGA（人为源VOC生成的SOA）。
 
-In some cases you may want to remove pcSOA from your SOA. In this case, you must create new variables with APCSOJ subtracted. For example, to calculate PM<sub>1</sub> SOA without pcSOA, update the following variables:
+在某些情况下，您可能要从SOA中删除pcSOA。在这种情况下，必须创建减去APCSOJ的新变量。例如，要在不使用pcSOA的情况下计算PM<sub>1</sub> SOA，请更新以下变量：
 ```
 AOMJ_MP         ,ug m-3    ,APOMJ[0]  + ASOMJ[0] - APCSOJ[1]
 ATOTJ_MP        ,ug m-3    ,ASO4J[1]+ANO3J[1]+ANH4J[1]+ANAJ[1]+ACLJ[1] \
@@ -109,12 +109,12 @@ ATOTJ_MP        ,ug m-3    ,ASO4J[1]+ANO3J[1]+ANH4J[1]+ANAJ[1]+ACLJ[1] \
                            +ATIJ[1]+ACAJ[1]+AMGJ[1]+AMNJ[1]+AALJ[1]+AKJ[1]
 PM1_TOT_MP      ,ug m-3    ,ATOTI[0]*PM1AT[3]+ATOTJ_MP[0]*PM1AC[3]+ATOTK[0]*PM1CO[3]
 ```
-To update the OC variables or the deposition of OC variables in the SpecDef_Dep_{mechanism}.txt file, you must know the OM:OC ratios of the new organic aerosol species.
+要更新SpecDef_Dep_{mechanism}.txt文件中的OC变量或OC变量的沉积，您必须知道新的有机气溶胶物种的OM:OC比例。
 
 
 
 <a id=SOA_DEFN></a>
-### 8. Edit SOA_DEFN.F
+### 8. 编辑SOA_DEFN.F文件
 SOA_DEFN.F describes SOA precursors, SOA species and their properties dealing with gas to particle partitioning. It is located at $CMAQ_REPO/CCTM/src/aero/aero6/SOA_DEFN.F. Note that the aero7 directory is linked to the aero6 directory.
 
 You must add a row for every new SOA species and increase n_oa_list by the number of species added to the list.
