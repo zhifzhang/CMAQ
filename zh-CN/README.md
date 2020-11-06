@@ -13,7 +13,8 @@ CMAQ采用开放源代码框架，将当前大气科学和空气质量建模方�
 CMAQv5.3.2包括对CMAQ集成源分配方法（ISAM）的重大更新，以及针对CMAQv5.3.1中多个存在问题的修复。新的CMAQ-ISAM版本包括对气相化学分配算法的实质性更新，从而在物理和数值方面改善了该方法。强烈建议ISAM用户更新到CMAQv5.3.2。
 * [CMAQv5.3.2发行说明](DOCS/Release_Notes/README.md)   
 * [升级到最新CMAQ版本的常见问题](DOCS/Release_Notes/CMAQ_FAQ.md) **-更新到v5.3.2** 
-* [CMAQv5.3.2已知问题](DOCS/Known_Issues/README.md) -更新到v5.3.2，以警告用户下一发行版时将解决的问题。
+* [CMAQ设置和运行教程](DOCS/Users_Guide/Tutorials/README.md) **- 新的教程：WRF-CMAQ、ISAM、修改化学机制**
+* [CMAQv5.3.2已知问题](DOCS/Known_Issues/README.md) -更新到v5.3.2，以警告用户下一发行版时将解决的问题
 
 
 ## CMAQ v5.3 的新功能包括：

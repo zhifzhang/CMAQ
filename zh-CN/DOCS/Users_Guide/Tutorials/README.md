@@ -13,4 +13,5 @@ CMAQ教程
 - [创建一个OCEAN文件](CMAQ_UG_tutorial_oceanfile.md)：本教程介绍了创建一个CMAQ Ocean文件的方法。
 - [向CMAQ添加一个惰性示踪剂物质](CMAQ_UG_tutorial_tracers.md)：本教程将逐步指导您向CMAQ模型添加惰性示踪剂。
 - [根据季平均半球CMAQ输出文件创建初始条件和边界条件](CMAQ_UG_tutorial_HCMAQ_IC_BC.md)：本教程将逐步指导用户从CMAS数据仓库分发的季平均半球CMAQ输出文件创建初始条件和边界条件。
+- [修改CMAQ化学机理](CMAQ_UG_tutorial_chemicalmechanism.md): 本教程介绍了如何在CMAQ中修改化学机理并在Github中提交更改。
 - [改进CMAQ模型运行环境](CMAQ_UG_tutorial_run_time.md)：本教程提供了CMAQ开发人员推荐的常见选项和方法，以改善常见系统上的模型运行效率。
