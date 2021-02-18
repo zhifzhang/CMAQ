@@ -672,13 +672,19 @@
 
 <!-- END COMMENT -->
 
+-   `CTM_WB_DUST [default: False]`<a id=CTM_WB_DUST></a>  
+	是否计算CCTM中的online风吹扬尘排放量。将此变量设置为Y时还可以启用下面的选项，以提供MCIP文件中包含的土地利用信息之外的其他网格化土地利用输入文件，详见下面的环境变量CTM_WBDUST_BELD，以及[第6章](../CMAQ_UG_ch06_model_configuration_options.md#wind-blown-dust)以获取更多信息。
+	
+-   `CTM_WBDUST_BELD [default: UNKNOWN]`<a id=CTM_WBDUST_BELD></a>  
+	用于确定扬尘源区域的土地利用数据库；如果CTM_WB_DUST = FALSE，则忽略此项。
+	- BELD3：使用BELD3土地利用数据进行风吹扬尘计算。用户需要指定DUST_LU_1和DUST_LU_2文件，详见[第4章](../CMAQ_UG_ch04_model_inputs.md)中的描述。这些文件通常仅适用于北美区域。
+	- UNKNOWN: 使用MCIP提供的土地利用信息进行风吹扬尘计算。
+
 -   `DUST_LU_1 [default: Path to BELD3 Data]`<a id=DUST_LU_1></a>  
-	输入netCDF格式的BELD “A”土地使利用文件，并将其网格化到模型区域。如果`CTM_WBDUST_BELD`设置为BELD3，则使用本选项。
+	输入netCDF格式的BELD “A”土地使利用文件，并将其网格化到模型区域。仅在`CTM_WBDUST_BELD`设置为BELD3时使用本选项。
 
 -   `DUST_LU_2 [default: Path to BELD3 Data]`<a id=DUST_LU_2></a>  
-	输入netCDF格式的BELD “TOT”土地使利用文件，并将其网格化到模型区域。如果`CTM_WBDUST_BELD`设置为BELD3，则使用本选项。
-
-
+	输入netCDF格式的BELD “TOT”土地使利用文件，并将其网格化到模型区域。仅在`CTM_WBDUST_BELD`设置为BELD3时使用本选项。
 
 <!-- BEGIN COMMENT -->
 
