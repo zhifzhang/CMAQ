@@ -673,7 +673,7 @@
 <!-- END COMMENT -->
 
 -   `CTM_WB_DUST [default: False]`<a id=CTM_WB_DUST></a>  
-	是否计算CCTM中的online风吹扬尘排放量。将此变量设置为Y时还可以启用下面的选项，以提供MCIP文件中包含的土地利用信息之外的其他网格化土地利用输入文件，详见下面的环境变量CTM_WBDUST_BELD，以及[第6章](../CMAQ_UG_ch06_model_configuration_options.md#wind-blown-dust)以获取更多信息。
+	是否计算CCTM中的online风吹扬尘排放量。将此变量设置为Y时还可以启用下面的选项，以提供MCIP文件中包含的土地利用信息之外的其他网格化土地利用输入文件，详见下面的环境变量CTM_WBDUST_BELD，以及[第6章](../CMAQ_UG_ch06_model_configuration_options.md#Wind_Blown_Dust)以获取更多信息。
 	
 -   `CTM_WBDUST_BELD [default: UNKNOWN]`<a id=CTM_WBDUST_BELD></a>  
 	用于确定扬尘源区域的土地利用数据库；如果CTM_WB_DUST = FALSE，则忽略此项。
