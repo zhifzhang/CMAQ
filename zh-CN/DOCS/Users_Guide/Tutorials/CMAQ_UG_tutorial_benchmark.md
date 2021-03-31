@@ -106,7 +106,7 @@ tar xzvf CMAQv5.3.2_Benchmark_2Day_Output_Debug.tar.gz
 ```
 
 CMAQ的基准测试案例是2016年7月1-2日为期两天的模拟，模拟范围为美国东南部，网格大小为100列×80行×35层，网格分辨率为12km。
-- 也可以从美国EPA匿名ftp服务器获得基准数据： ftp://newftp.epa.gov/exposure/CMAQ/V5_3_2/Benchmark/WRFv4.1.1-CMAQv5.3.2/
+- 也可以从美国EPA匿名ftp服务器获得基准数据： https://gaftp.epa.gov/exposure/CMAQ/V5_3_2/Benchmark/WRFv4.1.1-CMAQv5.3.2/
 - CMAQ基准测试案例的元数据发布在CMAS Center Dataverse网站上： https://doi.org/10.15139/S3/IQVABD 
 
 #### 关于v5.3+和v5.3基准测试数据差异的说明

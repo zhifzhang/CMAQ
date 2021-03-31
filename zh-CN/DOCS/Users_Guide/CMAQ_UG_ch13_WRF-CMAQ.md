@@ -42,7 +42,7 @@ WRFv4.1.1-CMAQv5.3.2模型的代码以压缩文件（WRFv4.1.1-CMAQv5.3.2_twoway
 基准测试案例输入和输出数据集可从CMAS中心数据仓库的Google Drive中获取。从CMAQv5.3.1开始，包含基本（未耦合）模型的基准输入的.tar.gz文件还包含一个文件夹（WRF-CMAQ），其中包含用于运行WRF-CMAQ模型所需的其他输入文件和WRF-CMAQ运行脚本示例（其中run.twoway_model_411_532_sf_run_script.16pe.csh用于以短波辐射计算运行WRF-CMAQ，run.twoway_model_411_532_sf_run_script.16pe.csh用于以无反馈运行WRF-CMAQ）。同样，基本模型的基准测试案例.tar.gz输出文件也包含一个文件夹（WRFv4.1.1_CMAQv5.3.2_outputs），该文件夹包括以短波辐射计算运行的WRF-CMAQ模型的参考输出文件（文件结尾为“sf.nc”），以及没有使用短波辐射计算运行的模型的参考输出文件（文件结尾为“nf.nc”）。这些输入和输出基准文件也已发布在美国EPA的匿名ftp服务器上。
 
 - [链接到Google Drive上的WRF-CMAQ基准测试案例输入和输出数据集]( https://drive.google.com/drive/folders/1poigGFlABCfepaIjDw-6JOyznJ6xz1ck?usp=sharing )
-- EPA匿名ftp服务器上的WRF-CMAQ基准测试案例输入和输出数据集: ftp://newftp.epa.gov/exposure/CMAQ/V5_3_1/Benchmark
+- EPA匿名ftp服务器上的WRF-CMAQ基准测试案例输入和输出数据集: https://gaftp.epa.gov/exposure/CMAQ/V5_3_1/Benchmark
 
 为期两天的基准测试案例的WRF-CMAQ输出文件包含了关闭调试模式（包含"opt"的.tar.gz文件）和打开调试模式（包含"rel_debug"的.tar.gz文件）两种版本，以便允许用户将他们的结果与任何一个进行比较。为了减少编译器标志对模型输出的影响，最好使用调试版本。为了比较由于编译器优化而实现的更快运行时间而获得的模型结果，还提供了“优化版本”输出。
 

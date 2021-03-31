@@ -63,7 +63,7 @@ git clone -b master https://github.com/USEPA/CMAQ.git CMAQ_REPO
 | v5.3, v5.3.1 | 输出 | 美国东南部 | 2016年7月1日至14日 | https://doi.org/10.15139/S3/PDE4SS |
 | v5.3.2 | 输出 | 美国东南部| 2016年7月1日至2日 |https://doi.org/10.15139/S3/PDE4SS |
 
-也可以从美国EPA匿名ftp服务器获得基准数据： ftp://newftp.epa.gov/exposure/CMAQ/V5_3_2/Benchmark/WRFv4.1.1-CMAQv5.3.2/
+也可以从美国EPA匿名ftp服务器获得基准数据：https://gaftp.epa.gov/exposure/CMAQ/V5_3_2/Benchmark/WRFv4.1.1-CMAQv5.3.2/
 
 ## 以前的CMAQ版本
 CMAQ的后续发行版本当前可在GitHub上获得。需要特定版本时，可以使用Zenodo的DOI值。
